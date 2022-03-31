@@ -11,7 +11,7 @@ public class HelloController {
 
     @GetMapping("/hello")
     public String hello() {
-        return "hello Spring Boot!";
+        return "hello, RTDC!!!~";
     }
     
     @GetMapping("/hello/dto")
