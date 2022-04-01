@@ -4,13 +4,15 @@ services:
     container_name: database
     image: mariadb
     volumes:
-      - ~/db/conf.d:/etc/mysql/conf.d:ro
-      - ~/db/data:/var/lib/mysql
-      - ~/db/logs:/var/log/maria
+      - ./db/conf.d:/etc/mysql/conf.d:ro
+      - ./db/data:/var/lib/mysql
+      - ./db/logs:/var/log/maria
     environment:
-      - MYSQL_DATABASE=database_name
-      - MYSQL_ROOT_PASSWORD=1234
+      - MYSQL_DATABASE=rtdc
+      - MYSQL_ROOT_PASSWORD=password
       - MYSQL_ROOT_HOST=%
+      - MYSQL_USER=rtdc
+      - MYSQL_PASSWORD=password
     command: ['--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci']
     ports:
       - 3306:3306
@@ -21,3 +23,5 @@ services:
       - 8080:8080
     depends_on:
       - database
+
+    
