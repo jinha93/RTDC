@@ -1,0 +1,29 @@
+body{
+	margin:0;
+}
+a{
+	text-decoration: none;
+	color: white;
+}
+.navbar{
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	background-color: #7240bf;
+	padding: 8px 12px;
+}
+
+.navbar_log{
+	font-size: 24px;
+	color:white;
+}
+
+.navbar_menu{
+	display: flex;
+	list-style: none;
+	padding-left: 0;	
+}
+
+.navbar_menu li{
+	padding: 8px 12px;
+}
