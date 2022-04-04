@@ -1,16 +1,18 @@
 <!doctype html>
-<html lang="en" class="h-100">
+<html xmlns:th="http://www.thymeleaf.org">
 <!-- head -->
-<head th:replace="layout/header :: head"></head>
+<head th:replace="fragment/header :: head"></head>
+
 
 <!-- header -->
-<header th:replace="layout/header :: header"></header>
+<header th:replace="fragment/header :: header(menu='0')"></header>
 
 <body>
 	<div class="container">
 		<div class="row">
-			<img src="img/rtdc-long-logo.png">
+			<img src="assets/img/rtdc-long-logo.png">
 		</div>
+		
 		<div>내용들어갈곳</div>
 		<div>내용들어갈곳</div>
 		<div>내용들어갈곳</div>
@@ -33,10 +35,8 @@
 		<div>내용들어갈곳</div>
 		<div>내용들어갈곳</div>
 	</div>
-
 </body>
 
 <!-- footer -->
-<footer th:replace="layout/footer :: footer"></footer>
-
+<footer th:replace="fragment/footer :: footer"></footer>
 </html>
