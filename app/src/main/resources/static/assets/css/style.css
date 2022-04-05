@@ -1,29 +1,68 @@
+/* 폰트 s*/
+@font-face {
+	font-family: "sbAggroB";
+	src: url("/assets/fonts/sbAggroB.ttf") format("truetype");
+	font-weight: normal;
+}
+@font-face {
+	font-family: "sbAggroL";
+	src: url("/assets/fonts/sbAggroL.ttf") format("truetype");
+	font-weight: normal;
+}
+@font-face {
+	font-family: "sbAggroM";
+	src: url("/assets/fonts/sbAggroM.ttf") format("truetype");
+	font-weight: normal;
+}
+
 body{
-	margin:0;
+	font-family: 'sbAggroM';
 }
-a{
-	text-decoration: none;
-	color: white;
+.sbAggroB{
+	font-family: 'sbAggroB';
 }
-.navbar{
-	display: flex;
-	justify-content: space-between;
-	align-items: center;
+.sbAggroL{
+	font-family: 'sbAggroL';
+}
+.sbAggroM{
+	font-family: 'sbAggroM';
+}
+/* 폰트 e*/
+
+.color{
+	color: #7240bf;
+}
+
+
+/* navbar s*/
+.nav-link{
+	color:#7240bf;
+	font-size:1.3em;
+	font-weight: 700;
+	padding: 8px 12px;
+}
+.nav-link:hover{
+	color:#7240bf;
+}
+.nav-link:focus{
+	color:#7240bf;
+}
+.nav-pills .nav-link.active{
+	background-color: #7240bf;	
+}
+/* navbar e*/
+
+
+/* pagenation s*/
+.page-link{
+	color: #7240bf;
+}
+.page-link:hover{
+	color: #7240bf;
+}
+
+.page-item.active .page-link{
 	background-color: #7240bf;
-	padding: 8px 12px;
+	border-color: #7240bf;
 }
-
-.navbar_log{
-	font-size: 24px;
-	color:white;
-}
-
-.navbar_menu{
-	display: flex;
-	list-style: none;
-	padding-left: 0;	
-}
-
-.navbar_menu li{
-	padding: 8px 12px;
-}
+/* pagenation e*/

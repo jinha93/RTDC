@@ -1,6 +1,6 @@
 package com.rtdc;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.stream.IntStream;
 
 import org.springframework.boot.CommandLineRunner;
@@ -30,7 +30,7 @@ public class RtdcApplication {
                 Board board = Board.builder()
                         .title("title" + i)
                         .content("content" + i)
-                        .regDate(new Date())
+                        .regDateTime(LocalDateTime.now())
                         .readCnt(0)
                         .build();
 

@@ -20,7 +20,7 @@ public class BoardController {
 	
 	@RequestMapping("/list")
 	public String list(@PageableDefault Pageable pageable, Model model) {
-		model.addAttribute("boards", boardService.getBoardList(pageable));
+		model.addAttribute("boardList", boardService.getBoardList(pageable));
 		return "board/list";
 	}
 }

@@ -22,19 +22,75 @@
 						</tr>
 					</thead>
 					<tbody>
-						<tr th:each="board : ${boards}">
+						<tr th:each="board : ${boardList}">
 							<td th:text="${board.id}"></td>
 							<td th:text="${board.title}"></td>
-							<td th:text="${board.regDate}"></td>
+							<td th:text="${#temporals.format(board.regDateTime, 'yyyy.MM.dd HH:mm:ss')}"></td>
 							<td th:text="${board.readCnt}"></td>
 						</tr>
-						<tr th:if="${#lists.size(boards)} == 0">
+						<tr th:if="${#lists.size(boardList)} == 0">
 							<td colspan="4" >게시글이 없습니다.</td>
 						</tr>
 					</tbody>
 				</table>
 			</div>
 		</div>
+		
+		<!-- pagenation s -->
+		<nav class="d-none d-md-block">
+			<ul class="pagination justify-content-center"
+				th:with="start=${boardList.number/10*10 + 1}
+  						, last=(${start + 9 < boardList.totalPages ? start + 9 : boardList.totalPages})">
+  				<!-- firstPage -->
+				<li class="page-item">
+					<a class="page-link" th:href="@{/board/list(page=1)}">&lt;&lt;</a>
+				</li>
+				<!-- previousPage -->
+				<li class="page-item" th:class="${boardList.first} ? 'disabled'">
+					<a class="page-link" th:href="${boardList.first} ? '#' :@{/board/list(page=${boardList.number})}">&lt;</a>
+				</li>
+				<!-- page -->
+				<li class="page-item" th:each="page: ${#numbers.sequence(start, last)}" th:classappend="${page == boardList.number + 1} ? 'active'">
+					<a class="page-link" th:text="${page}" th:href="@{/board/list(page=${page})}"></a>
+				</li>
+				<!-- nextPage -->
+				<li class="page-item" th:class="${boardList.last} ? 'disabled'">
+					<a class="page-link" th:href="${boardList.last} ? '#' :@{/board/list(page=${boardList.number +2})}">&gt;</a>
+				</li>
+				<!-- lastPage -->
+				<li class="page-item">
+					<a class="page-link" th:href="@{/board/list(page=${boardList.totalPages})}">&gt;&gt;</a>
+				</li>
+			</ul>
+		</nav>
+		
+		<nav class="d-sm-block d-md-none">
+			<ul class="pagination justify-content-center" 
+				th:with="start=${boardList.number/5*5 + 1}
+  						, last=(${start + 4 < boardList.totalPages ? start + 4 : boardList.totalPages})">
+  				<!-- firstPage -->
+				<li class="page-item">
+					<a class="page-link" th:href="@{/board/list(page=1)}">&lt;&lt;</a>
+				</li>
+				<!-- previousPage -->
+				<li class="page-item" th:class="${boardList.first} ? 'disabled'">
+					<a class="page-link" th:href="${boardList.first} ? '#' :@{/board/list(page=${boardList.number})}">&lt;</a>
+				</li>
+				<!-- page -->
+				<li class="page-item" th:each="page: ${#numbers.sequence(start, last)}" th:classappend="${page == boardList.number + 1} ? 'active'">
+					<a class="page-link" th:text="${page}" th:href="@{/board/list(page=${page})}"></a>
+				</li>
+				<!-- nextPage -->
+				<li class="page-item" th:class="${boardList.last} ? 'disabled'">
+					<a class="page-link" th:href="${boardList.last} ? '#' :@{/board/list(page=${boardList.number +2})}">&gt;</a>
+				</li>
+				<!-- lastPage -->
+				<li class="page-item">
+					<a class="page-link" th:href="@{/board/list(page=${boardList.totalPages})}">&gt;&gt;</a>
+				</li>
+			</ul>
+		</nav>
+		<!-- pagenation e -->
 	</div>
 
 
