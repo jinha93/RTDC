@@ -25,4 +25,13 @@ public class BoardService {
 		
 		return boardRepository.findAll(pageable);
 	}
+	
+	public Board getBoard(Long id) {
+		return boardRepository.findById(id).orElse(null);
+	}
+	
+	public Board save(Board board) {
+		return boardRepository.save(board);
+	}
+	
 }

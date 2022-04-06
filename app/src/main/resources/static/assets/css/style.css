@@ -29,10 +29,15 @@ body{
 }
 /* 폰트 e*/
 
-.color{
+.colorRtdc{
 	color: #7240bf;
 }
-
+.backgroundColorRtdc{
+	background-color: #7240bf;
+}
+.borderColorRtdc{
+	border-color: #7240bf;
+}
 
 /* navbar s*/
 .nav-link{
@@ -66,3 +71,12 @@ body{
 	border-color: #7240bf;
 }
 /* pagenation e*/
+
+
+.btn-rtdc{
+	color: white;
+	background-color: #7240bf;
+}
+.btn-rtdc:hover {
+	color: white;
+}

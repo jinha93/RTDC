@@ -1,0 +1,42 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!-- head -->
+<head th:replace="fragment/header :: head"></head>
+
+<body>
+	<!-- header -->
+	<header th:replace="fragment/header :: header(menu='3')"></header>
+
+
+	<!-- content -->
+	<div class="container">
+		<form action="#" th:action=@{/board/form} th:object="${board}" method="post">
+			<input type="hidden" th:field="*{id}">
+			<div class="form-gruop">
+				<label for="title">제목</label>
+				<input type="text" class="form-control" th:classappend="${#fields.hasErrors('title')} ? 'is-invalid'" id="title" th:field="*{title}">
+				<div class="invalid-feedback" th:if="${#fields.hasErrors('title')}" th:errors="*{title}">
+			      제목 에러 메시지
+			    </div>
+			</div>
+			
+			<div class="form-gruop">
+				<label for="content">내용</label>
+				<textarea class="form-control" th:classappend="${#fields.hasErrors('content')} ? 'is-invalid'" id="content" rows="3" th:field="*{content}"></textarea>
+				<div class="invalid-feedback" th:if="${#fields.hasErrors('content')}" th:errors="*{content}">
+			      내용 에러 메시지
+			    </div>
+			</div>
+			
+			<div class="text-end mt-2">
+				<button type="submit" class="btn btn-rtdc">작성</button>
+				<a type="button" class="btn btn-secondary" th:href=@{/board/list}>취소</a>
+			</div>
+		</form>
+	</div>
+
+
+	<!-- footer -->
+	<footer th:replace="fragment/footer :: footer"></footer>
+</body>
+</html>
