@@ -9,7 +9,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 import com.rtdc.model.Board;
+import com.rtdc.model.Post;
+import com.rtdc.model.PostId;
 import com.rtdc.repository.BoardRepository;
+import com.rtdc.repository.PostRepository;
 
 @SpringBootApplication
 public class RtdcApplication {
@@ -18,23 +21,28 @@ public class RtdcApplication {
 		SpringApplication.run(RtdcApplication.class, args);
 	}
 	
-	 /**
-     * 154 개 게시물 생성
-     * @param boardRepository
-     * @return
-     */
     @Bean
-    public CommandLineRunner initData(BoardRepository boardRepository) {
+    public CommandLineRunner initData(BoardRepository boardRepository, PostRepository postRepository) {
         return args -> 
             IntStream.rangeClosed(1, 154).forEach(i -> {
-                Board board = Board.builder()
+            	if(i == 1) {
+            		Board board = Board.builder()
+            				.boardId(1)
+            				.BoardNm("자유게시판")
+            				.build();
+            		
+            		boardRepository.save(board);
+            	}
+            	Post post = Post.builder()
+            			.board(new Board((long)1, "자유게시판"))
+            			.postId(i)
                         .title("title" + i)
                         .content("content" + i)
                         .regDateTime(LocalDateTime.now())
                         .readCnt(0)
                         .build();
 
-                boardRepository.save(board);
+            	postRepository.save(post);
             });
     }
 

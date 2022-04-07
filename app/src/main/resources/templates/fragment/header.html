@@ -33,24 +33,17 @@
 			</a>
 			
 			<ul class="nav nav-pills justify-content-center">
-				<li class="nav-item"><a href="#" class="nav-link" th:classappend="${menu == '1'} ? active">이벤트</a></li>
-				<li class="nav-item"><a href="#" class="nav-link" th:classappend="${menu == '2'} ? active">프로젝트</a></li>
-				<li class="nav-item"><a href="/board/list" class="nav-link" th:classappend="${menu == '3'} ? active">자유게시판</a></li>
-				<li class="nav-item"><a href="#" class="nav-link" th:classappend="${menu == '4'} ? active">공지사항</a></li>
-				<li class="nav-item"><a href="#" class="nav-link" th:classappend="${menu == '4'} ? active">공지사항</a></li>
+				<li class="nav-item"><a href="#" class="nav-link" th:classappend="${menu == 1} ? active">이벤트</a></li>
+				<li class="nav-item"><a href="#" class="nav-link" th:classappend="${menu == 2} ? active">프로젝트</a></li>
+				<li class="nav-item"><a href="/post/list?postId=3" class="nav-link" th:classappend="${menu == 3} ? active">자유게시판</a></li>
+				<li class="nav-item"><a href="/post/list?postId=4" class="nav-link" th:classappend="${menu == 4} ? active">공지사항</a></li>
+				<li class="nav-item"><a href="#" class="nav-link" th:classappend="${menu == 5} ? active">공지사항</a></li>
 			</ul>
-			<!--<ul class="nav nav-pills col-12 col-md-auto mb-2 justify-content-center mb-md-0">
-				<li class="nav-item"><a href="#" class="nav-link px-2 link-secondary Active">홈</a></li>
-				<li class="nav-item"><a href="#" class="nav-link px-2 link-dark">이벤트</a></li>
-				<li class="nav-item"><a href="#" class="nav-link px-2 link-dark">프로젝트</a></li>
-				<li class="nav-item"><a href="#" class="nav-link px-2 link-dark">자유게시판</a></li>
-				<li class="nav-item"><a href="#" class="nav-link px-2 link-dark">공지사항</a></li>
-			</ul>-->
 
 			<div class="col-xl-3 text-end justify-content-md-between mt-2">
-				<sapn class="color"><i class="fa-solid fa-comment fa-2x px-1"></i></sapn>
-				<sapn class="color"><i class="fa-brands fa-discord fa-2x px-1"></i></sapn>
-				<sapn class="color"><i class="fa-brands fa-twitter fa-2x px-1"></i></sapn>
+				<span class="colorRtdc"><i class="fa-solid fa-comment fa-2x px-1"></i></span>
+				<span class="colorRtdc"><i class="fa-brands fa-discord fa-2x px-1"></i></span>
+				<span class="colorRtdc"><i class="fa-brands fa-twitter fa-2x px-1"></i></span>
 			</div>
 		</header>
 		<div></div>

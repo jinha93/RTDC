@@ -1,0 +1,60 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!-- head -->
+<head th:replace="fragment/header :: head"></head>
+
+<body>
+	<!-- header -->
+	<header th:replace="fragment/header :: header(menu='3')"></header>
+
+
+	<!-- content -->
+	<div class="container">
+		<form action="#" th:action=@{/post/form} th:object="${post}" method="post">
+			<input type="hidden" th:field="*{id}">
+			<div class="form-gruop">
+				<h3>제목</h3>
+				<input type="text" class="form-control" th:classappend="${#fields.hasErrors('title')} ? 'is-invalid'" id="title" th:field="*{title}">
+				<div class="invalid-feedback" th:if="${#fields.hasErrors('title')}" th:errors="*{title}">
+			      제목 에러 메시지
+			    </div>
+			</div>
+			
+			<div class="form-gruop mt-3">
+				<h3>내용</h3>
+				<textarea id="summernote" class="form-control" th:classappend="${#fields.hasErrors('content')} ? 'is-invalid'" th:field="*{content}"></textarea>
+				<div class="invalid-feedback" th:if="${#fields.hasErrors('content')}" th:errors="*{content}">
+			      내용 에러 메시지
+			    </div>
+			</div>
+			
+			
+			
+			<div class="text-end mt-2">
+				<button type="submit" class="btn btn-rtdc">작성</button>
+				<a type="button" class="btn btn-secondary" th:href=@{/post/list}>취소</a>
+			</div>
+		</form>
+	</div>
+
+
+	<!-- footer -->
+	<footer th:replace="fragment/footer :: footer"></footer>
+</body>
+
+<script>
+	$('#summernote').summernote(
+			{
+				tabsize : 2,
+				height : 500,
+				toolbar : [ [ 'style', [ 'style' ] ],
+						[ 'font', [ 'bold', 'underline', 'clear' ] ],
+						[ 'color', [ 'color' ] ],
+						[ 'para', [ 'ul', 'ol', 'paragraph' ] ],
+						[ 'table', [ 'table' ] ],
+						[ 'insert', [ 'link', 'picture', 'video' ] ],
+						[ 'view', [ 'fullscreen', 'codeview', 'help' ] ] ]
+			});
+</script>
+
+</html>
