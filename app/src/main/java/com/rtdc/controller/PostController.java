@@ -22,20 +22,20 @@ import com.rtdc.validator.PostValidator;
 @RequestMapping("/post")
 public class PostController {
 	
-	private PostService postService;
-	
 	@Autowired
 	private PostValidator postValidator;
 	
+	private PostService postService;
 	public PostController(PostService postService) {
 		this.postService = postService;
 	}
 	
 	@GetMapping("/list")
-	public String list(Model model, @RequestParam int boardId, @PageableDefault Pageable pageable, 
-			@RequestParam(required = false, defaultValue = "") String searchText) {
+	public String list(Model model, @RequestParam Long boardId, @PageableDefault Pageable pageable, @RequestParam(required = false, defaultValue = "") String searchText) {
+		Page<Post> postList = postService.getPostList(pageable, searchText);
+		
 		model.addAttribute("boardId", boardId);
-		model.addAttribute("postList", postService.getPostList(pageable, searchText));
+		model.addAttribute("postList", postList);
 		return "post/list";
 	}
 	
@@ -44,7 +44,7 @@ public class PostController {
 		if(id == null) {
 			model.addAttribute("post", new Post());
 		}else {
-//			model.addAttribute("post", postService.getPost(id));
+			model.addAttribute("post", postService.getPost(id));
 		}
 		return "post/form";
 	}
@@ -55,6 +55,8 @@ public class PostController {
 		if(bindingResult.hasErrors()) {
 			return "post/form";
 		}
+		
+		postService.save(post);
 		return "redirect:/post/list";
 	}
 }

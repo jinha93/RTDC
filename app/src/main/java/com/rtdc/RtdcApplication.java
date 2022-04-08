@@ -10,7 +10,6 @@ import org.springframework.context.annotation.Bean;
 
 import com.rtdc.model.Board;
 import com.rtdc.model.Post;
-import com.rtdc.model.PostId;
 import com.rtdc.repository.BoardRepository;
 import com.rtdc.repository.PostRepository;
 
@@ -33,9 +32,10 @@ public class RtdcApplication {
             		
             		boardRepository.save(board);
             	}
+            	Board board = new Board();
+            	board.setBoardId(1);
             	Post post = Post.builder()
-            			.board(new Board((long)1, "자유게시판"))
-            			.postId(i)
+//            			.board(board)
                         .title("title" + i)
                         .content("content" + i)
                         .regDateTime(LocalDateTime.now())
