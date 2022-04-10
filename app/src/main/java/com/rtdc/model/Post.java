@@ -54,7 +54,7 @@ public class Post {
 //    @JoinColumn(name = "userId", nullable = true)
 //    public User user;
 //    
-//    @ManyToOne
-//	@JoinColumn(name = "boardId", nullable = true)
-//	public Board board;
+    @ManyToOne
+	@JoinColumn(name = "boardId", nullable = true)
+	public Board board;
 }

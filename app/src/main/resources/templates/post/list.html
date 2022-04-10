@@ -12,6 +12,7 @@
 	<div class="container">
 
 		<form class="row g-3 d-flex justify-content-end" method="GET" th:action="@{/post/list}">
+			<input type="hidden" id="boardId" name="boardId" th:value="${boardId}">
 			<div class="col-auto">
 				<label for="searchText" class="visually-hidden">검색</label>
 				<input type="text" class="form-control" id="searchText" name="searchText" th:value="${param.searchText}">
@@ -31,8 +32,8 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr th:each="post : ${postList}" th:onclick="|location.href='@{/post/form(id=${post.id})}'|" style="cursor: pointer;">
-					<td th:text="${post.id}"></td>
+				<tr th:each="post : ${postList}" th:onclick="|location.href='@{/post/form(boardId=${boardId},postId=${post.postId})}'|" style="cursor: pointer;">
+					<td th:text="${post.postId}"></td>
 					<td th:text="${post.title}"></td>
 					<td th:text="${#temporals.format(post.regDateTime, 'yyyy.MM.dd HH:mm:ss')}"></td>
 					<td th:text="${post.readCnt}"></td>
@@ -44,7 +45,7 @@
 		</table>
 		
 		<div class="text-end">
-			<a type="button" class="btn btn-rtdc" th:href=@{/post/form}>작성</a>
+			<a type="button" class="btn btn-rtdc" th:href=@{/post/form(boardId=${boardId})}>작성</a>
 		</div>
 		
 		
@@ -54,19 +55,19 @@
 				th:with="start=${postList.number/10*10 + 1}
   						, last=(${start + 9 < postList.totalPages ? start + 9 : postList.totalPages})">
 				<li class="page-item">
-					<a class="page-link" th:href="@{/post/list(page=1, searchText=${param.searchText})}">&lt;&lt;</a>
+					<a class="page-link" th:href="@{/post/list(boardId=${boardId}, page=1, searchText=${param.searchText})}">&lt;&lt;</a>
 				</li>
 				<li class="page-item" th:class="${postList.first} ? 'disabled'">
-					<a class="page-link" th:href="${postList.first} ? '#' :@{/post/list(page=${postList.number}, searchText=${param.searchText})}">&lt;</a>
+					<a class="page-link" th:href="${postList.first} ? '#' :@{/post/list(boardId=${boardId}, page=${postList.number}, searchText=${param.searchText})}">&lt;</a>
 				</li>
 				<li class="page-item" th:each="page: ${#numbers.sequence(start, last)}" th:classappend="${page == postList.number + 1} ? 'active'">
-					<a class="page-link" th:text="${page}" th:href="@{/post/list(page=${page}, searchText=${param.searchText})}"></a>
+					<a class="page-link" th:text="${page}" th:href="@{/post/list(boardId=${boardId}, page=${page}, searchText=${param.searchText})}"></a>
 				</li>
 				<li class="page-item" th:class="${postList.last} ? 'disabled'">
-					<a class="page-link" th:href="${postList.last} ? '#' :@{/post/list(page=${postList.number +2}, searchText=${param.searchText})}">&gt;</a>
+					<a class="page-link" th:href="${postList.last} ? '#' :@{/post/list(boardId=${boardId}, page=${postList.number +2}, searchText=${param.searchText})}">&gt;</a>
 				</li>
 				<li class="page-item">
-					<a class="page-link" th:href="@{/post/list(page=${postList.totalPages}, searchText=${param.searchText})}">&gt;&gt;</a>
+					<a class="page-link" th:href="@{/post/list(boardId=${boardId}, page=${postList.totalPages}, searchText=${param.searchText})}">&gt;&gt;</a>
 				</li>
 			</ul>
 		</nav>
@@ -76,19 +77,19 @@
 				th:with="start=${postList.number/5*5 + 1}
   						, last=(${start + 4 < postList.totalPages ? start + 4 : postList.totalPages})">
 				<li class="page-item">
-					<a class="page-link" th:href="@{/post/list(page=1, searchText=${param.searchText})}">&lt;&lt;</a>
+					<a class="page-link" th:href="@{/post/list(boardId=${boardId}, page=1, searchText=${param.searchText})}">&lt;&lt;</a>
 				</li>
 				<li class="page-item" th:class="${postList.first} ? 'disabled'">
-					<a class="page-link" th:href="${postList.first} ? '#' :@{/post/list(page=${postList.number}, searchText=${param.searchText})}">&lt;</a>
+					<a class="page-link" th:href="${postList.first} ? '#' :@{/post/list(boardId=${boardId}, page=${postList.number}, searchText=${param.searchText})}">&lt;</a>
 				</li>
 				<li class="page-item" th:each="page: ${#numbers.sequence(start, last)}" th:classappend="${page == postList.number + 1} ? 'active'">
-					<a class="page-link" th:text="${page}" th:href="@{/post/list(page=${page}, searchText=${param.searchText})}"></a>
+					<a class="page-link" th:text="${page}" th:href="@{/post/list(boardId=${boardId}, page=${page}, searchText=${param.searchText})}"></a>
 				</li>
 				<li class="page-item" th:class="${postList.last} ? 'disabled'">
-					<a class="page-link" th:href="${postList.last} ? '#' :@{/post/list(page=${postList.number +2}, searchText=${param.searchText})}">&gt;</a>
+					<a class="page-link" th:href="${postList.last} ? '#' :@{/post/list(boardId=${boardId}, page=${postList.number +2}, searchText=${param.searchText})}">&gt;</a>
 				</li>
 				<li class="page-item">
-					<a class="page-link" th:href="@{/post/list(page=${postList.totalPages}, searchText=${param.searchText})}">&gt;&gt;</a>
+					<a class="page-link" th:href="@{/post/list(boardId=${boardId}, page=${postList.totalPages}, searchText=${param.searchText})}">&gt;&gt;</a>
 				</li>
 			</ul>
 		</nav>

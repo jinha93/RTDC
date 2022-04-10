@@ -14,7 +14,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import com.rtdc.model.Board;
 import com.rtdc.model.Post;
+import com.rtdc.service.BoardService;
 import com.rtdc.service.PostService;
 import com.rtdc.validator.PostValidator;
 
@@ -26,13 +28,21 @@ public class PostController {
 	private PostValidator postValidator;
 	
 	private PostService postService;
-	public PostController(PostService postService) {
+	private BoardService boardService;
+	
+	public PostController(PostService postService, BoardService boardService) {
 		this.postService = postService;
+		this.boardService = boardService;
 	}
+	
+	
 	
 	@GetMapping("/list")
 	public String list(Model model, @RequestParam Long boardId, @PageableDefault Pageable pageable, @RequestParam(required = false, defaultValue = "") String searchText) {
-		Page<Post> postList = postService.getPostList(pageable, searchText);
+		
+		Board board = boardService.getBoard(boardId);
+		Page<Post> postList = postService.getPostList(pageable, board, searchText);
+		
 		
 		model.addAttribute("boardId", boardId);
 		model.addAttribute("postList", postList);
@@ -40,11 +50,16 @@ public class PostController {
 	}
 	
 	@GetMapping("/form")
-	public String form(Model model, @RequestParam(required = false) Long id) {
-		if(id == null) {
-			model.addAttribute("post", new Post());
+	public String form(Model model, @RequestParam Long boardId, @RequestParam(required = false) Long postId) {
+		
+		Board board = boardService.getBoard(boardId);
+		
+		if(postId == null) {
+			Post post = new Post();
+			post.setBoard(board);
+			model.addAttribute("post", post);
 		}else {
-			model.addAttribute("post", postService.getPost(id));
+			model.addAttribute("post", postService.getPost(board, postId));
 		}
 		return "post/form";
 	}
@@ -57,6 +72,6 @@ public class PostController {
 		}
 		
 		postService.save(post);
-		return "redirect:/post/list";
+		return "redirect:/post/list?boardId=" + post.getBoard().getBoardId();
 	}
 }

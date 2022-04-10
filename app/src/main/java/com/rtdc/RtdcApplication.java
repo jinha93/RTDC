@@ -35,7 +35,7 @@ public class RtdcApplication {
             	Board board = new Board();
             	board.setBoardId(1);
             	Post post = Post.builder()
-//            			.board(board)
+            			.board(board)
                         .title("title" + i)
                         .content("content" + i)
                         .regDateTime(LocalDateTime.now())

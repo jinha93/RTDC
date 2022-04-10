@@ -5,13 +5,14 @@
 
 <body>
 	<!-- header -->
-	<header th:replace="fragment/header :: header(menu='3')"></header>
+	<header th:replace="fragment/header :: header(menu=${post.board.boardId})"></header>
 
 
 	<!-- content -->
 	<div class="container">
-		<form action="#" th:action=@{/post/form} th:object="${post}" method="post">
-			<input type="hidden" th:field="*{id}">
+		<form action="#" th:action=@{/post/form} th:object="${post}" method="post" enctype="multipart/form-data">
+			<input type="hidden" th:field="*{board.boardId}">
+			<input type="hidden" th:field="*{postId}">
 			<div class="form-gruop">
 				<h3>제목</h3>
 				<input type="text" class="form-control" th:classappend="${#fields.hasErrors('title')} ? 'is-invalid'" id="title" th:field="*{title}">
@@ -28,11 +29,9 @@
 			    </div>
 			</div>
 			
-			
-			
 			<div class="text-end mt-2">
 				<button type="submit" class="btn btn-rtdc">작성</button>
-				<a type="button" class="btn btn-secondary" th:href=@{/post/list}>취소</a>
+				<a type="button" class="btn btn-secondary" th:href=@{/post/list(boardId=${post.board.boardId})}>취소</a>
 			</div>
 		</form>
 	</div>
@@ -43,18 +42,43 @@
 </body>
 
 <script>
-	$('#summernote').summernote(
-			{
-				tabsize : 2,
-				height : 500,
-				toolbar : [ [ 'style', [ 'style' ] ],
-						[ 'font', [ 'bold', 'underline', 'clear' ] ],
-						[ 'color', [ 'color' ] ],
-						[ 'para', [ 'ul', 'ol', 'paragraph' ] ],
-						[ 'table', [ 'table' ] ],
-						[ 'insert', [ 'link', 'picture', 'video' ] ],
-						[ 'view', [ 'fullscreen', 'codeview', 'help' ] ] ]
-			});
+	$('#summernote').summernote({
+		tabsize : 2,
+		height : 500,
+		toolbar : [ [ 'style', [ 'style' ] ],
+				[ 'font', [ 'bold', 'underline', 'clear' ] ],
+				[ 'color', [ 'color' ] ],
+				[ 'para', [ 'ul', 'ol', 'paragraph' ] ],
+				[ 'table', [ 'table' ] ],
+				[ 'insert', [ 'link', 'picture', 'video' ] ],
+				[ 'view', [ 'fullscreen', 'codeview', 'help' ] ] ],
+		callbacks : {
+			onImageUpload : function(files, editor, welEditable) {       
+				for (var i = 0; i < files.length; i++) {
+					sendFile(files[i], this);
+				}
+			}
+		}
+	});
+	
+	function sendFile(file, el) {
+		var form_data = new FormData();
+		form_data.append('file', file);
+		$.ajax({
+			data : form_data,
+			type : "POST",
+			url : '/image',
+			cache : false,
+			contentType : false,
+			enctype : 'multipart/form-data',
+			processData : false,
+			success : function(url) {
+				$(el).summernote('insertImage', url, function($image) {
+					$image.css('width', "25%");
+				});
+			}
+		});
+	}
 </script>
 
 </html>

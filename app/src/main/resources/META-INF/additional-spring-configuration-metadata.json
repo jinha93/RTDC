@@ -1,0 +1,22 @@
+{"properties": [
+  {
+    "name": "spring.my.file-path",
+    "type": "java.lang.String",
+    "description": "A description for 'spring.my.file-path'"
+  },
+  {
+    "name": "my.file-path",
+    "type": "java.lang.String",
+    "description": "A description for 'my.file-path'"
+  },
+  {
+    "name": "custom.file-path",
+    "type": "java.lang.String",
+    "description": "A description for 'custom.file-path'"
+  },
+  {
+    "name": "custom.img-path",
+    "type": "java.lang.String",
+    "description": "A description for 'custom.img-path'"
+  }
+]}
