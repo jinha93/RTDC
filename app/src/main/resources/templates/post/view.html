@@ -1,0 +1,40 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!-- head -->
+<head th:replace="fragment/header :: head"></head>
+
+<body>
+	<!-- header -->
+	<header th:replace="fragment/header :: header(menu=${post.board.boardId})"></header>
+
+
+	<!-- content -->
+	<div class="container">
+		<div class="row justify-content-center mt-5 mb-5">
+			<div class="col-12 border p-5">
+				<div class="border-bottom">
+					<h2 th:text="${post.title}"></h2>
+				</div>
+				<div class="mt-3" style="height: 300px;">
+					<span th:utext="${post.content}"></span>
+				</div>
+			</div>
+			<div class="col border p-5">
+				<form action="#" th:action=@{/comment/save} th:object="${comment}" method="post">
+					<div class="comment">
+						<label for="exampleFormControlTextarea1" class="form-label">댓글</label>
+						<textarea class="form-control" rows="3" id="content" th:field="*{content}"></textarea>
+					</div>
+					<div class="text-end mt-2">
+						<button type="submit" class="btn-xs btn-rtdc">작성</button>
+					</div>
+				</form>
+			</div>
+		</div>
+	</div>
+
+
+	<!-- footer -->
+	<footer th:replace="fragment/footer :: footer"></footer>
+</body>
+</html>

@@ -23,10 +23,12 @@ import lombok.NoArgsConstructor;
 
 @Entity
 @Data
+
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Builder
-@DynamicInsert
+
+@DynamicInsert	//insert 시점에 null이 아닌 컬럼들만 insert
 public class Post {
 	
 	@Id

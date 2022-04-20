@@ -1,5 +1,6 @@
 package com.rtdc.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,11 +12,9 @@ import com.rtdc.service.BoardService;
 @Controller
 @RequestMapping("/board")
 public class BoardController {
-	private BoardService boardService;
 	
-	public BoardController(BoardService boardService) {
-		this.boardService = boardService;
-	}
+	@Autowired
+	private BoardService boardService;
 	
 	@GetMapping("/list")
 	public String list(Model model, @RequestParam(required = false) Long boardId) {

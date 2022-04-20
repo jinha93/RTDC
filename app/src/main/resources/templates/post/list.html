@@ -32,7 +32,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				<tr th:each="post : ${postList}" th:onclick="|location.href='@{/post/form(boardId=${boardId},postId=${post.postId})}'|" style="cursor: pointer;">
+				<tr th:each="post : ${postList}" th:onclick="|location.href='@{/post/view(boardId=${boardId},postId=${post.postId})}'|" style="cursor: pointer;">
 					<td th:text="${post.postId}"></td>
 					<td th:text="${post.title}"></td>
 					<td th:text="${#temporals.format(post.regDateTime, 'yyyy.MM.dd HH:mm:ss')}"></td>
