@@ -27,6 +27,8 @@ public class Comment {
 	
 	private long parentCommentId;
 	
+	private String randomName;
+	
 	private String content;
 	
 	@Column(updatable=false)

@@ -27,13 +27,28 @@ public class RtdcApplication {
             	if(i == 1) {
             		Board board = Board.builder()
             				.boardId(1)
+            				.BoardNm("공지사항")
+            				.build();
+            		boardRepository.save(board);
+            		board = Board.builder()
+            				.boardId(2)
+            				.BoardNm("이벤트")
+            				.build();
+            		boardRepository.save(board);
+            		board = Board.builder()
+            				.boardId(3)
+            				.BoardNm("명예의전당")
+            				.build();
+            		boardRepository.save(board);
+            		board = Board.builder()
+            				.boardId(4)
             				.BoardNm("자유게시판")
             				.build();
             		
             		boardRepository.save(board);
             	}
             	Board board = new Board();
-            	board.setBoardId(1);
+            	board.setBoardId(4);
             	Post post = Post.builder()
             			.board(board)
                         .title("title" + i)

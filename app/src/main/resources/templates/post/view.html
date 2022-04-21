@@ -11,7 +11,8 @@
 	<!-- content -->
 	<div class="container">
 		<div class="row justify-content-center mt-5 mb-5">
-			<div class="col-12 border p-5">
+		
+			<div class="col col-lg-12 border p-5">
 				<div class="border-bottom">
 					<h2 th:text="${post.title}"></h2>
 				</div>
@@ -19,8 +20,12 @@
 					<span th:utext="${post.content}"></span>
 				</div>
 			</div>
-			<div class="col border p-5">
-				<form action="#" th:action=@{/comment/save} th:object="${comment}" method="post">
+			
+			<div class="col border mt-5 p-5">
+				<form action="#" th:action=@{/comment/form} th:object="${comment}" method="post">
+					<input type="hidden" th:field="*{post.board.boardId}">
+					<input type="hidden" th:field="*{post.postId}">
+					
 					<div class="comment">
 						<label for="exampleFormControlTextarea1" class="form-label">댓글</label>
 						<textarea class="form-control" rows="3" id="content" th:field="*{content}"></textarea>
@@ -29,6 +34,11 @@
 						<button type="submit" class="btn-xs btn-rtdc">작성</button>
 					</div>
 				</form>
+				<div th:each="comment, i : ${commentList}" class="border mt-3 p-3">
+					<div th:if="${comment.randomName} == 'G'"><span th:text="${i.count} + '.G-Dragon'" class="text-rainbow"></span></div>
+					<div th:if="${comment.randomName} != 'G'"><span th:text="${i.count} + '.' + ${comment.randomName} + ' 드래곤'"></span></div>
+					<div class="sbAggroL m-2"><span th:text=${comment.content}></span></div>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -37,4 +47,5 @@
 	<!-- footer -->
 	<footer th:replace="fragment/footer :: footer"></footer>
 </body>
+
 </html>
