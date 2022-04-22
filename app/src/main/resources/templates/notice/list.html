@@ -1,0 +1,103 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!-- head -->
+<head th:replace="fragment/header :: head"></head>
+
+<body>
+	<!-- header -->
+	<header th:replace="fragment/header :: header(menu=${boardId})"></header>
+
+
+	<!-- content -->
+	<div class="container">
+
+		<form class="row g-3 d-flex justify-content-end" method="GET" th:action="@{/post/list}">
+			<input type="hidden" id="boardId" name="boardId" th:value="${boardId}">
+			<div class="col-auto">
+				<label for="searchText" class="visually-hidden">검색</label>
+				<input type="text" class="form-control" id="searchText" name="searchText" th:value="${param.searchText}">
+			</div>
+			<div class="col-auto">
+				<button type="submit" class="btn btn-light mb-3">검색</button>
+			</div>
+		</form>
+
+		<table class="table table-hover text-center">
+			<thead class="table-light">
+				<tr>
+					<th class="col-2">번호</th>
+					<th class="col-5">제목</th>
+					<th class="col-3">작성일</th>
+					<th class="col-2">조회</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="post, i : ${postList}" th:onclick="|location.href='@{/post/view(boardId=${boardId},postId=${post.postId})}'|" style="cursor: pointer;">
+					<td th:text="${post.postId}"></td>
+					<td th:text="${post.title}"></td>
+					<td th:text="${#temporals.format(post.regDateTime, 'yyyy.MM.dd HH:mm:ss')}"></td>
+					<td th:text="${post.readCnt}"></td>
+				</tr>
+				<tr th:if="${#lists.size(postList)} == 0">
+					<td colspan="4" >게시글이 없습니다.</td>
+				</tr>
+			</tbody>
+		</table>
+		
+		<div class="text-end">
+			<a type="button" class="btn btn-rtdc" th:href=@{/post/form(boardId=${boardId})}>작성</a>
+		</div>
+		
+		
+		<!-- pagenation s -->
+		<nav class="d-none d-md-block">
+			<ul class="pagination justify-content-center"
+				th:with="start=${postList.number/10*10 + 1}
+  						, last=(${start + 9 < postList.totalPages ? start + 9 : postList.totalPages})">
+				<li class="page-item">
+					<a class="page-link" th:href="@{/post/list(boardId=${boardId}, page=1, searchText=${param.searchText})}">&lt;&lt;</a>
+				</li>
+				<li class="page-item" th:class="${postList.first} ? 'disabled'">
+					<a class="page-link" th:href="${postList.first} ? '#' :@{/post/list(boardId=${boardId}, page=${postList.number}, searchText=${param.searchText})}">&lt;</a>
+				</li>
+				<li class="page-item" th:each="page: ${#numbers.sequence(start, last)}" th:classappend="${page == postList.number + 1} ? 'active'">
+					<a class="page-link" th:text="${page}" th:href="@{/post/list(boardId=${boardId}, page=${page}, searchText=${param.searchText})}"></a>
+				</li>
+				<li class="page-item" th:class="${postList.last} ? 'disabled'">
+					<a class="page-link" th:href="${postList.last} ? '#' :@{/post/list(boardId=${boardId}, page=${postList.number +2}, searchText=${param.searchText})}">&gt;</a>
+				</li>
+				<li class="page-item">
+					<a class="page-link" th:href="@{/post/list(boardId=${boardId}, page=${postList.totalPages}, searchText=${param.searchText})}">&gt;&gt;</a>
+				</li>
+			</ul>
+		</nav>
+		
+		<nav class="d-sm-block d-md-none">
+			<ul class="pagination justify-content-center" 
+				th:with="start=${postList.number/5*5 + 1}
+  						, last=(${start + 4 < postList.totalPages ? start + 4 : postList.totalPages})">
+				<li class="page-item">
+					<a class="page-link" th:href="@{/post/list(boardId=${boardId}, page=1, searchText=${param.searchText})}">&lt;&lt;</a>
+				</li>
+				<li class="page-item" th:class="${postList.first} ? 'disabled'">
+					<a class="page-link" th:href="${postList.first} ? '#' :@{/post/list(boardId=${boardId}, page=${postList.number}, searchText=${param.searchText})}">&lt;</a>
+				</li>
+				<li class="page-item" th:each="page: ${#numbers.sequence(start, last)}" th:classappend="${page == postList.number + 1} ? 'active'">
+					<a class="page-link" th:text="${page}" th:href="@{/post/list(boardId=${boardId}, page=${page}, searchText=${param.searchText})}"></a>
+				</li>
+				<li class="page-item" th:class="${postList.last} ? 'disabled'">
+					<a class="page-link" th:href="${postList.last} ? '#' :@{/post/list(boardId=${boardId}, page=${postList.number +2}, searchText=${param.searchText})}">&gt;</a>
+				</li>
+				<li class="page-item">
+					<a class="page-link" th:href="@{/post/list(boardId=${boardId}, page=${postList.totalPages}, searchText=${param.searchText})}">&gt;&gt;</a>
+				</li>
+			</ul>
+		</nav>
+		<!-- pagenation e -->
+	</div>
+
+
+	<!-- footer -->
+	<footer th:replace="fragment/footer :: footer"></footer>
+</body>
+</html>

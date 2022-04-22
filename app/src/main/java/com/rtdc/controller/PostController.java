@@ -1,7 +1,5 @@
 package com.rtdc.controller;
 
-import java.util.Random;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
@@ -57,7 +55,6 @@ public class PostController {
 		Board board = boardService.getBoard(boardId);
 		Page<Post> postList = postService.getPostList(pageable, board, searchText);
 		
-		
 		model.addAttribute("boardId", boardId);
 		model.addAttribute("postList", postList);
 		return "post/list";
@@ -74,7 +71,12 @@ public class PostController {
 	public String view(Model model, @RequestParam Long boardId, @RequestParam(required = false) Long postId) {
 		Board board = boardService.getBoard(boardId);
 		
+		//게시글 조회
 		Post post = postService.getPost(board, postId);
+		//조회수 증가
+		post.setReadCnt(post.getReadCnt()+1);
+		postService.save(post);
+		
 		model.addAttribute("post", post);
 		
 		Comment comment = new Comment();

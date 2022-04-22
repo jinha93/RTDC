@@ -52,6 +52,9 @@ public class Post {
     @Column(length = 200, nullable = true)
     private String regIp;
     
+    @Column(columnDefinition = "varchar(1) default 'N'")
+    private String delYn;
+    
 //    @ManyToOne
 //    @JoinColumn(name = "userId", nullable = true)
 //    public User user;
