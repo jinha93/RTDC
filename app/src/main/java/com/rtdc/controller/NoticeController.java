@@ -11,8 +11,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.rtdc.model.Board;
+import com.rtdc.model.Comment;
 import com.rtdc.model.Post;
 import com.rtdc.service.BoardService;
+import com.rtdc.service.CommentService;
 import com.rtdc.service.PostService;
 
 @Controller
@@ -24,6 +26,9 @@ public class NoticeController {
 	
 	@Autowired
 	private PostService postService;
+	
+	@Autowired
+	private CommentService commentService;
 	
 	/**
 	 * 게시글 목록 조회
@@ -43,4 +48,5 @@ public class NoticeController {
 		model.addAttribute("postList", postList);
 		return "notice/list";
 	}
+	
 }

@@ -1,0 +1,132 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!-- head -->
+<head th:replace="fragment/header :: head"></head>
+<style>
+	.card-img-top{
+		max-width: 100%;
+  		height: 270px;
+/*   		height: auto !important; */
+	}
+	.card:hover {
+		cursor: pointer;	
+	}
+</style>
+<body>
+	<!-- header -->
+	<header th:replace="fragment/header :: header(menu=${boardId})"></header>
+	
+
+	<!-- content -->
+	<div class="container sbAggroL mt-3">
+		<div class="col">
+			<ul class="nav nav-tabs nav-justified" id="myTab" role="tablist">
+				<li class="nav-item" role="presentation">
+					<button class="nav-link active" id="home-tab" data-bs-toggle="tab"
+						data-bs-target="#now" type="button" role="tab"
+						aria-controls="now" aria-selected="true" style="color:black;">진행중 이벤트</button>
+				</li>
+				<li class="nav-item" role="presentation">
+					<button class="nav-link" id="profile-tab" data-bs-toggle="tab"
+						data-bs-target="#finish" type="button" role="tab"
+						aria-controls="finish" aria-selected="false" style="color:black;">종료된 이벤트</button>
+				</li>
+				<li class="nav-item" role="presentation">
+					<button class="nav-link" id="contact-tab" data-bs-toggle="tab"
+						data-bs-target="#winner" type="button" role="tab"
+						aria-controls="winner" aria-selected="false" style="color:black;">당첨자 발표</button>
+				</li>
+			</ul>
+			<div class="tab-content" id="myTabContent">
+				<div class="tab-pane fade show active" id="now" role="tabpanel" aria-labelledby="home-tab">
+					<div class="row">
+						<div class="col col-lg-4 col-md-6 col-sm-12">
+							<div class="card mt-3" >
+								<img th:src="@{/assets/img/event/mbti.jpg}" class="card-img-top" alt="MBTI">
+								<div class="card-body">
+									<h5 class="card-title sbAggroM">MBTI</h5>
+									<p class="card-text">이벤트 기간 : 2022.04.00 ~ 04.30 00:00</p>
+								</div>
+							</div>
+						</div>
+						<div class="col col-lg-4 col-md-6 col-sm-12">
+							<div class="card mt-3" data-bs-toggle="modal" data-bs-target="#exampleModal">
+								<img th:src="@{/assets/img/event/신춘문예.jpg}" class="card-img-top" alt="신춘문예">
+								<div class="card-body">
+									<h5 class="card-title sbAggroM">신춘문예</h5>
+									<p class="card-text">이벤트 기간 : 2022.04.00 ~ 04.30 00:00</p>
+								</div>
+							</div>
+						</div>
+						<div class="col col-lg-4 col-md-6 col-sm-12">
+							<div class="card mt-3">
+								<img th:src="@{/assets/img/event/신춘문예.jpg}" class="card-img-top" alt="신춘문예">
+								<div class="card-body">
+									<h5 class="card-title sbAggroM">신춘문예</h5>
+									<p class="card-text">이벤트 기간 : 2022.04.00 ~ 04.30 00:00</p>
+								</div>
+							</div>
+						</div>
+						<div class="col col-lg-4 col-md-6 col-sm-12">
+							<div class="card mt-3">
+								<img th:src="@{/assets/img/event/신춘문예.jpg}" class="card-img-top" alt="신춘문예">
+								<div class="card-body">
+									<h5 class="card-title sbAggroM">신춘문예</h5>
+									<p class="card-text">이벤트 기간 : 2022.04.00 ~ 04.30 00:00</p>
+								</div>
+							</div>
+						</div>
+						<div class="col col-lg-4 col-md-6 col-sm-12">
+							<div class="card mt-3">
+								<img th:src="@{/assets/img/event/신춘문예.jpg}" class="card-img-top" alt="신춘문예">
+								<div class="card-body">
+									<h5 class="card-title sbAggroM">신춘문예</h5>
+									<p class="card-text">이벤트 기간 : 2022.04.00 ~ 04.30 00:00</p>
+								</div>
+							</div>
+						</div>
+						<div class="col col-lg-4 col-md-6 col-sm-12">
+							<div class="card mt-3">
+								<img th:src="@{/assets/img/event/신춘문예.jpg}" class="card-img-top" alt="신춘문예">
+								<div class="card-body">
+									<h5 class="card-title sbAggroM">신춘문예</h5>
+									<p class="card-text">이벤트 기간 : 2022.04.00 ~ 04.30 00:00</p>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="tab-pane fade" id="finish" role="tabpanel" aria-labelledby="profile-tab">
+				...
+				</div>
+				<div class="tab-pane fade" id="winner" role="tabpanel" aria-labelledby="contact-tab">
+				...
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<!-- Modal -->
+	<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal"
+						aria-label="Close"></button>
+				</div>
+				<div class="modal-body">...</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-secondary"
+						data-bs-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-primary">Save changes</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	
+	<!-- footer -->
+	<footer th:replace="fragment/footer :: footer"></footer>
+</body>
+</html>
