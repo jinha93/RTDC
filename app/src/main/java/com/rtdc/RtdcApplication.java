@@ -9,8 +9,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 import com.rtdc.model.Board;
+import com.rtdc.model.Event;
 import com.rtdc.model.Post;
 import com.rtdc.repository.BoardRepository;
+import com.rtdc.repository.EventRepository;
 import com.rtdc.repository.PostRepository;
 
 @SpringBootApplication
@@ -21,7 +23,7 @@ public class RtdcApplication {
 	}
 	
     @Bean
-    public CommandLineRunner initData(BoardRepository boardRepository, PostRepository postRepository) {
+    public CommandLineRunner initData(BoardRepository boardRepository, PostRepository postRepository, EventRepository eventRepository) {
         return args -> 
             IntStream.rangeClosed(1, 154).forEach(i -> {
             	if(i == 1) {
@@ -47,6 +49,19 @@ public class RtdcApplication {
             		
             		boardRepository.save(board);
             	}
+            	
+            	if(i < 13) {
+            		Event event = Event.builder()
+            				.title("이벤트테스트" + i)
+            				.content("이벤트테스트" + i)
+            				.startDateTime(LocalDateTime.now())
+            				.endDateTime(LocalDateTime.now().plusDays(i))
+            				.status("0")
+            				.build();
+            		
+            		eventRepository.save(event);
+            	}
+            	
             	Board board = new Board();
             	board.setBoardId(4);
             	Post post = Post.builder()
