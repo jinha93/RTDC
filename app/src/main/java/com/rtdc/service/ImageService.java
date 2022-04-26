@@ -22,29 +22,34 @@ public class ImageService {
 	@Autowired
 	UploadFileRepository uploadFileRepository;
 	
-	private final Path rootLocation; // d:/image/
+	private Path rootLocation;
+	private final Path uploadFilePath;
+	private final Path eventFilePath;
 	
-	public ImageService(@Value("${custom.img-path}") String filePath) {
-		this.rootLocation = Paths.get(filePath);
-		System.out.println(filePath);
-		System.out.println(rootLocation.toString());
+		
+	public ImageService(@Value("${custom.upload-img-path}") String uploadFilePath, @Value("${custom.upload-img-path}") String eventFilePath) {
+		this.uploadFilePath = Paths.get(uploadFilePath);
+		this.eventFilePath = Paths.get(eventFilePath);
 	}
-//	public ImageService(String uploadPath) {
-//		this.rootLocation = Paths.get(uploadPath);
-//		System.out.println(rootLocation.toString());
-//	}
 	
-	public UploadFile store(MultipartFile file) throws Exception {
-		//		 fileName : 예류2.jpg
-		//		 filePath : d:/images/uuid-예류2.jpg
-		//		 saveFileName : uuid-예류2.png
-		//		 contentType : image/jpeg
-		//		 size : 4994942
-		//		 registerDate : 2020-02-06 22:29:57.748
+	private void FilePathSetting(String gb) {
+		if("post".equals(gb)) {
+			this.rootLocation = this.uploadFilePath;
+		}else if("event".equals(gb)) {
+			this.rootLocation = this.eventFilePath;
+		}
+	}
+	
+	public UploadFile store(MultipartFile file, String gb) throws Exception {
+		
 		try {
 			if(file.isEmpty()) {
 				throw new Exception("Failed to store empty file " + file.getOriginalFilename());
 			}
+			if(gb == null || "".equals(gb)) {
+				throw new Exception("gb is null");
+			}
+			FilePathSetting(gb);
 			
 			String saveFileName = fileSave(rootLocation.toString(), file);
 			UploadFile saveFile = new UploadFile();

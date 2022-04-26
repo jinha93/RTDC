@@ -39,68 +39,48 @@
 			</ul>
 			<div class="tab-content" id="myTabContent">
 				<div class="tab-pane fade show active" id="now" role="tabpanel" aria-labelledby="home-tab">
+					
+					<!-- 진행중 이벤트 -->
 					<div class="row">
-						<div class="col col-lg-4 col-md-6 col-sm-12 col-12">
+						<div th:each="event : ${eventList}" th:if="${event.status == '0'}" class="col col-lg-4 col-md-6 col-sm-12 col-12">
 							<div class="card mt-3" >
-								<img th:src="@{/assets/img/event/mbti.jpg}" class="card-img-top" alt="MBTI">
+								<div th:utext="${event.content}"></div>
 								<div class="card-body">
-									<h5 class="card-title sbAggroM">MBTI</h5>
-									<p class="card-text">이벤트 기간 : 2022.04.00 ~ 04.30 00:00</p>
+									<h5 th:text="${event.title}" class="card-title sbAggroM"></h5>
+									<p th:text="${#temporals.format(event.startDateTime, 'yyyy.MM.dd HH:mm:ss')}" class="card-text"></p>
 								</div>
 							</div>
 						</div>
-						<div class="col col-lg-4 col-md-6 col-sm-12 col-12">
-							<div class="card mt-3" data-bs-toggle="modal" data-bs-target="#exampleModal">
-								<img th:src="@{/assets/img/event/신춘문예.jpg}" class="card-img-top" alt="신춘문예">
+					</div>
+						
+				</div>
+				<div class="tab-pane fade" id="finish" role="tabpanel" aria-labelledby="profile-tab">
+					<!-- 종료된 이벤트 -->
+					<div class="row">
+						<div th:each="event : ${eventList}" th:if="${event.status == '1'}" class="col col-lg-4 col-md-6 col-sm-12 col-12">
+							<div class="card mt-3" >
+								<div th:utext="${event.content}"></div>
 								<div class="card-body">
-									<h5 class="card-title sbAggroM">신춘문예</h5>
-									<p class="card-text">이벤트 기간 : 2022.04.00 ~ 04.30 00:00</p>
-								</div>
-							</div>
-						</div>
-						<div class="col col-lg-4 col-md-6 col-sm-12 col-12">
-							<div class="card mt-3">
-								<img th:src="@{/assets/img/event/신춘문예.jpg}" class="card-img-top" alt="신춘문예">
-								<div class="card-body">
-									<h5 class="card-title sbAggroM">신춘문예</h5>
-									<p class="card-text">이벤트 기간 : 2022.04.00 ~ 04.30 00:00</p>
-								</div>
-							</div>
-						</div>
-						<div class="col col-lg-4 col-md-6 col-sm-12 col-12">
-							<div class="card mt-3">
-								<img th:src="@{/assets/img/event/신춘문예.jpg}" class="card-img-top" alt="신춘문예">
-								<div class="card-body">
-									<h5 class="card-title sbAggroM">신춘문예</h5>
-									<p class="card-text">이벤트 기간 : 2022.04.00 ~ 04.30 00:00</p>
-								</div>
-							</div>
-						</div>
-						<div class="col col-lg-4 col-md-6 col-sm-12 col-12">
-							<div class="card mt-3">
-								<img th:src="@{/assets/img/event/신춘문예.jpg}" class="card-img-top" alt="신춘문예">
-								<div class="card-body">
-									<h5 class="card-title sbAggroM">신춘문예</h5>
-									<p class="card-text">이벤트 기간 : 2022.04.00 ~ 04.30 00:00</p>
-								</div>
-							</div>
-						</div>
-						<div class="col col-lg-4 col-md-6 col-sm-12 col-12">
-							<div class="card mt-3">
-								<img th:src="@{/assets/img/event/신춘문예.jpg}" class="card-img-top" alt="신춘문예">
-								<div class="card-body">
-									<h5 class="card-title sbAggroM">신춘문예</h5>
-									<p class="card-text">이벤트 기간 : 2022.04.00 ~ 04.30 00:00</p>
+									<h5 th:text="${event.title}" class="card-title sbAggroM"></h5>
+									<p th:text="${#temporals.format(event.startDateTime, 'yyyy.MM.dd HH:mm:ss')}" class="card-text"></p>
 								</div>
 							</div>
 						</div>
 					</div>
 				</div>
-				<div class="tab-pane fade" id="finish" role="tabpanel" aria-labelledby="profile-tab">
-				...
-				</div>
 				<div class="tab-pane fade" id="winner" role="tabpanel" aria-labelledby="contact-tab">
-				...
+					<!-- 당첨자 발표 -->
+					<div class="row">
+						<div th:each="event : ${eventList}" th:if="${event.status == '2'}" class="col col-lg-4 col-md-6 col-sm-12 col-12">
+							<div class="card mt-3" >
+								<div th:utext="${event.content}"></div>
+								<div class="card-body">
+									<h5 th:text="${event.title}" class="card-title sbAggroM"></h5>
+									<p th:text="${#temporals.format(event.startDateTime, 'yyyy.MM.dd HH:mm:ss')}" class="card-text"></p>
+								</div>
+							</div>
+						</div>
+					</div>
 				</div>
 			</div>
 		</div>

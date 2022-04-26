@@ -25,9 +25,9 @@ public class ImageController {
 	ResourceLoader resourceLoader;
 	
 	@PostMapping("/image")
-	public ResponseEntity<?> imageUpload(@RequestParam("file") MultipartFile file) {
+	public ResponseEntity<?> imageUpload(@RequestParam("file") MultipartFile file, String gb) {
 		try {
-			UploadFile uploadFile = imageService.store(file);
+			UploadFile uploadFile = imageService.store(file, gb);
 			return ResponseEntity.ok().body("/image/" + uploadFile.getId());
 		} catch(Exception e) {
 			e.printStackTrace();
