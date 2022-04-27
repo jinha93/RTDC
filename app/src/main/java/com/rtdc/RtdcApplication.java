@@ -65,7 +65,8 @@ public class RtdcApplication {
             		
             		Event event = Event.builder()
             				.title("이벤트테스트" + i)
-            				.content("<p><img src=\"/image/1\" class=\"card-img-top\"><br></p>")
+            				.cardImg("<p><img src=\"/image/1\" class=\"card-img-top\"><br></p>")
+            				.content("이벤트내용" + i)
             				.startDateTime(LocalDateTime.now())
             				.endDateTime(LocalDateTime.now().plusDays(i))
             				.status("0")

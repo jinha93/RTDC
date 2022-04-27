@@ -42,9 +42,9 @@
 					
 					<!-- 진행중 이벤트 -->
 					<div class="row">
-						<div th:each="event : ${eventList}" th:if="${event.status == '0'}" class="col col-lg-4 col-md-6 col-sm-12 col-12">
-							<div class="card mt-3" >
-								<div th:utext="${event.content}"></div>
+						<div th:each="event, i : ${eventList}" th:if="${event.status == '0'}" class="col col-lg-4 col-md-6 col-sm-12 col-12">
+							<div class="card mt-3" data-bs-toggle="modal" th:attr="data-bs-target=${'#exampleModal' + i.index}">
+								<div th:utext="${event.cardImg}"></div>
 								<div class="card-body">
 									<h5 th:text="${event.title}" class="card-title sbAggroM"></h5>
 									<p th:text="${#temporals.format(event.startDateTime, 'yyyy.MM.dd HH:mm:ss')}" class="card-text"></p>
@@ -58,8 +58,8 @@
 					<!-- 종료된 이벤트 -->
 					<div class="row">
 						<div th:each="event : ${eventList}" th:if="${event.status == '1'}" class="col col-lg-4 col-md-6 col-sm-12 col-12">
-							<div class="card mt-3" >
-								<div th:utext="${event.content}"></div>
+							<div class="card mt-3" data-bs-toggle="modal" th:attr="data-bs-target=${'#exampleModal' + i.index}">
+								<div th:utext="${event.cardImg}"></div>
 								<div class="card-body">
 									<h5 th:text="${event.title}" class="card-title sbAggroM"></h5>
 									<p th:text="${#temporals.format(event.startDateTime, 'yyyy.MM.dd HH:mm:ss')}" class="card-text"></p>
@@ -72,8 +72,8 @@
 					<!-- 당첨자 발표 -->
 					<div class="row">
 						<div th:each="event : ${eventList}" th:if="${event.status == '2'}" class="col col-lg-4 col-md-6 col-sm-12 col-12">
-							<div class="card mt-3" >
-								<div th:utext="${event.content}"></div>
+							<div class="card mt-3" data-bs-toggle="modal" th:attr="data-bs-target=${'#exampleModal' + i.index}">
+								<div th:utext="${event.cardImg}"></div>
 								<div class="card-body">
 									<h5 th:text="${event.title}" class="card-title sbAggroM"></h5>
 									<p th:text="${#temporals.format(event.startDateTime, 'yyyy.MM.dd HH:mm:ss')}" class="card-text"></p>
@@ -87,19 +87,18 @@
 	</div>
 	
 	<!-- Modal -->
-	<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+	<div th:each="event, i : ${eventList}" class="modal fade" th:attr="id=${'exampleModal' + i.index}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
 		<div class="modal-dialog modal-xl">
 			<div class="modal-content">
 				<div class="modal-header">
-					<h5 class="modal-title" id="exampleModalLabel">Modal title</h5>
-					<button type="button" class="btn-close" data-bs-dismiss="modal"
-						aria-label="Close"></button>
+					<h5 class="modal-title" id="exampleModalLabel" th:text="${event.title}">Modal title</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
-				<div class="modal-body">...</div>
+				<div class="modal-body">
+					<p th:utext="${event.content}" class="card-text"></p>
+				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary"
-						data-bs-dismiss="modal">Close</button>
-					<button type="button" class="btn btn-primary">Save changes</button>
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
 				</div>
 			</div>
 		</div>

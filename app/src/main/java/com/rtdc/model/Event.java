@@ -28,6 +28,9 @@ public class Event {
 	@Column(length = 200)
 	private String title;
 	
+	@Column(length = 500)
+	private String cardImg;
+	
 	@Column(length = 4000)
 	private String content;
 	
