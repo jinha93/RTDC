@@ -13,7 +13,7 @@ services:
       - MYSQL_ROOT_HOST=%
       - MYSQL_USER=rtdc
       - MYSQL_PASSWORD=password
-    command: ['--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci']
+    command: ['--character-set-server=utf8mb4', '--collation-server=utf8mb4_unicode_ci', '--lower_case_table_names=1']
     ports:
       - 3306:3306
 
