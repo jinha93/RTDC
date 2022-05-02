@@ -18,7 +18,7 @@ public class IpBanInterceptor implements HandlerInterceptor {
 		String regIp = common.getIp(request);
 		
 		//218.55.83.131 --한야형
-		String[] ipArray = {"172.23.0.1"};
+		String[] ipArray = {""};
 		for(String ip : ipArray) {
 			if(regIp.equals(ip)) {
 				return false;

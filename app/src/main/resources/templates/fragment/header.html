@@ -28,29 +28,37 @@
 		
 </head>
 <body>
-	<div class="container" th:fragment="header(menu)">
-		<header class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-between py-3 mb-4 border-bottom">
-			<a href="/" class="d-flex align-items-center col-xl-3 mb-2 mb-md-0 text-dark text-decoration-none">
-				<img th:src="@{/assets/img/sm-logo2.png}" style="width: 128px;">
-			</a>
-			
-			<ul class="nav nav-pills justify-content-center">
-				<li class="nav-item"><a href="/" class="nav-link">HOME</a></li>
-				<li class="nav-item"><a href="/notice/list?boardId=1" class="nav-link" th:classappend="${menu == 1} ? active">공지사항</a></li>
-				<li class="nav-item"><a href="/event/list?boardId=2" class="nav-link" th:classappend="${menu == 2} ? active">이벤트</a></li>
-<!-- 				<li class="nav-item"><a href="/heros/list?boardId=3" class="nav-link" th:classappend="${menu == 3} ? active">명예의전당</a></li> -->
-				<li class="nav-item"><a href="javascript:alert('준비중입니다.');" class="nav-link">명예의전당</a></li>
-				<li class="nav-item"><a href="/post/list?boardId=4" class="nav-link" th:classappend="${menu == 4} ? active">자유게시판</a></li>
-			</ul>
+	<header class="p-3 border-bottom border-gray mb-3" th:fragment="header(menu)">
+		<div class="container-fluid">
+			<div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
+				<a href="/" class="d-flex align-items-center text-dark text-decoration-none me-4">
+					<img th:src="@{/assets/img/sm-logo2.png}" style="width: 128px;">
+				</a>
 
-			<div class="col-xl-3 text-end justify-content-md-between mt-2">
-				<span class="colorRtdc"><i class="fa-solid fa-comment fa-2x px-1"></i></span>
-				<span class="colorRtdc"><i class="fa-brands fa-discord fa-2x px-1"></i></span>
-				<span class="colorRtdc"><i class="fa-brands fa-twitter fa-2x px-1"></i></span>
+				<ul class="nav col-12 col-lg-auto me-lg-auto justify-content-center sbAggroM">
+					<li class="nav-item ms-4"><a href="/notice/list?boardId=1" class="nav-link link-dark">공지사항</a></li>
+					<li class="nav-item ms-4"><a href="/event/list?boardId=2" class="nav-link link-dark">이벤트</a></li>
+					<li class="nav-item ms-4"><a href="javascript:alert('준비중입니다.');" class="nav-link link-dark">명예의전당</a></li>
+					<li class="nav-item ms-4"><a href="/post/list?boardId=4" class="nav-link link-dark">자유게시판</a></li>
+				</ul>
+
+				<div class="dropdown text-end">
+					<a href="#" class="d-block link-dark text-decoration-none dropdown-toggle" id="dropdownUser1" data-bs-toggle="dropdown" aria-expanded="false">
+						<img src="https://github.com/mdo.png" alt="mdo" width="32"
+						height="32" class="rounded-circle">
+					</a>
+					<ul class="dropdown-menu text-small"
+						aria-labelledby="dropdownUser1" style="">
+						<li><a class="dropdown-item" href="#">New project...</a></li>
+						<li><a class="dropdown-item" href="#">Settings</a></li>
+						<li><a class="dropdown-item" href="#">Profile</a></li>
+						<li><hr class="dropdown-divider"></li>
+						<li><a class="dropdown-item" href="#">Sign out</a></li>
+					</ul>
+				</div>
 			</div>
-		</header>
-	</div>
-	
+		</div>
+	</header>
 </body>
 
 
