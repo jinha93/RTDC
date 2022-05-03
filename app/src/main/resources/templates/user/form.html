@@ -1,0 +1,62 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!-- head -->
+<head th:replace="fragment/header :: head"></head>
+
+
+<!-- header -->
+<header th:replace="fragment/header :: header(menu='0')"></header>
+
+<body>
+	<div class="container-fluid">
+		<div class="row justify-content-md-center p-5">
+			<div class="col-4 my-5 LoginBox">
+				<div style="padding: 80px 140px;">
+					<form action="#" th:action=@{/user/signup} th:object="${user}" method="post" enctype="multipart/form-data">
+						<div class="mb-3">
+							<input type="text" class="form-control" id="username" th:field="*{username}" placeholder="Username" required autofocus>
+						</div>
+						<div class="mb-3">
+							<input type="password" class="form-control" id="password" th:field="*{password}" placeholder="Password" required>
+						</div>
+						<div class="mb-3">
+							<input type="text" class="form-control" id="nickname" th:field="*{nickname}" placeholder="nickname" required>
+						</div>
+						<div class="d-grid gap-2">
+							<button type="submit" class="btn btn-primary">회원가입</button>
+						</div>
+						<input name="_csrf" type="hidden" value="79c76bfb-72b4-4bff-bd7d-4675a8270d84">
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+
+<!-- footer -->
+<footer th:replace="fragment/footer :: footer"></footer>
+
+<script>
+	function sendFile(file, el) {
+		var form_data = new FormData();
+		form_data.append('file', file);
+		form_data.append('gb', 'post');
+		$.ajax({
+			data : form_data,
+			type : "POST",
+			url : '/image',
+			cache : false,
+			contentType : false,
+			enctype : 'multipart/form-data',
+			processData : false,
+			success : function(url) {
+				$(el).summernote('insertImage', url, function($image) {
+					$image.css('width', "25%");
+				});
+			}
+		});
+	}
+</script>
+</html>
+
+

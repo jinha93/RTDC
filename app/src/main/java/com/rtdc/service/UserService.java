@@ -32,9 +32,9 @@ public class UserService implements UserDetailsService{
 				.build();
 	}
 
-	public User createUser(User user) {
+	public void signup(User user) {
 		user.encodePassword(passwordEncoder);
-		return userRepository.save(user);
+		userRepository.save(user);
 	}
 
 }

@@ -37,6 +37,10 @@
 						<img th:src="@{/assets/img/member.png}" style="width:30px;">
 					</a>
 				</div>
+				<div>
+					<span>Pala : </span>
+					<span id="palaFloorPrice"></span>
+				</div>
 			</div>
 			
 			
@@ -82,4 +86,16 @@
 
 <!-- footer -->
 <footer th:replace="fragment/footer :: footer"></footer>
+<script>
+$(document).ready(function(){
+	$.ajax({
+		type : "GET",
+		url : 'https://api.pala.world/projects/0x46DBdC7965CF3cd2257C054fEAb941a05Ff46488',
+		data : {},
+		success : function(response) {
+			$("#palaFloorPrice").text(response.floorPriceInKlay/1000000000000000000);
+		}
+	});
+})
+</script>
 </html>

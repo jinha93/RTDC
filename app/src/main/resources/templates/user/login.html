@@ -1,0 +1,38 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!-- head -->
+<head th:replace="fragment/header :: head"></head>
+
+
+<!-- header -->
+<header th:replace="fragment/header :: header(menu='0')"></header>
+
+<body>
+	<div class="container-fluid">
+		<div class="row justify-content-md-center p-5">
+			<div class="col-4 my-5 LoginBox">
+				<div style="padding: 80px 140px;">
+					<h1 class="text-center mb-5" style="font-size: 64px; font-weight: bold">LOGIN</h1>
+					
+					<form class="form-signin" method="post" th:action=@{/user/login}>
+						<div class="mb-3">
+							<input type="text" class="form-control" id="username" name="username" placeholder="Username" required="" autofocus="">
+						</div>
+						<div class="mb-3">
+							<input type="password" class="form-control" id="password" name="password" placeholder="Password" required="">
+						</div>
+						<div class="d-grid gap-2">
+							<button type="submit" class="btn btn-primary">Sign in</button>
+							<a class="btn btn-primary" href="/user/signup">Sign up</a>
+						</div>
+						<input name="_csrf" type="hidden" value="79c76bfb-72b4-4bff-bd7d-4675a8270d84">
+					</form>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+
+<!-- footer -->
+<footer th:replace="fragment/footer :: footer"></footer>
+</html>
