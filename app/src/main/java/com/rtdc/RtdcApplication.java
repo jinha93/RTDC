@@ -41,11 +41,6 @@ public class RtdcApplication {
             		boardRepository.save(board);
             		board = Board.builder()
             				.boardId(3)
-            				.BoardNm("명예의전당")
-            				.build();
-            		boardRepository.save(board);
-            		board = Board.builder()
-            				.boardId(4)
             				.BoardNm("자유게시판")
             				.build();
             		
@@ -76,7 +71,7 @@ public class RtdcApplication {
             	}
             	
             	Board board = new Board();
-            	board.setBoardId(4);
+            	board.setBoardId(3);
             	Post post = Post.builder()
             			.board(board)
                         .title("title" + i)

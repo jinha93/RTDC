@@ -1,5 +1,7 @@
 package com.rtdc.service;
 
+import java.util.List;
+
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +21,14 @@ public class PostService {
 	
 	@Autowired
 	private PostRepository postRepository;
+	
+	public List<Post> getPopularPostList(){
+		return postRepository.findTop8ByOrderByReadCntDesc();
+	}
+	
+	public List<Post> getNewPostList(){
+		return postRepository.findTop8ByOrderByRegDateTimeDesc();
+	}
 	
 	public Page<Post> getPostList(Pageable pageable, Board board, String searchText){
 		int page = (pageable.getPageNumber() == 0) ? 0 : (pageable.getPageNumber() - 1); //page는 0부터 시작
