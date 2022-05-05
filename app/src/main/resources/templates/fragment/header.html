@@ -29,7 +29,7 @@
 		
 </head>
 <body>
-	<header class="p-3 border-bottom border-gray" th:fragment="header(menu)">
+	<header class="p-3 border-bottom border-gray" th:fragment="header">
 		<div class="container-fluid">
 			<div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
 				<a href="/" class="d-flex align-items-center text-dark text-decoration-none me-4">
@@ -43,6 +43,7 @@
 				</ul>
 
 				<div class="dropdown text-end">
+<!-- 					<div sec:authentication="name"></div> -->
 					<a sec:authorize="isAnonymous()" class="sbAggroM py-2 px-4 text-center text-decoration-none loginBtn" th:href="@{/user/login}">LOGIN</a>
 					<a sec:authorize="isAuthenticated()" class="sbAggroM py-2 px-4 text-center text-decoration-none loginBtn" th:href="@{/user/logout}">LOGOUT</a>
 				</div>

@@ -11,35 +11,78 @@
 	<div class="container-fluid">
 		<div class="row">
 			<!-- left -->
-			<div class="border-end border-gray p-3 d-none d-lg-block" style="width:200px; min-height:700px;">
-				<div><span class="sbAggroM">온라인</span></div>
-				<div class="d-flex align-items-center p-2 border-bottom">
-					<img th:src="@{/assets/members/1100.png}" class="profile me-2">
-					<div class="text-start me-auto lh-sm">
-						<span class="fw-bold" style="font-size: 0.9em;">꽁치</span><br>
-						<span class="colorRtdc" style="font-size: 0.8em;">● </span>
-						<span style="font-size: 0.8em;">online</span>
-					</div>
-					<a href="#">
-						<img th:src="@{/assets/img/member.png}" style="width:30px;">
-					</a>
-				</div>
+			<div class="col-1 border-end border-gray p-3 d-none d-lg-block text-center">
+<!-- 				<div><span class="sbAggroM">온라인</span></div> -->
+<!-- 				<div class="d-flex align-items-center p-2 border-bottom"> -->
+<!-- 					<img th:src="@{/assets/members/1100.png}" class="profile me-2"> -->
+<!-- 					<div class="text-start me-auto lh-sm"> -->
+<!-- 						<span class="fw-bold" style="font-size: 0.9em;">꽁치</span><br> -->
+<!-- 						<span class="colorRtdc" style="font-size: 0.8em;">● </span> -->
+<!-- 						<span style="font-size: 0.8em;">online</span> -->
+<!-- 					</div> -->
+<!-- 					<a href="#"> -->
+<!-- 						<img th:src="@{/assets/img/member.png}" style="width:30px;"> -->
+<!-- 					</a> -->
+<!-- 				</div> -->
 				
-				<div class="mt-3"><span class="sbAggroM">오프라인</span></div>
-				<div class="d-flex align-items-center p-2 border-bottom">
-					<img th:src="@{/assets/members/1100.png}" class="profile me-2">
-					<div class="text-start me-auto lh-sm">
-						<span class="fw-bold" style="font-size: 0.9em;">꽁치</span><br>
-						<span style="font-size: 0.8em; color: gray;">● </span>
-						<span style="font-size: 0.8em;">online</span>
+<!-- 				<div class="mt-3"><span class="sbAggroM">오프라인</span></div> -->
+<!-- 				<div class="d-flex align-items-center p-2 border-bottom"> -->
+<!-- 					<img th:src="@{/assets/members/1100.png}" class="profile me-2"> -->
+<!-- 					<div class="text-start me-auto lh-sm"> -->
+<!-- 						<span class="fw-bold" style="font-size: 0.9em;">꽁치</span><br> -->
+<!-- 						<span style="font-size: 0.8em; color: gray;">● </span> -->
+<!-- 						<span style="font-size: 0.8em;">online</span> -->
+<!-- 					</div> -->
+<!-- 					<a href="#"> -->
+<!-- 						<img th:src="@{/assets/img/member.png}" style="width:30px;"> -->
+<!-- 					</a> -->
+<!-- 				</div> -->
+				<div class="">
+					<h5 class="sbAggroM">MTDZ</h5>
+					<div class="">
+						<img class="openseaLogo">
+						<span id="mtdz_opensea_fp">준비중</span>
 					</div>
-					<a href="#">
-						<img th:src="@{/assets/img/member.png}" style="width:30px;">
-					</a>
+					<div class="">
+						<img class="palaLogo">
+						<span id="mtdz_pala_fp"></span>
+					</div>
 				</div>
-				<div>
-					<span>Pala : </span>
-					<span id="palaFloorPrice"></span>
+				<hr>
+				<div class="">
+					<h5 class="sbAggroM">MTG</h5>
+					<div class="">
+						<img class="openseaLogo">
+						<span id="mtg_opensea_fp">준비중</span>
+					</div>
+					<div class="">
+						<img class="palaLogo">
+						<span id="mtg_pala_fp"></span>
+					</div>
+				</div>
+				<hr>
+				<div class="">
+					<h5 class="sbAggroM">MTB</h5>
+					<div class="">
+						<img class="openseaLogo">
+						<span id="mtb_opensea_fp">준비중</span>
+					</div>
+					<div class="">
+						<img class="palaLogo">
+						<span id="mtb_pala_fp"></span>
+					</div>
+				</div>
+				<hr>
+				<div class="">
+					<h5 class="sbAggroM">GOLDBOX</h5>
+					<div class="">
+						<img class="openseaLogo">
+						<span id="gb_opensea_fp">준비중</span>
+					</div>
+					<div class="">
+						<img class="palaLogo">
+						<span id="gb_pala_fp"></span>
+					</div>
 				</div>
 			</div>
 			
@@ -87,15 +130,33 @@
 <!-- footer -->
 <footer th:replace="fragment/footer :: footer"></footer>
 <script>
+
+var mtdzPalaUrl = 'https://api.pala.world/projects/0x46DBdC7965CF3cd2257C054fEAb941a05Ff46488';
+var mtgPalaUrl = 'https://api.pala.world/projects/0x30b0bD905Efa7503879554fa8F8714C5c82f8Ebc';
+var mtbPalaUrl = 'https://api.pala.world/projects/0x2D5ee6A91F486278A7078eab13383F5Da0Ef9dc1';
+var gbPalaUrl = 'https://api.pala.world/projects/0xA3fC602f8D174F0aA7b2A02074D90E309583814e';
+
 $(document).ready(function(){
+	getPalaFp('mtdz_pala_fp', mtdzPalaUrl)
+	getPalaFp('mtg_pala_fp', mtgPalaUrl)
+	getPalaFp('mtb_pala_fp', mtbPalaUrl)
+	getPalaFp('gb_pala_fp', gbPalaUrl)
+})
+
+
+function getPalaFp(target, url){
 	$.ajax({
 		type : "GET",
-		url : 'https://api.pala.world/projects/0x46DBdC7965CF3cd2257C054fEAb941a05Ff46488',
+		url : url,
 		data : {},
 		success : function(response) {
-			$("#palaFloorPrice").text(response.floorPriceInKlay/1000000000000000000);
+			console.log(response.floorPriceInKlay/1000000000000000000);
+			fp = response.floorPriceInKlay/1000000000000000000 + "";
+			fp = fp.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+			$('#' + target).text(fp);
+			console.log(fp);
 		}
 	});
-})
+}
 </script>
 </html>

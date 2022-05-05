@@ -30,13 +30,13 @@ body{
 /* 폰트 e*/
 
 .colorRtdc{
-	color: #7240bf;
+	color: #7240bf !important;
 }
 .backgroundColorRtdc{
-	background-color: #7240bf;
+	background-color: #7240bf !important;
 }
 .borderColorRtdc{
-	border-color: #7240bf;
+	border-color: #7240bf !important;
 }
 
 
@@ -104,5 +104,13 @@ body{
 	border-radius: 20px;
 	border-color: #7240bf;
 	color : black;
-	min-height: 500px;
+}
+
+.openseaLogo{
+	content: url("/assets/img/logo_opensea.png");
+	width: 20px;
+}
+.palaLogo{
+	content: url("/assets/img/logo_pala.png");
+	width: 20px;
 }

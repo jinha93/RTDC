@@ -32,7 +32,7 @@ public class PostService {
 	
 	public Page<Post> getPostList(Pageable pageable, Board board, String searchText){
 		int page = (pageable.getPageNumber() == 0) ? 0 : (pageable.getPageNumber() - 1); //page는 0부터 시작
-		pageable = PageRequest.of(page, 10, Sort.by("post_id").descending());
+		pageable = PageRequest.of(page, 15, Sort.by("post_id").descending());
 		
 		Post post = new Post();
 		post.setTitle(searchText);

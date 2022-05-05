@@ -49,15 +49,18 @@ public class Post {
     @ColumnDefault("0") //default 0
 	private Integer readCnt;
     
+    @ColumnDefault("0") //default 0
+    private Integer likeCnt;
+    
     @Column(length = 200, nullable = true)
     private String regIp;
     
     @Column(columnDefinition = "varchar(1) default 'N'")
     private String delYn;
     
-//    @ManyToOne
-//    @JoinColumn(name = "userId", nullable = true)
-//    public User user;
+    @ManyToOne
+    @JoinColumn(name = "id", nullable = false)
+    public User user;
 //    
     @ManyToOne
 	@JoinColumn(name = "boardId", nullable = true)

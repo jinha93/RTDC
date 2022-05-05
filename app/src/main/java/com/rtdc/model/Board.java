@@ -23,7 +23,7 @@ public class Board {
 	private long boardId;
 	
 	@Column(columnDefinition = "VARCHAR(20)", nullable = false)
-	private String BoardNm;
+	private String boardNm;
 	
 //	@OneToMany(mappedBy = "board")
 //    private List<Post> posts = new ArrayList<>();

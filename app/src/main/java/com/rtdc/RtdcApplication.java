@@ -3,19 +3,23 @@ package com.rtdc;
 import java.time.LocalDateTime;
 import java.util.stream.IntStream;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.rtdc.model.Board;
 import com.rtdc.model.Event;
 import com.rtdc.model.Post;
 import com.rtdc.model.UploadFile;
+import com.rtdc.model.User;
 import com.rtdc.repository.BoardRepository;
 import com.rtdc.repository.EventRepository;
 import com.rtdc.repository.PostRepository;
 import com.rtdc.repository.UploadFileRepository;
+import com.rtdc.repository.UserRepository;
 
 @SpringBootApplication
 public class RtdcApplication {
@@ -24,27 +28,38 @@ public class RtdcApplication {
 		SpringApplication.run(RtdcApplication.class, args);
 	}
 	
+	@Autowired
+	private PasswordEncoder passwordEncoder;
+	
     @Bean
-    public CommandLineRunner initData(BoardRepository boardRepository, PostRepository postRepository, EventRepository eventRepository, UploadFileRepository uploadFileRepository) {
+    public CommandLineRunner initData(BoardRepository boardRepository, PostRepository postRepository, EventRepository eventRepository, UploadFileRepository uploadFileRepository, UserRepository userRepository) {
         return args -> 
             IntStream.rangeClosed(1, 154).forEach(i -> {
             	if(i == 1) {
             		Board board = Board.builder()
             				.boardId(1)
-            				.BoardNm("공지사항")
+            				.boardNm("공지사항")
             				.build();
             		boardRepository.save(board);
             		board = Board.builder()
             				.boardId(2)
-            				.BoardNm("이벤트")
+            				.boardNm("이벤트")
             				.build();
             		boardRepository.save(board);
             		board = Board.builder()
             				.boardId(3)
-            				.BoardNm("자유게시판")
+            				.boardNm("자유게시판")
             				.build();
-            		
             		boardRepository.save(board);
+            		User user = new User();
+            		user = User.builder()
+            				.username("admin")
+            				.password("test")
+            				.nickname("어드민")
+            				.role("ADMIN")
+            				.build();
+            		user.encodePassword(passwordEncoder);
+            		userRepository.save(user);
             	}
             	
             	if(i < 13) {
@@ -72,12 +87,16 @@ public class RtdcApplication {
             	
             	Board board = new Board();
             	board.setBoardId(3);
+            	User user = new User();
+            	user.setId((long) 1);
+            	user.setUsername("admin");
             	Post post = Post.builder()
             			.board(board)
                         .title("title" + i)
                         .content("content" + i)
                         .regDateTime(LocalDateTime.now())
                         .readCnt(0)
+                        .user(user)
                         .build();
 
             	postRepository.save(post);

@@ -55,7 +55,7 @@ public class PostController {
 		Board board = boardService.getBoard(boardId);
 		Page<Post> postList = postService.getPostList(pageable, board, searchText);
 		
-		model.addAttribute("boardId", boardId);
+		model.addAttribute("board", board);
 		model.addAttribute("postList", postList);
 		return "post/list";
 	}

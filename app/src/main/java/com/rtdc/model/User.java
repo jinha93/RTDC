@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Data
@@ -22,6 +23,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 
 @DynamicInsert	//insert 시점에 null이 아닌 컬럼들만 insert
+@Setter
 public class User {
 	
 	@Id
@@ -31,9 +33,9 @@ public class User {
 	@Column(unique = true)
 	private String username; // 아이디
 	
-	private String nickname;
-	
 	private String password;
+	
+	private String nickname;
 	
 	@Column(columnDefinition = "varchar(5) default 'USER'")
 	private String role;

@@ -10,20 +10,20 @@
 <body>
 	<div class="container-fluid">
 		<div class="row justify-content-md-center p-5">
-			<div class="col-4 my-5 LoginBox">
-				<div style="padding: 80px 140px;">
+			<div class="col col-md-7 col-lg-6 col-xl-5 col-xxl-4 my-5 LoginBox">
+				<div class="p-5">
 					<h1 class="text-center mb-5" style="font-size: 64px; font-weight: bold">LOGIN</h1>
 					
-					<form class="form-signin" method="post" th:action=@{/user/login}>
+					<form class="form-signin p-5" method="post" th:action=@{/user/login}>
 						<div class="mb-3">
-							<input type="text" class="form-control" id="username" name="username" placeholder="Username" required="" autofocus="">
+							<input type="text" class="form-control" id="username" name="username" placeholder="아이디" required="" autofocus="">
 						</div>
 						<div class="mb-3">
-							<input type="password" class="form-control" id="password" name="password" placeholder="Password" required="">
+							<input type="password" class="form-control" id="password" name="password" placeholder="비밀번호" required="">
 						</div>
 						<div class="d-grid gap-2">
-							<button type="submit" class="btn btn-primary">Sign in</button>
-							<a class="btn btn-primary" href="/user/signup">Sign up</a>
+							<button type="submit" class="btn btn-primary">로그인</button>
+							<a class="btn btn-primary" href="/user/signup">회원가입</a>
 						</div>
 						<input name="_csrf" type="hidden" value="79c76bfb-72b4-4bff-bd7d-4675a8270d84">
 					</form>
