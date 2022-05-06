@@ -59,7 +59,7 @@ public class Post {
     private String delYn;
     
     @ManyToOne
-    @JoinColumn(name = "id", nullable = false)
+    @JoinColumn(name = "username", nullable = false)
     public User user;
 //    
     @ManyToOne

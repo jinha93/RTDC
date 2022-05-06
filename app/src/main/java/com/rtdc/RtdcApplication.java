@@ -37,13 +37,18 @@ public class RtdcApplication {
             IntStream.rangeClosed(1, 154).forEach(i -> {
             	if(i == 1) {
             		Board board = Board.builder()
-            				.boardId(1)
+            				.boardId(0)
             				.boardNm("공지사항")
             				.build();
             		boardRepository.save(board);
             		board = Board.builder()
+            				.boardId(1)
+            				.boardNm("P2E(MTDZ THE GAME)")
+            				.build();
+            		boardRepository.save(board);
+            		board = Board.builder()
             				.boardId(2)
-            				.boardNm("이벤트")
+            				.boardNm("P2E(META TOY CITY)")
             				.build();
             		boardRepository.save(board);
             		board = Board.builder()
@@ -51,6 +56,12 @@ public class RtdcApplication {
             				.boardNm("자유게시판")
             				.build();
             		boardRepository.save(board);
+            		board = Board.builder()
+            				.boardId(4)
+            				.boardNm("건의/신고")
+            				.build();
+            		boardRepository.save(board);
+            		
             		User user = new User();
             		user = User.builder()
             				.username("admin")
@@ -88,7 +99,6 @@ public class RtdcApplication {
             	Board board = new Board();
             	board.setBoardId(3);
             	User user = new User();
-            	user.setId((long) 1);
             	user.setUsername("admin");
             	Post post = Post.builder()
             			.board(board)

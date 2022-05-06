@@ -17,11 +17,11 @@ public class EventService {
 	@Autowired
 	private EventRepository eventRepository;
 	
-	public Page<Event> getEventList(Pageable pageable){
+	public Page<Event> getEventList(Pageable pageable, String status){
 		int page = (pageable.getPageNumber() == 0) ? 0 : (pageable.getPageNumber() - 1); //page는 0부터 시작
 		pageable = PageRequest.of(page, 12, Sort.by("eventId").descending());
 		
-		return eventRepository.findAll(pageable);
+		return eventRepository.findByStatus(pageable, status);
 	}
 	
 }

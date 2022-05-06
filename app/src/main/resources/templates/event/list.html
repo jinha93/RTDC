@@ -14,70 +14,37 @@
 </style>
 <body>
 	<!-- header -->
-	<header th:replace="fragment/header :: header(menu=${boardId})"></header>
+	<header th:replace="fragment/header :: header"></header>
 	
 
 	<!-- content -->
-	<div class="container sbAggroL mt-3">
-		<div class="col">
-			<ul class="nav nav-tabs nav-justified" id="myTab" role="tablist">
-				<li class="nav-item" role="presentation">
-					<button class="nav-link active" id="home-tab" data-bs-toggle="tab"
-						data-bs-target="#now" type="button" role="tab"
-						aria-controls="now" aria-selected="true" style="color:black;">진행중 이벤트</button>
-				</li>
-				<li class="nav-item" role="presentation">
-					<button class="nav-link" id="profile-tab" data-bs-toggle="tab"
-						data-bs-target="#finish" type="button" role="tab"
-						aria-controls="finish" aria-selected="false" style="color:black;">종료된 이벤트</button>
-				</li>
-				<li class="nav-item" role="presentation">
-					<button class="nav-link" id="contact-tab" data-bs-toggle="tab"
-						data-bs-target="#winner" type="button" role="tab"
-						aria-controls="winner" aria-selected="false" style="color:black;">당첨자 발표</button>
-				</li>
-			</ul>
-			<div class="tab-content" id="myTabContent">
-				<div class="tab-pane fade show active" id="now" role="tabpanel" aria-labelledby="home-tab">
-					
-					<!-- 진행중 이벤트 -->
-					<div class="row">
-						<div th:each="event, i : ${eventList}" th:if="${event.status == '0'}" class="col col-lg-4 col-md-6 col-sm-12 col-12">
-							<div class="card mt-3" data-bs-toggle="modal" th:attr="data-bs-target=${'#exampleModal' + i.index}">
-								<div th:utext="${event.cardImg}"></div>
-								<div class="card-body">
-									<h5 th:text="${event.title}" class="card-title sbAggroM"></h5>
-									<p th:text="${#temporals.format(event.startDateTime, 'yyyy.MM.dd HH:mm:ss')}" class="card-text"></p>
-								</div>
-							</div>
-						</div>
-					</div>
-						
+	<div class="container-fluid">
+	
+
+		<div class="row">
+			<div class="col-2 mt-5">
+				<div class="border p-3 mt-4" style="border-radius: 20px;">
+					<ul class="list-group list-group-flush">
+						<li class="list-group-item"><a class="text-dark text-decoration-none" href="/event/list?status=0" th:classappend="${status} == 0 ? sbAggroM">진행중 이벤트</a></li>
+						<li class="list-group-item"><a class="text-dark text-decoration-none" href="/event/list?status=1" th:classappend="${status} == 1 ? sbAggroM">종료된 이벤트</a></li>
+						<li class="list-group-item"><a class="text-dark text-decoration-none" href="/event/list?status=2" th:classappend="${status} == 2 ? sbAggroM">당첨자 발표</a></li>
+					</ul>
 				</div>
-				<div class="tab-pane fade" id="finish" role="tabpanel" aria-labelledby="profile-tab">
-					<!-- 종료된 이벤트 -->
-					<div class="row">
-						<div th:each="event : ${eventList}" th:if="${event.status == '1'}" class="col col-lg-4 col-md-6 col-sm-12 col-12">
-							<div class="card mt-3" data-bs-toggle="modal" th:attr="data-bs-target=${'#exampleModal' + i.index}">
-								<div th:utext="${event.cardImg}"></div>
-								<div class="card-body">
-									<h5 th:text="${event.title}" class="card-title sbAggroM"></h5>
-									<p th:text="${#temporals.format(event.startDateTime, 'yyyy.MM.dd HH:mm:ss')}" class="card-text"></p>
-								</div>
-							</div>
-						</div>
+			</div>
+			
+			<div class="col">
+				<div class="d-flex justify-content-start mt-4">
+					<div class="my-auto">
+						<h4>이벤트</h4>
 					</div>
 				</div>
-				<div class="tab-pane fade" id="winner" role="tabpanel" aria-labelledby="contact-tab">
-					<!-- 당첨자 발표 -->
-					<div class="row">
-						<div th:each="event : ${eventList}" th:if="${event.status == '2'}" class="col col-lg-4 col-md-6 col-sm-12 col-12">
-							<div class="card mt-3" data-bs-toggle="modal" th:attr="data-bs-target=${'#exampleModal' + i.index}">
-								<div th:utext="${event.cardImg}"></div>
-								<div class="card-body">
-									<h5 th:text="${event.title}" class="card-title sbAggroM"></h5>
-									<p th:text="${#temporals.format(event.startDateTime, 'yyyy.MM.dd HH:mm:ss')}" class="card-text"></p>
-								</div>
+				<div class="row">
+					<div th:each="event, i : ${eventList}" th:if="${event.status == '0'}" class="col col-lg-4 col-md-6 col-sm-12 col-12">
+						<div class="card mt-3" data-bs-toggle="modal" th:attr="data-bs-target=${'#exampleModal' + i.index}">
+							<div th:utext="${event.cardImg}"></div>
+							<div class="card-body">
+								<h5 th:text="${event.title}" class="card-title sbAggroM"></h5>
+								<p th:text="${#temporals.format(event.startDateTime, 'yyyy.MM.dd HH:mm:ss')}" class="card-text"></p>
 							</div>
 						</div>
 					</div>
@@ -85,6 +52,77 @@
 			</div>
 		</div>
 	</div>
+	
+	
+	
+	
+<!-- 	<div class="container sbAggroL mt-3"> -->
+<!-- 		<div class="col"> -->
+<!-- 			<ul class="nav nav-tabs nav-justified" id="myTab" role="tablist"> -->
+<!-- 				<li class="nav-item" role="presentation"> -->
+<!-- 					<button class="nav-link active" id="home-tab" data-bs-toggle="tab" -->
+<!-- 						data-bs-target="#now" type="button" role="tab" -->
+<!-- 						aria-controls="now" aria-selected="true" style="color:black;">진행중 이벤트</button> -->
+<!-- 				</li> -->
+<!-- 				<li class="nav-item" role="presentation"> -->
+<!-- 					<button class="nav-link" id="profile-tab" data-bs-toggle="tab" -->
+<!-- 						data-bs-target="#finish" type="button" role="tab" -->
+<!-- 						aria-controls="finish" aria-selected="false" style="color:black;">종료된 이벤트</button> -->
+<!-- 				</li> -->
+<!-- 				<li class="nav-item" role="presentation"> -->
+<!-- 					<button class="nav-link" id="contact-tab" data-bs-toggle="tab" -->
+<!-- 						data-bs-target="#winner" type="button" role="tab" -->
+<!-- 						aria-controls="winner" aria-selected="false" style="color:black;">당첨자 발표</button> -->
+<!-- 				</li> -->
+<!-- 			</ul> -->
+<!-- 			<div class="tab-content" id="myTabContent"> -->
+<!-- 				<div class="tab-pane fade show active" id="now" role="tabpanel" aria-labelledby="home-tab"> -->
+					
+<!-- 					진행중 이벤트 -->
+<!-- 					<div class="row"> -->
+<!-- 						<div th:each="event, i : ${eventList}" th:if="${event.status == '0'}" class="col col-lg-4 col-md-6 col-sm-12 col-12"> -->
+<!-- 							<div class="card mt-3" data-bs-toggle="modal" th:attr="data-bs-target=${'#exampleModal' + i.index}"> -->
+<!-- 								<div th:utext="${event.cardImg}"></div> -->
+<!-- 								<div class="card-body"> -->
+<!-- 									<h5 th:text="${event.title}" class="card-title sbAggroM"></h5> -->
+<!-- 									<p th:text="${#temporals.format(event.startDateTime, 'yyyy.MM.dd HH:mm:ss')}" class="card-text"></p> -->
+<!-- 								</div> -->
+<!-- 							</div> -->
+<!-- 						</div> -->
+<!-- 					</div> -->
+						
+<!-- 				</div> -->
+<!-- 				<div class="tab-pane fade" id="finish" role="tabpanel" aria-labelledby="profile-tab"> -->
+<!-- 					종료된 이벤트 -->
+<!-- 					<div class="row"> -->
+<!-- 						<div th:each="event : ${eventList}" th:if="${event.status == '1'}" class="col col-lg-4 col-md-6 col-sm-12 col-12"> -->
+<!-- 							<div class="card mt-3" data-bs-toggle="modal" th:attr="data-bs-target=${'#exampleModal' + i.index}"> -->
+<!-- 								<div th:utext="${event.cardImg}"></div> -->
+<!-- 								<div class="card-body"> -->
+<!-- 									<h5 th:text="${event.title}" class="card-title sbAggroM"></h5> -->
+<!-- 									<p th:text="${#temporals.format(event.startDateTime, 'yyyy.MM.dd HH:mm:ss')}" class="card-text"></p> -->
+<!-- 								</div> -->
+<!-- 							</div> -->
+<!-- 						</div> -->
+<!-- 					</div> -->
+<!-- 				</div> -->
+<!-- 				<div class="tab-pane fade" id="winner" role="tabpanel" aria-labelledby="contact-tab"> -->
+<!-- 					당첨자 발표 -->
+<!-- 					<div class="row"> -->
+<!-- 						<div th:each="event : ${eventList}" th:if="${event.status == '2'}" class="col col-lg-4 col-md-6 col-sm-12 col-12"> -->
+<!-- 							<div class="card mt-3" data-bs-toggle="modal" th:attr="data-bs-target=${'#exampleModal' + i.index}"> -->
+<!-- 								<div th:utext="${event.cardImg}"></div> -->
+<!-- 								<div class="card-body"> -->
+<!-- 									<h5 th:text="${event.title}" class="card-title sbAggroM"></h5> -->
+<!-- 									<p th:text="${#temporals.format(event.startDateTime, 'yyyy.MM.dd HH:mm:ss')}" class="card-text"></p> -->
+<!-- 								</div> -->
+<!-- 							</div> -->
+<!-- 						</div> -->
+<!-- 					</div> -->
+<!-- 				</div> -->
+<!-- 			</div> -->
+<!-- 		</div> -->
+<!-- 	</div> -->
 	
 	<!-- Modal -->
 	<div th:each="event, i : ${eventList}" class="modal fade" th:attr="id=${'exampleModal' + i.index}" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">

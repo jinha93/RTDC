@@ -27,11 +27,16 @@ public class EventController {
 	 * @return
 	 */
 	@GetMapping("/list")
-	public String list(Model model,  @RequestParam Long boardId, @PageableDefault Pageable pageable) {
+	public String list(Model model, @PageableDefault Pageable pageable, @RequestParam String status) {
 		
-		model.addAttribute("boardId", boardId);
-		model.addAttribute("eventList", eventService.getEventList(pageable));
+		model.addAttribute("status", status);
+		model.addAttribute("eventList", eventService.getEventList(pageable, status));
 		
 		return "event/list";
+	}
+	
+	@GetMapping("/test")
+	public String test() {
+		return "MTDZ-volleyball/src/ko/index";
 	}
 }

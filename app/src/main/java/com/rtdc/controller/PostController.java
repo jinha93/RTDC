@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -19,6 +21,7 @@ import com.rtdc.Common;
 import com.rtdc.model.Board;
 import com.rtdc.model.Comment;
 import com.rtdc.model.Post;
+import com.rtdc.model.User;
 import com.rtdc.service.BoardService;
 import com.rtdc.service.CommentService;
 import com.rtdc.service.PostService;
@@ -119,6 +122,14 @@ public class PostController {
 	 */
 	@PostMapping("/form")
 	public String form(@Valid Post post, BindingResult bindingResult, HttpServletRequest request) {
+		
+		//현재 로그인한 사용자정보
+		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+		String userName = auth.getName();
+		User user = new User();
+		user.setUsername(userName);
+		
+		post.setUser(user);
 		
 		//validate
 		postValidator.validate(post, bindingResult);
