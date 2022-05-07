@@ -14,11 +14,11 @@
 			<div class="col-12 col-lg-1 p-3 d-flex border-end border-gray d-lg-block text-center">
 				<div class="mx-auto">
 					<h5 class="sbAggroM">MTDZ</h5>
-					<div class="">
+					<div class="my-1">
 						<img class="openseaLogo">
-						<span id="mtdz_opensea_fp">준비중</span>
+						<span id="mtdz_opensea_fp" th:text="${#numbers.formatInteger(mtdzFp, 0, 'COMMA')}"></span>
 					</div>
-					<div class="">
+					<div class="my-1">
 						<img class="palaLogo">
 						<span id="mtdz_pala_fp"></span>
 					</div>
@@ -26,11 +26,11 @@
 				<hr>
 				<div class="mx-auto">
 					<h5 class="sbAggroM">MTG</h5>
-					<div class="">
+					<div class="my-1">
 						<img class="openseaLogo">
-						<span id="mtg_opensea_fp">준비중</span>
+						<span id="mtg_opensea_fp" th:text="${#numbers.formatInteger(mtgFp, 0, 'COMMA')}"></span>
 					</div>
-					<div class="">
+					<div class="my-1">
 						<img class="palaLogo">
 						<span id="mtg_pala_fp"></span>
 					</div>
@@ -38,11 +38,11 @@
 				<hr>
 				<div class="mx-auto">
 					<h5 class="sbAggroM">MTB</h5>
-					<div class="">
+					<div class="my-1">
 						<img class="openseaLogo">
-						<span id="mtb_opensea_fp">준비중</span>
+						<span id="mtb_opensea_fp" th:text="${#numbers.formatInteger(mtbFp, 0, 'COMMA')}"></span>
 					</div>
-					<div class="">
+					<div class="my-1">
 						<img class="palaLogo">
 						<span id="mtb_pala_fp"></span>
 					</div>
@@ -105,6 +105,8 @@ $(document).ready(function(){
 	getPalaFp('mtg_pala_fp', mtgPalaUrl)
 	getPalaFp('mtb_pala_fp', mtbPalaUrl)
 	getPalaFp('gb_pala_fp', gbPalaUrl)
+	
+// 	$("#showLoading").click();
 })
 
 
@@ -114,11 +116,9 @@ function getPalaFp(target, url){
 		url : url,
 		data : {},
 		success : function(response) {
-			console.log(response.floorPriceInKlay/1000000000000000000);
 			fp = response.floorPriceInKlay/1000000000000000000 + "";
 			fp = fp.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 			$('#' + target).text(fp);
-			console.log(fp);
 		}
 	});
 }
