@@ -8,8 +8,7 @@ spring:
   jpa:
     open-in-view: true
     hibernate:
-      ddl-auto: none
-      #ddl-auto: create
+      ddl-auto: create
       #use-new-id-generate-mappings: false
     show-sql: true
     properties:
