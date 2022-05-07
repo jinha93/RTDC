@@ -23,6 +23,6 @@ services:
       - 8080:8080
     depends_on:
       - database
-  environment:
-    TZ: "Asia/Seoul"
+    environment:
+      TZ: "Asia/Seoul"
     
