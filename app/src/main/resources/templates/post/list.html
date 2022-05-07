@@ -1,5 +1,6 @@
 <!doctype html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <!-- head -->
 <head th:replace="fragment/header :: head"></head>
 
@@ -10,10 +11,8 @@
 
 	<!-- content -->
 	<div class="container-fluid">
-	
-
 		<div class="row">
-			<div class="col-2 mt-5">
+			<div class="col-2 mt-5 d-none d-lg-block">
 				<div class="border p-3 mt-4" style="border-radius: 20px;">
 					<ul class="list-group list-group-flush">
 						<li class="list-group-item"><a class="text-dark text-decoration-none" href="/post/list?boardId=0" th:classappend="${board.boardId} == 0 ? sbAggroM">공지사항</a></li>
@@ -25,7 +24,7 @@
 				</div>
 			</div>
 			
-			<div class="col">
+			<div class="col d-none d-lg-block">
 				<div class="d-flex justify-content-between mt-3">
 					<div class="my-auto">
 						<h4 th:text="${board.boardNm}"></h4>
@@ -63,7 +62,9 @@
 									<a class="text-dark text-decoration-none" th:text="${post.title}" th:href="@{/post/view(boardId=${post.board.boardId},postId=${post.postId})}"></a>
 								</td>								
 								<td th:text="${post.user.nickname}"></td>
-								<td th:text="${#temporals.format(post.regDateTime, 'MM.dd')}"></td>
+								<td th:with="regDateTime=${#temporals.format(post.regDateTime, 'yyyy.MM.dd')}, curDateTime=${#calendars.format(#calendars.createNow(), 'yyyy.MM.dd')}" 
+									th:text="${regDateTime} == ${curDateTime} ? ${#temporals.format(post.regDateTime, 'HH:mm')} : ${#temporals.format(post.regDateTime, 'MM.dd')}">
+								</td>
 								<td th:text="${post.readCnt}"></td>
 								<td th:text="${post.likeCnt}"></td>
 							</tr>
@@ -74,14 +75,13 @@
 					</table>
 				</div>
 				
-				<div class="text-end mt-3">
-					<a type="button" class="btn btn-rtdc" th:href=@{/post/form(boardId=${board.boardId})}>작성</a>
+				<div class="text-end my-3">
+					<a type="button" class="btn btn-rtdc" th:href=@{/post/form(boardId=${board.boardId})} th:if="${board.boardId} == 0" sec:authorize="hasRole('ADMIN')">작성</a>
+					<a type="button" class="btn btn-rtdc" th:href=@{/post/form(boardId=${board.boardId})} th:unless="${board.boardId} == 0">작성</a>
 				</div>
 				
-				
-				
 				<!-- pagenation s -->
-				<nav class="d-none d-md-block">
+				<nav class="">
 					<ul class="pagination justify-content-center"
 						th:with="start=${postList.number/10*10 + 1}
 		  						, last=(${start + 9 < postList.totalPages ? start + 9 : postList.totalPages})">
@@ -102,8 +102,42 @@
 						</li>
 					</ul>
 				</nav>
+				<!-- pagenation e -->
+			</div>
+		</div>
+		
+		<div class="row">
+			<div class="col d-block d-lg-none">
+				<div class="d-flex justify-content-between mt-3">
+					<div class="my-auto">
+						<h4 th:text="${board.boardNm}"></h4>
+					</div>
+				</div>
 				
-				<nav class="d-sm-block d-md-none">
+				<div class="list-group list-group-flush p-3">
+					<a th:each="post, i : ${postList}" th:href="@{/post/view(boardId=${post.board.boardId},postId=${post.postId})}" class="list-group-item list-group-item-action" aria-current="true">
+						<div>
+							<div class="sbAggroM">
+								<img th:src="@{/assets/img/paper.png}" style="width:18px;"/>
+								<span th:text="${post.title}"></span>
+							</div>
+							<div>
+								<span th:text="${post.user.nickname}"></span>
+								<span class="float-end" 
+									th:with="regDateTime=${#temporals.format(post.regDateTime, 'yyyy.MM.dd')}, curDateTime=${#calendars.format(#calendars.createNow(), 'yyyy.MM.dd')}" 
+									th:text="${regDateTime} == ${curDateTime} ? ${#temporals.format(post.regDateTime, 'HH:mm')} : ${#temporals.format(post.regDateTime, 'MM.dd')}">
+								</span>
+							</div>
+						</div>
+					</a>
+				</div>
+				
+				<div class="text-end my-3">
+					<a type="button" class="btn btn-rtdc" th:href=@{/post/form(boardId=${board.boardId})} th:if="${board.boardId} == 0" sec:authorize="hasRole('ADMIN')">작성</a>
+					<a type="button" class="btn btn-rtdc" th:href=@{/post/form(boardId=${board.boardId})} th:unless="${board.boardId} == 0">작성</a>
+				</div>
+				
+				<nav class="">
 					<ul class="pagination justify-content-center" 
 						th:with="start=${postList.number/5*5 + 1}
 		  						, last=(${start + 4 < postList.totalPages ? start + 4 : postList.totalPages})">
@@ -124,7 +158,6 @@
 						</li>
 					</ul>
 				</nav>
-				<!-- pagenation e -->
 			</div>
 		</div>
 	</div>

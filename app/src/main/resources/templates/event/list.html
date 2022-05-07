@@ -22,8 +22,8 @@
 	
 
 		<div class="row">
-			<div class="col-2 mt-5">
-				<div class="border p-3 mt-4" style="border-radius: 20px;">
+			<div class="col-2 mt-5 d-none d-lg-block">
+				<div class="border p-3 mt-3" style="border-radius: 20px;">
 					<ul class="list-group list-group-flush">
 						<li class="list-group-item"><a class="text-dark text-decoration-none" href="/event/list?status=0" th:classappend="${status} == 0 ? sbAggroM">진행중 이벤트</a></li>
 						<li class="list-group-item"><a class="text-dark text-decoration-none" href="/event/list?status=1" th:classappend="${status} == 1 ? sbAggroM">종료된 이벤트</a></li>
@@ -35,7 +35,9 @@
 			<div class="col">
 				<div class="d-flex justify-content-start mt-4">
 					<div class="my-auto">
-						<h4>이벤트</h4>
+						<h4 th:if="${status} == 0">진행중 이벤트</h4>
+						<h4 th:if="${status} == 1">종료된 이벤트</h4>
+						<h4 th:if="${status} == 2">당첨자 발표</h4>
 					</div>
 				</div>
 				<div class="row">
