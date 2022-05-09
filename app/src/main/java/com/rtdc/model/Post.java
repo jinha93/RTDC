@@ -15,6 +15,8 @@ import javax.validation.constraints.Size;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,6 +30,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 
+@DynamicUpdate	//update 시점에 null이 아닌 컬럼들만 update
 @DynamicInsert	//insert 시점에 null이 아닌 컬럼들만 insert
 public class Post {
 	
@@ -42,8 +45,9 @@ public class Post {
 	@Column(length = 4000)
 	private String content;
 	
-	@Column(updatable=false)
+	@Column
 	@CreationTimestamp
+//	@UpdateTimestamp
 	private LocalDateTime regDateTime;
 	
     @ColumnDefault("0") //default 0

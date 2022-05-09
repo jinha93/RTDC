@@ -31,10 +31,24 @@ public class UserService implements UserDetailsService{
 				.roles(user.getRole())
 				.build();
 	}
+	
+	public User getUser(String username) {
+		return userRepository.findByUsername(username);
+	}
 
 	public void signup(User user) {
 		user.encodePassword(passwordEncoder);
+		user.setRole("USER");
 		userRepository.save(user);
+	}
+	
+	public User plusPoint(User user, int point) {
+		user.setPoint(user.getPoint()+point);
+		return userRepository.save(user); 
+	}
+	public User minusPoint(User user, int point) {
+		user.setPoint(user.getPoint()-point);
+		return userRepository.save(user);
 	}
 
 }

@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.rtdc.Common;
+import com.rtdc.common.Common;
 import com.rtdc.model.Board;
 import com.rtdc.model.Comment;
 import com.rtdc.model.Post;

@@ -11,7 +11,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.rtdc.Common;
+import com.rtdc.common.Common;
 import com.rtdc.model.Comment;
 import com.rtdc.service.CommentService;
 
