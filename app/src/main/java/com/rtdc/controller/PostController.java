@@ -27,6 +27,7 @@ import com.rtdc.model.User;
 import com.rtdc.service.BoardService;
 import com.rtdc.service.CommentService;
 import com.rtdc.service.PostService;
+import com.rtdc.service.UserService;
 import com.rtdc.validator.PostValidator;
 
 @Controller
@@ -41,6 +42,9 @@ public class PostController {
 	
 	@Autowired
 	private BoardService boardService;
+	
+	@Autowired
+	private UserService userService;
 	
 	@Autowired
 	private CommentService commentService;
@@ -128,9 +132,8 @@ public class PostController {
 		//현재 로그인한 사용자정보
 		Authentication auth = SecurityContextHolder.getContext().getAuthentication();
 		String userName = auth.getName();
-		User user = new User();
-		user.setUsername(userName);
 		
+		User user = userService.getUser(userName);
 		post.setUser(user);
 		
 		//validate
@@ -146,6 +149,10 @@ public class PostController {
 		
 		
 		postService.save(post);
+		
+		//게시글 작성 시 +10p
+		userService.plusPoint(user, 10);
+		
 		return "redirect:/post/list?boardId=" + post.getBoard().getBoardId();
 	}
 }

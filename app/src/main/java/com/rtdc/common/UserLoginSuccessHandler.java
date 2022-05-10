@@ -1,6 +1,8 @@
 package com.rtdc.common;
 
 import java.io.IOException;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -33,11 +35,16 @@ public class UserLoginSuccessHandler implements AuthenticationSuccessHandler {
 		System.out.println("name : " + authentication.getName());
 		
 		// 권한 리스트
-		System.out.print("권한 : " + authentication.getAuthorities());
-		System.out.println();
+		System.out.println("권한 : " + authentication.getAuthorities());
 		
+		//유저정보 조회
 		User user = userService.getUser(authentication.getName());
-		userService.plusPoint(user, 100);
+		
+		//오늘날짜가 유저의 마지막 접속일자보다 클 경우 포인트 적립(출석체크)
+		LocalDate curDt = LocalDate.now();
+		if(curDt.isAfter(user.getLastLoginDateTime().toLocalDate())) {
+			userService.plusPoint(user, 100);
+		}
 		
 		response.sendRedirect("/");
 	}

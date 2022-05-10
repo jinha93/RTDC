@@ -47,7 +47,6 @@
 				</ul>
 
 				<div class="d-none d-lg-block">
-<!-- 					<div sec:authentication="name"></div> -->
 					<a sec:authorize="isAnonymous()" class="sbAggroM py-2 px-4 text-center text-decoration-none loginBtn" th:href="@{/user/login}">LOGIN</a>
 					<a sec:authorize="isAuthenticated()" class="sbAggroM py-2 px-4 text-center text-decoration-none loginBtn" th:href="@{/user/logout}">LOGOUT</a>
 				</div>
@@ -61,8 +60,7 @@
 						<div class="offcanvas-header">
 							<a sec:authorize="isAnonymous()" class="sbAggroM py-2 px-4 text-center text-decoration-none loginBtn" th:href="@{/user/login}">LOGIN</a>
 							<a sec:authorize="isAuthenticated()" class="sbAggroM py-2 px-4 text-center text-decoration-none loginBtn" th:href="@{/user/logout}">LOGOUT</a>
-							<button type="button" class="btn-close text-reset"
-								data-bs-dismiss="offcanvas" aria-label="Close"></button>
+							<button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
 						</div>
 						<div class="offcanvas-body">
 							<ul class="navbar-nav justify-content-end flex-grow-1 pe-3">

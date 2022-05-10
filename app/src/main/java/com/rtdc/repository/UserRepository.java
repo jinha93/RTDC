@@ -9,5 +9,8 @@ import com.rtdc.model.User;
 public interface UserRepository extends JpaRepository<User, Long>{
 	
 	User findByUsername(String username);
+	
+	public boolean existsByUsername(String username);
+	public boolean existsByNickname(String nickname);
 
 }
