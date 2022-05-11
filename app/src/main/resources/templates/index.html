@@ -16,7 +16,7 @@
 					<h5 class="sbAggroM">MTDZ</h5>
 					<div class="my-1">
 						<img class="openseaLogo">
-						<span id="mtdz_opensea_fp" th:text="${#numbers.formatInteger(mtdzFp, 0, 'COMMA')}"></span>
+						<span id="mtdz_opensea_fp"></span>
 					</div>
 					<div class="my-1">
 						<img class="palaLogo">
@@ -28,7 +28,7 @@
 					<h5 class="sbAggroM">MTG</h5>
 					<div class="my-1">
 						<img class="openseaLogo">
-						<span id="mtg_opensea_fp" th:text="${#numbers.formatInteger(mtgFp, 0, 'COMMA')}"></span>
+						<span id="mtg_opensea_fp"></span>
 					</div>
 					<div class="my-1">
 						<img class="palaLogo">
@@ -40,7 +40,7 @@
 					<h5 class="sbAggroM">MTB</h5>
 					<div class="my-1">
 						<img class="openseaLogo">
-						<span id="mtb_opensea_fp" th:text="${#numbers.formatInteger(mtbFp, 0, 'COMMA')}"></span>
+						<span id="mtb_opensea_fp"></span>
 					</div>
 					<div class="my-1">
 						<img class="palaLogo">
@@ -94,33 +94,73 @@
 <!-- footer -->
 <footer th:replace="fragment/footer :: footer"></footer>
 <script>
-
-var mtdzPalaUrl = 'https://api.pala.world/projects/0x46DBdC7965CF3cd2257C054fEAb941a05Ff46488';
-var mtgPalaUrl = 'https://api.pala.world/projects/0x30b0bD905Efa7503879554fa8F8714C5c82f8Ebc';
-var mtbPalaUrl = 'https://api.pala.world/projects/0x2D5ee6A91F486278A7078eab13383F5Da0Ef9dc1';
-var gbPalaUrl = 'https://api.pala.world/projects/0xA3fC602f8D174F0aA7b2A02074D90E309583814e';
-
 $(document).ready(function(){
-	getPalaFp('mtdz_pala_fp', mtdzPalaUrl)
-	getPalaFp('mtg_pala_fp', mtgPalaUrl)
-	getPalaFp('mtb_pala_fp', mtbPalaUrl)
-	getPalaFp('gb_pala_fp', gbPalaUrl)
-	
-// 	$("#showLoading").click();
+	getFp();
 })
+
+function getFp(){
+	$("#showLoading").click();
+	
+	//opensea
+	var mtdzUrl = "https://opensea.io/collection/mtdz-1";
+	var mtdzhref = "/collection/mtdz-1?search[sortAscending]=true&search[sortBy]=PRICE&search[toggles][0]=BUY_NOW";
+	var mtgUrl = "https://opensea.io/collection/meta-toy-gamers";
+	var mtghref = "/collection/meta-toy-gamers?search[sortAscending]=true&search[sortBy]=PRICE&search[toggles][0]=BUY_NOW";
+	var mtbUrl = "https://opensea.io/collection/meta-toy-bricks";
+	var mtbhref = "/collection/meta-toy-bricks?search[sortAscending]=true&search[sortBy]=PRICE&search[toggles][0]=BUY_NOW";
+
+	//pala
+	var mtdzPalaUrl = 'https://api.pala.world/projects/0x46DBdC7965CF3cd2257C054fEAb941a05Ff46488';
+	var mtgPalaUrl = 'https://api.pala.world/projects/0x30b0bD905Efa7503879554fa8F8714C5c82f8Ebc';
+	var mtbPalaUrl = 'https://api.pala.world/projects/0x2D5ee6A91F486278A7078eab13383F5Da0Ef9dc1';
+	var gbPalaUrl = 'https://api.pala.world/projects/0xA3fC602f8D174F0aA7b2A02074D90E309583814e';
+	
+	
+	//openseaFP
+	Promise.all([
+		getOpenSea('mtdz_opensea_fp', mtdzUrl, mtdzhref),
+		getOpenSea('mtg_opensea_fp', mtgUrl, mtghref),
+		getOpenSea('mtb_opensea_fp', mtbUrl, mtbhref),
+		//palaFP
+		getPalaFp('mtdz_pala_fp', mtdzPalaUrl),
+		getPalaFp('mtg_pala_fp', mtgPalaUrl),
+		getPalaFp('mtb_pala_fp', mtbPalaUrl)
+	]).then(function(values) {
+		$("#hideLoading").click();
+	});
+}
 
 
 function getPalaFp(target, url){
-	$.ajax({
-		type : "GET",
-		url : url,
-		data : {},
-		success : function(response) {
-			fp = response.floorPriceInKlay/1000000000000000000 + "";
-			fp = fp.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-			$('#' + target).text(fp);
-		}
-	});
+	return new Promise((resolve, reject) => {
+		$.ajax({
+			type : "GET",
+			url : url,
+			data : {},
+			success : function(response) {
+				fp = response.floorPriceInKlay/1000000000000000000 + "";
+				fp = fp.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+				$('#' + target).text(fp);
+				
+				resolve();
+			}
+		});
+	})
+}
+function getOpenSea(target, url, href){
+	return new Promise((resolve, reject) => {
+		$.ajax({
+			type : "POST",
+			url : "/getOpenseaFp",
+			data : { url:url, href:href},
+			success : function(fp) {
+				fp = fp.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+				$('#' + target).text(fp);
+				
+				resolve();
+			}
+		});
+	})
 }
 </script>
 </html>

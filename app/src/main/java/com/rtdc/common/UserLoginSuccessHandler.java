@@ -2,7 +2,6 @@ package com.rtdc.common;
 
 import java.io.IOException;
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -39,6 +38,10 @@ public class UserLoginSuccessHandler implements AuthenticationSuccessHandler {
 		
 		//유저정보 조회
 		User user = userService.getUser(authentication.getName());
+		
+		//마지막 접속IP 저장
+		String ip = web.getRemoteAddress();
+		userService.saveLoginIp(user, ip);
 		
 		//오늘날짜가 유저의 마지막 접속일자보다 클 경우 포인트 적립(출석체크)
 		LocalDate curDt = LocalDate.now();

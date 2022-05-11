@@ -1,6 +1,7 @@
 package com.rtdc.controller;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 
 import org.jsoup.Connection;
@@ -11,9 +12,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.rtdc.model.Post;
+import com.rtdc.model.User;
 import com.rtdc.service.PostService;
+import com.rtdc.service.UserService;
 
 @Controller
 public class HomeController{
@@ -21,14 +28,8 @@ public class HomeController{
 	@Autowired
 	private PostService postService;
 	
-	private final String mtdzUrl = "https://opensea.io/collection/mtdz-1";
-	private final String mtdzhref = "/collection/mtdz-1?search[sortAscending]=true&search[sortBy]=PRICE&search[toggles][0]=BUY_NOW";
-	private final String mtgUrl = "https://opensea.io/collection/meta-toy-gamers";
-	private final String mtghref = "/collection/meta-toy-gamers?search[sortAscending]=true&search[sortBy]=PRICE&search[toggles][0]=BUY_NOW";
-	private final String mtbUrl = "https://opensea.io/collection/meta-toy-bricks";
-	private final String mtbhref = "/collection/meta-toy-bricks?search[sortAscending]=true&search[sortBy]=PRICE&search[toggles][0]=BUY_NOW";
-	
-	
+	@Autowired
+	private UserService userService;
 	
 	private String getFp(String url, String href) throws IOException {
 		Connection connect = Jsoup.connect(url);
@@ -42,13 +43,8 @@ public class HomeController{
 	}
 	
 
-	
     @GetMapping("/")
-    public String index(Model model) throws IOException{
-    	
-    	model.addAttribute("mtdzFp",getFp(mtdzUrl, mtdzhref));
-    	model.addAttribute("mtgFp",getFp(mtgUrl, mtghref));
-    	model.addAttribute("mtbFp",getFp(mtbUrl, mtbhref));
+    public String index(Model model){
     	
     	List<Post> popularPostList = postService.getPopularPostList();
     	List<Post> newPostList = postService.getNewPostList();
@@ -57,5 +53,23 @@ public class HomeController{
 		model.addAttribute("newPostList", newPostList);
 		
         return "index";
+    }
+    
+    @PostMapping("/getUser")
+    @ResponseBody
+    public User getUserInfo(@RequestParam HashMap<String, Object> param) {
+    	User user = userService.getUser((String) param.get("username"));
+    	user.setPassword(null);
+    	return user;
+    }
+    
+    @PostMapping("/getOpenseaFp")
+    @ResponseBody
+    public String getOpenseaFp(@RequestParam HashMap<String, Object> param) throws IOException {
+    	
+    	String url = (String) param.get("url");
+    	String href = (String) param.get("href");
+    	
+    	return getFp(url, href);
     }
 }

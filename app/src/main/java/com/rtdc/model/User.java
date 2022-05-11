@@ -45,9 +45,13 @@ public class User{
 //	@UpdateTimestamp
 	private LocalDateTime lastLoginDateTime;
 	
+	@Column(nullable = true)
+	private String lastLoginIp;
+	
 	@ColumnDefault("0") //default 0
 	@PositiveOrZero
 	private int point;
+	
 	
 	public void encodePassword(PasswordEncoder passwordEncoder) {
 		this.password = passwordEncoder.encode(this.password);

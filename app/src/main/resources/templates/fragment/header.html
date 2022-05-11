@@ -58,6 +58,7 @@
 					</button>
 					<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel" style="width: 270px;">
 						<div class="offcanvas-header">
+							<div id="resultDiv"></div>
 							<a sec:authorize="isAnonymous()" class="sbAggroM py-2 px-4 text-center text-decoration-none loginBtn" th:href="@{/user/login}">LOGIN</a>
 							<a sec:authorize="isAuthenticated()" class="sbAggroM py-2 px-4 text-center text-decoration-none loginBtn" th:href="@{/user/logout}">LOGOUT</a>
 							<button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
@@ -104,6 +105,27 @@
 		<!-- Button trigger modal -->
 		<button type="button" style="display: none;" id="showLoading" data-bs-toggle="modal" data-bs-target="#loadingModal"></button>
 		<button type="button" style="display: none;" id="hideLoading" data-bs-dismiss="modal" aria-label="Close" data-bs-target="#loadingModal"></button>
+		
+		<script>
+		var token = $("meta[name='_csrf']").attr("content");
+		var header = $("meta[name='_csrf_header']").attr("content");
+		$(document).ajaxSend(function(e, xhr, options) { xhr.setRequestHeader(header, token); });
+		
+		$(document).ready(function(){
+			getUserInfo();
+		})
+		
+		function getUserInfo(){
+			 $.ajax({
+			        url: "/getUser",
+			        type:"POST",
+			        data: {username: "admin"},
+			        success : function(data){
+			        	console.log(data);
+			        }
+			    });
+		}
+		</script>
 	</header>
 </body>
 </html>

@@ -42,12 +42,30 @@ public class UserService implements UserDetailsService{
 		userRepository.save(user);
 	}
 	
+	/**
+	 * 포인트 +
+	 * @param user
+	 * @param point
+	 * @return
+	 */
 	public User plusPoint(User user, int point) {
 		user.setPoint(user.getPoint()+point);
 		return userRepository.save(user); 
 	}
+	
+	/**
+	 * 포인트 -
+	 * @param user
+	 * @param point
+	 * @return
+	 */
 	public User minusPoint(User user, int point) {
 		user.setPoint(user.getPoint()-point);
+		return userRepository.save(user);
+	}
+	
+	public User saveLoginIp(User user, String ip) {
+		user.setLastLoginIp(ip);
 		return userRepository.save(user);
 	}
 

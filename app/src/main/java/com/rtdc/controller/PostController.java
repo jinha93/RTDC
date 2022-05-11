@@ -142,12 +142,6 @@ public class PostController {
 			return "post/form";
 		}
 		
-		//getIp
-		Common common = new Common();
-		String regIp = common.getIp(request);
-		post.setRegIp(regIp);
-		
-		
 		postService.save(post);
 		
 		//게시글 작성 시 +10p

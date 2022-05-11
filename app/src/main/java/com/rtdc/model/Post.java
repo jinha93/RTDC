@@ -56,9 +56,6 @@ public class Post {
     @ColumnDefault("0") //default 0
     private Integer likeCnt;
     
-    @Column(length = 200, nullable = true)
-    private String regIp;
-    
     @Column(columnDefinition = "varchar(1) default 'N'")
     private String delYn;
     
