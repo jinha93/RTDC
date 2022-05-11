@@ -1,3 +1,4 @@
+
 package com.rtdc.controller;
 
 import javax.validation.Valid;
@@ -24,8 +25,8 @@ public class UserController {
 	@Autowired
 	private UserService userService;
 	
-	@GetMapping("/login")
-	public String login() {
+	@RequestMapping("/login")
+	public String login(Model model) {
 		return "user/login";
 	}
 	

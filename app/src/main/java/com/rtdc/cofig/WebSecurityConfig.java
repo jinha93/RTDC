@@ -7,6 +7,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
+import com.rtdc.common.UserLoginFailureHandler;
 import com.rtdc.common.UserLoginSuccessHandler;
 
 @Configuration
@@ -15,6 +16,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	@Autowired
 	UserLoginSuccessHandler userLoginSuccessHandler;
+	
+	@Autowired
+	UserLoginFailureHandler userLoginFailureHandler;
 	
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
@@ -27,6 +31,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.formLogin()
 				.loginPage("/user/login")
 				.successHandler(userLoginSuccessHandler)
+				.failureHandler(userLoginFailureHandler)
 				.permitAll()
 				.and()
 			.logout()

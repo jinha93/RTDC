@@ -47,7 +47,6 @@ public class Post {
 	
 	@Column
 	@CreationTimestamp
-//	@UpdateTimestamp
 	private LocalDateTime regDateTime;
 	
     @ColumnDefault("0") //default 0
@@ -62,7 +61,7 @@ public class Post {
     @ManyToOne
     @JoinColumn(name = "username", nullable = false)
     public User user;
-//    
+    
     @ManyToOne
 	@JoinColumn(name = "boardId", nullable = true)
 	public Board board;

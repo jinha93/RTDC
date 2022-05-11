@@ -33,6 +33,7 @@
 </head>
 <body>
 	<header class="p-3 border-bottom border-gray" th:fragment="header">
+	<input type="hidden" id="username" name="username" th:value="${#authentication.name}">
 		<div class="container-fluid">
 			<div class="d-flex flex-wrap align-items-center justify-content-start">
 				<a href="/" class="d-flex align-items-center text-dark text-decoration-none me-4">
@@ -48,7 +49,19 @@
 
 				<div class="d-none d-lg-block">
 					<a sec:authorize="isAnonymous()" class="sbAggroM py-2 px-4 text-center text-decoration-none loginBtn" th:href="@{/user/login}">LOGIN</a>
-					<a sec:authorize="isAuthenticated()" class="sbAggroM py-2 px-4 text-center text-decoration-none loginBtn" th:href="@{/user/logout}">LOGOUT</a>
+					<div class="" sec:authorize="isAuthenticated()">
+						<div class="d-flex flex-row" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;">
+							<div class="d-flex flex-column justify-content-center text-end me-3">
+								<span class="sbAggroM nicknameSpan"></span>
+								<span style="font-size: 0.8em;" class="pointSpan"></span>
+							</div>
+							<img class="d-flex flex-row" th:src="@{/assets/img/MTDZ_1100.png}" style="width:50px; height: 50px; border-radius: 5px;">
+						</div>
+						<ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
+							<li><a class="dropdown-item" href="javascript:alert('준비중입니다.');">마이페이지</a></li>
+							<li><a class="dropdown-item" th:href="@{/user/logout}">로그아웃</a></li>
+						</ul>
+					</div>
 				</div>
 				
 				<div class="navbar navbar-expand-lg navbar-light d-block d-lg-none ms-auto">
@@ -58,9 +71,16 @@
 					</button>
 					<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel" style="width: 270px;">
 						<div class="offcanvas-header">
-							<div id="resultDiv"></div>
 							<a sec:authorize="isAnonymous()" class="sbAggroM py-2 px-4 text-center text-decoration-none loginBtn" th:href="@{/user/login}">LOGIN</a>
-							<a sec:authorize="isAuthenticated()" class="sbAggroM py-2 px-4 text-center text-decoration-none loginBtn" th:href="@{/user/logout}">LOGOUT</a>
+							<div class="" sec:authorize="isAuthenticated()">
+								<div class="d-flex flex-row" style="cursor: pointer;">
+									<img class="d-flex flex-row" th:src="@{/assets/img/MTDZ_1100.png}" style="width:50px; height: 50px; border-radius: 5px;">
+									<div class="d-flex flex-column justify-content-center text-start ms-3">
+										<span class="sbAggroM nicknameSpan"></span>
+										<span style="font-size: 0.8em;" class="pointSpan"></span>
+									</div>
+								</div>
+							</div>
 							<button type="button" class="btn-close text-reset" data-bs-dismiss="offcanvas" aria-label="Close"></button>
 						</div>
 						<div class="offcanvas-body">
@@ -107,24 +127,31 @@
 		<button type="button" style="display: none;" id="hideLoading" data-bs-dismiss="modal" aria-label="Close" data-bs-target="#loadingModal"></button>
 		
 		<script>
-		var token = $("meta[name='_csrf']").attr("content");
-		var header = $("meta[name='_csrf_header']").attr("content");
-		$(document).ajaxSend(function(e, xhr, options) { xhr.setRequestHeader(header, token); });
 		
-		$(document).ready(function(){
-			getUserInfo();
-		})
-		
-		function getUserInfo(){
-			 $.ajax({
-			        url: "/getUser",
-			        type:"POST",
-			        data: {username: "admin"},
-			        success : function(data){
-			        	console.log(data);
-			        }
-			    });
-		}
+			var token = $("meta[name='_csrf']").attr("content");
+			var header = $("meta[name='_csrf_header']").attr("content");
+			$(document).ajaxSend(function(e, xhr, options) {
+				xhr.setRequestHeader(header, token);
+			});
+
+			$(document).ready(function() {
+				getUserInfo();
+			})
+
+			function getUserInfo() {
+				const username = $("#username").val();
+				$.ajax({
+					url : "/getUser",
+					type : "POST",
+					data : {
+						username : username
+					},
+					success : function(data) {
+						$(".nicknameSpan").text(data.nickname);
+						$(".pointSpan").text(data.point + " P");
+					}
+				});
+			}
 		</script>
 	</header>
 </body>

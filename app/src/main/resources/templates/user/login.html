@@ -21,6 +21,8 @@
 						<div class="mb-3">
 							<input type="password" class="form-control" id="password" name="password" placeholder="비밀번호" required="">
 						</div>
+						<!--로그인에러-->
+	        			<div th:if="${param.error}" th:text="${errorMessage}" class="alert alert-danger" role="alert"></div>
 						<div class="d-grid gap-2">
 							<button type="submit" class="btn btn-primary">로그인</button>
 							<a class="btn btn-primary" href="/user/signup">회원가입</a>

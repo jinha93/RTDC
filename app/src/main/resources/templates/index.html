@@ -126,7 +126,11 @@ function getFp(){
 		getPalaFp('mtg_pala_fp', mtgPalaUrl),
 		getPalaFp('mtb_pala_fp', mtbPalaUrl)
 	]).then(function(values) {
-		$("#hideLoading").click();
+		//로딩보여주기용
+		setTimeout(function() {
+			$("#hideLoading").click();
+		}, 1000);
+		
 	});
 }
 

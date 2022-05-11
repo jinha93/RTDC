@@ -68,6 +68,7 @@ public class RtdcApplication {
             				.password("test")
             				.nickname("어드민")
             				.role("ADMIN")
+            				.point(10000)
             				.build();
             		user.encodePassword(passwordEncoder);
             		userRepository.save(user);

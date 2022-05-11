@@ -59,7 +59,9 @@ public class HomeController{
     @ResponseBody
     public User getUserInfo(@RequestParam HashMap<String, Object> param) {
     	User user = userService.getUser((String) param.get("username"));
-    	user.setPassword(null);
+    	if(user != null) {
+    		user.setPassword(null);
+    	}
     	return user;
     }
     
