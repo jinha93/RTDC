@@ -2,6 +2,8 @@ package com.rtdc.common;
 
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -14,6 +16,7 @@ import org.springframework.security.web.authentication.WebAuthenticationDetails;
 import org.springframework.stereotype.Component;
 
 import com.rtdc.model.User;
+import com.rtdc.service.PointHistoryService;
 import com.rtdc.service.UserService;
 
 @Component
@@ -21,6 +24,9 @@ public class UserLoginSuccessHandler implements AuthenticationSuccessHandler {
 	
 	@Autowired
 	UserService userService;
+	
+	@Autowired
+	private PointHistoryService pointHistoryService;
 	
 	@Override
 	public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -39,15 +45,19 @@ public class UserLoginSuccessHandler implements AuthenticationSuccessHandler {
 		//유저정보 조회
 		User user = userService.getUser(authentication.getName());
 		
-		//마지막 접속IP 저장
-		String ip = web.getRemoteAddress();
-		userService.saveLoginIp(user, ip);
-		
 		//오늘날짜가 유저의 마지막 접속일자보다 클 경우 포인트 적립(출석체크)
-		LocalDate curDt = LocalDate.now();
-		if(curDt.isAfter(user.getLastLoginDateTime().toLocalDate())) {
-			userService.plusPoint(user, 100);
+		LocalDateTime curDateTime = LocalDateTime.now();
+		if(curDateTime.toLocalDate().isAfter(user.getLastLoginDateTime().toLocalDate())) {
+			
+			//출석체크 시 +100p
+			int point = pointHistoryService.savePoint(user, 100, curDateTime.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")) + " 출석체크");
+			userService.savePoint(user, point);
+			userService.savePoint(user, 100);
 		}
+		
+		//마지막접속 IP, 마지막접속 일시 저장
+		String ip = web.getRemoteAddress();
+		userService.saveLoginInfo(user, ip, curDateTime);
 		
 		response.sendRedirect("/");
 	}

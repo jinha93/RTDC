@@ -1,7 +1,5 @@
 package com.rtdc.controller;
 
-import java.time.LocalDateTime;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
@@ -19,13 +17,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import com.rtdc.common.Common;
 import com.rtdc.model.Board;
 import com.rtdc.model.Comment;
 import com.rtdc.model.Post;
 import com.rtdc.model.User;
 import com.rtdc.service.BoardService;
 import com.rtdc.service.CommentService;
+import com.rtdc.service.PointHistoryService;
 import com.rtdc.service.PostService;
 import com.rtdc.service.UserService;
 import com.rtdc.validator.PostValidator;
@@ -45,6 +43,9 @@ public class PostController {
 	
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private PointHistoryService pointHistoryService;
 	
 	@Autowired
 	private CommentService commentService;
@@ -145,7 +146,8 @@ public class PostController {
 		postService.save(post);
 		
 		//게시글 작성 시 +10p
-		userService.plusPoint(user, 10);
+		int point = pointHistoryService.savePoint(user, 10, "게시글 작성");
+		userService.savePoint(user, point);
 		
 		return "redirect:/post/list?boardId=" + post.getBoard().getBoardId();
 	}

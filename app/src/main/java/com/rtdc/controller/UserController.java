@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.rtdc.model.User;
+import com.rtdc.service.PointHistoryService;
 import com.rtdc.service.UserService;
 import com.rtdc.validator.UserValidator;
 
@@ -24,6 +25,9 @@ public class UserController {
 	
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private PointHistoryService pointHistoryService;
 	
 	@RequestMapping("/login")
 	public String login(Model model) {
@@ -46,10 +50,14 @@ public class UserController {
 			return "user/form";
 		}
 		
-		//회원등록
-		userService.signup(user);
+		//회원가입
+		user = userService.signup(user);
 		
-		return "redirect:/user/login";
+		//회원가입 시 +1000p
+		int point = pointHistoryService.savePoint(user, 1000, "회원가입");
+		userService.savePoint(user, point);
+		
+		return "user/login";
 	}
 	
 }

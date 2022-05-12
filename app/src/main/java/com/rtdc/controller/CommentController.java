@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import com.rtdc.model.Comment;
 import com.rtdc.model.User;
 import com.rtdc.service.CommentService;
+import com.rtdc.service.PointHistoryService;
 import com.rtdc.service.UserService;
 
 @Controller
@@ -20,6 +21,9 @@ public class CommentController {
 	
 	@Autowired
 	private CommentService commentService;
+	
+	@Autowired
+	private PointHistoryService pointHistoryService;
 	
 	@Autowired
 	private UserService userService;
@@ -40,7 +44,8 @@ public class CommentController {
 		commentService.save(comment);
 		
 		//댓글 작성 시 +5p
-		userService.plusPoint(user, 5);
+		int point = pointHistoryService.savePoint(user, 5, "댓글 작성");
+		userService.savePoint(user, point);
 		
 		return "redirect:/post/view?boardId=" + boardId + "&postId=" + postId;
 	}

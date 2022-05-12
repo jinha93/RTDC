@@ -33,7 +33,7 @@
 </head>
 <body>
 	<header class="p-3 border-bottom border-gray" th:fragment="header">
-	<input type="hidden" id="username" name="username" th:value="${#authentication.name}">
+	<input sec:authorize="isAuthenticated()" type="hidden" id="username" name="username" th:value="${#authentication.name}">
 		<div class="container-fluid">
 			<div class="d-flex flex-wrap align-items-center justify-content-start">
 				<a href="/" class="d-flex align-items-center text-dark text-decoration-none me-4">
@@ -140,17 +140,19 @@
 
 			function getUserInfo() {
 				const username = $("#username").val();
-				$.ajax({
-					url : "/getUser",
-					type : "POST",
-					data : {
-						username : username
-					},
-					success : function(data) {
-						$(".nicknameSpan").text(data.nickname);
-						$(".pointSpan").text(data.point + " P");
-					}
-				});
+				if(username != ''){
+					$.ajax({
+						url : "/getUser",
+						type : "POST",
+						data : {
+							username : username
+						},
+						success : function(data) {
+							$(".nicknameSpan").text(data.nickname);
+							$(".pointSpan").text(data.point + " P");
+						}
+					});
+				}
 			}
 		</script>
 	</header>

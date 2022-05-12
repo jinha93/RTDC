@@ -1,5 +1,7 @@
 package com.rtdc.service;
 
+import java.time.LocalDateTime;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -32,40 +34,48 @@ public class UserService implements UserDetailsService{
 				.build();
 	}
 	
+	/**
+	 * 유저정보조회
+	 * @param username
+	 * @return
+	 */
 	public User getUser(String username) {
 		return userRepository.findByUsername(username);
 	}
 
-	public void signup(User user) {
+	/**
+	 * 회원가입
+	 * @param user
+	 * @return
+	 */
+	public User signup(User user) {
 		user.encodePassword(passwordEncoder);
 		user.setRole("USER");
-		userRepository.save(user);
+		return userRepository.save(user);
 	}
 	
 	/**
-	 * 포인트 +
+	 * 포인트 저장
 	 * @param user
 	 * @param point
 	 * @return
 	 */
-	public User plusPoint(User user, int point) {
-		user.setPoint(user.getPoint()+point);
+	public User savePoint(User user, int point) {
+		//포인트 저장
+		user.setPoint(point);
 		return userRepository.save(user); 
 	}
 	
 	/**
-	 * 포인트 -
+	 * 로그인정보저장
 	 * @param user
-	 * @param point
+	 * @param ip
+	 * @param curDateTime
 	 * @return
 	 */
-	public User minusPoint(User user, int point) {
-		user.setPoint(user.getPoint()-point);
-		return userRepository.save(user);
-	}
-	
-	public User saveLoginIp(User user, String ip) {
+	public User saveLoginInfo(User user, String ip, LocalDateTime curDateTime) {
 		user.setLastLoginIp(ip);
+		user.setLastLoginDateTime(curDateTime);
 		return userRepository.save(user);
 	}
 

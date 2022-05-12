@@ -25,8 +25,8 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 
-@DynamicInsert	//insert 시점에 null이 아닌 컬럼들만 insert
 @DynamicUpdate	//update 시점에 null이 아닌 컬럼들만 update
+@DynamicInsert	//insert 시점에 null이 아닌 컬럼들만 insert
 public class User{
 	
 	@Id
@@ -42,7 +42,6 @@ public class User{
 	
 	@Column
 	@CreationTimestamp
-//	@UpdateTimestamp
 	private LocalDateTime lastLoginDateTime;
 	
 	@Column(nullable = true)
