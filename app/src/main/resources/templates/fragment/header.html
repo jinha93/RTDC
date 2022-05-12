@@ -55,7 +55,7 @@
 								<span class="sbAggroM nicknameSpan"></span>
 								<span style="font-size: 0.8em;" class="pointSpan"></span>
 							</div>
-							<img class="d-flex flex-row" th:src="@{/assets/img/MTDZ_1100.png}" style="width:50px; height: 50px; border-radius: 5px;">
+							<img class="d-flex flex-row profileImg">
 						</div>
 						<ul class="dropdown-menu" aria-labelledby="dropdownMenuButton">
 							<li><a class="dropdown-item" href="javascript:alert('준비중입니다.');">마이페이지</a></li>
@@ -74,7 +74,7 @@
 							<a sec:authorize="isAnonymous()" class="sbAggroM py-2 px-4 text-center text-decoration-none loginBtn" th:href="@{/user/login}">LOGIN</a>
 							<div class="" sec:authorize="isAuthenticated()">
 								<div class="d-flex flex-row" style="cursor: pointer;">
-									<img class="d-flex flex-row" th:src="@{/assets/img/MTDZ_1100.png}" style="width:50px; height: 50px; border-radius: 5px;">
+									<img class="d-flex flex-row profileImg">
 									<div class="d-flex flex-column justify-content-center text-start ms-3">
 										<span class="sbAggroM nicknameSpan"></span>
 										<span style="font-size: 0.8em;" class="pointSpan"></span>
@@ -150,6 +150,7 @@
 						success : function(data) {
 							$(".nicknameSpan").text(data.nickname);
 							$(".pointSpan").text(data.point + " P");
+							$(".profileImg").attr("src", data.profileImgPath);
 						}
 					});
 				}

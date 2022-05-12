@@ -23,13 +23,20 @@ public class ImageService {
 	UploadFileRepository uploadFileRepository;
 	
 	private Path rootLocation;
+	
 	private final Path uploadFilePath;
 	private final Path eventFilePath;
+	private final Path profileFilePath;
 	
 		
-	public ImageService(@Value("${custom.upload-img-path}") String uploadFilePath, @Value("${custom.upload-img-path}") String eventFilePath) {
+	public ImageService(
+			@Value("${custom.upload-img-path}") String uploadFilePath
+			, @Value("${custom.event-img-path}") String eventFilePath
+			, @Value("${custom.profile-img-path}") String profileFilePath
+			) {
 		this.uploadFilePath = Paths.get(uploadFilePath);
 		this.eventFilePath = Paths.get(eventFilePath);
+		this.profileFilePath = Paths.get(profileFilePath);
 	}
 	
 	private void FilePathSetting(String gb) {
@@ -37,6 +44,8 @@ public class ImageService {
 			this.rootLocation = this.uploadFilePath;
 		}else if("event".equals(gb)) {
 			this.rootLocation = this.eventFilePath;
+		}else if("profile".equals(gb)) {
+			this.rootLocation = this.profileFilePath;
 		}
 	}
 	
