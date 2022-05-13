@@ -150,7 +150,7 @@
 						success : function(data) {
 							$(".nicknameSpan").text(data.nickname);
 							$(".pointSpan").text(data.point + " P");
-							$(".profileImg").attr("src", data.profileImgPath);
+							$("header .profileImg").attr("src", data.profileImgPath);
 						}
 					});
 				}
