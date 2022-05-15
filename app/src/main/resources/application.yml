@@ -1,8 +1,8 @@
 spring:
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://localhost:3306/rtdc?serverTimezone=Asia/Seoul
-    #url: jdbc:mariadb://database:3306/rtdc?serverTimezone=Asia/Seoul
+    #url: jdbc:mariadb://localhost:3306/rtdc?serverTimezone=Asia/Seoul
+    url: jdbc:mariadb://database:3306/rtdc?serverTimezone=Asia/Seoul
     username: root
     password: password
   jpa:
@@ -19,9 +19,9 @@ spring:
       max-file-size: 10MB
       max-request-size: 10MB
 custom:
-  #upload-img-path: /home/ec2-user/RTDC/upload-file/
-  #event-img-path: /home/ec2-user/RTDC/event-file/
-  #profile-img-path: /home/ec2-user/RTDC/profile-file/
-  upload-img-path: c:/dev/WORKSPACE/RTDC/upload-file/
-  event-img-path: c:/dev/WORKSPACE/RTDC/event-file/
-  profile-img-path: c:/dev/WORKSPACE/RTDC/profile-file/
+  upload-img-path: /home/ec2-user/RTDC/upload-file/
+  event-img-path: /home/ec2-user/RTDC/event-file/
+  profile-img-path: /home/ec2-user/RTDC/profile-file/
+  #upload-img-path: c:/dev/WORKSPACE/RTDC/upload-file/
+  #event-img-path: c:/dev/WORKSPACE/RTDC/event-file/
+  #profile-img-path: c:/dev/WORKSPACE/RTDC/profile-file/

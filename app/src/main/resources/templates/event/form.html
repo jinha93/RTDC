@@ -1,0 +1,146 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!-- head -->
+<head th:replace="fragment/header :: head"></head>
+
+<body>
+	<!-- header -->
+	<header th:replace="fragment/header :: header"></header>
+
+
+	<!-- content -->
+	<div class="container p-3">
+		<form action="#" th:action=@{/event/form} th:object="${event}" method="post" enctype="multipart/form-data" id="eventForm">
+			<div class="form-gruop">
+				<h3>제목</h3>
+				<input type="text" class="form-control" id="title" th:field="*{title}">
+			</div>
+			<div class="form-gruop mt-3">
+				<h3>카드 이미지</h3>
+				<input type="file" class="form-control" id="cardImg" accept=".png, .jpg, .jpeg">
+				<input type="hidden" class="form-control" id="cardImgPath" th:field="*{cardImgPath}">
+			</div>
+			<div class="form-group mt-3">
+				<h3>기간</h3>
+				<div class="d-flex align-items-center">
+					<input type="text" class="form-control" id="datepickerStart" name="startDateVal" style="width: 200px;" placeholder="연도-월-일">
+					<span class="mx-1">~</span>
+					<input type="text" class="form-control" id="datepickerEnd" name="endDateVal" style="width: 200px;" placeholder="연도-월-일">
+				</div>
+			</div>
+			<div class="form-gruop mt-3">
+				<h3>내용</h3>
+				<textarea id="summernote" class="form-control" th:field="*{content}"></textarea>
+			</div>
+
+			<div class="text-end mt-2">
+				<button type="button" class="btn btn-rtdc" onclick="saveEvent();">작성</button>
+				<a type="button" class="btn btn-secondary" th:href=@{/event/list(status=0}>취소</a>
+			</div>
+		</form>
+	</div>
+
+
+	<!-- footer -->
+	<footer th:replace="fragment/footer :: footer"></footer>
+</body>
+
+<script>
+	var token = $("meta[name='_csrf']").attr("content");
+	var header = $("meta[name='_csrf_header']").attr("content");
+	$(document).ajaxSend(function(e, xhr, options) { xhr.setRequestHeader(header, token); });
+	
+	
+	$(document).ready(function(){
+		$( "#datepickerStart" ).datepicker({
+			dateFormat: "yy-mm-dd",
+		});
+		$( "#datepickerEnd" ).datepicker({
+			dateFormat: "yy-mm-dd",
+		});
+		
+		$("#datepickerStart").on("change", function(){
+			$("#datepickerEnd").datepicker("option", "minDate", $("#datepickerStart").val());
+		})
+		
+		$("#datepickerEnd").on("change", function(){
+			$("#datepickerStart").datepicker("option", "maxDate", $("#datepickerEnd").val());
+		})
+		
+		
+		
+	})
+
+	$('#summernote').summernote({
+		tabsize : 2,
+		height : 500,
+		toolbar : [ [ 'style', [ 'style' ] ],
+				[ 'font', [ 'bold', 'underline', 'clear' ] ],
+				[ 'color', [ 'color' ] ],
+				[ 'para', [ 'ul', 'ol', 'paragraph' ] ],
+				[ 'table', [ 'table' ] ],
+				[ 'insert', [ 'link', 'picture', 'video' ] ],
+				[ 'view', [ 'fullscreen', 'codeview', 'help' ] ] ],
+		callbacks : {
+			onImageUpload : function(files, editor, welEditable) {       
+				for (var i = 0; i < files.length; i++) {
+					sendFile(files[i], this);
+				}
+			}
+		}
+	});
+	
+	function sendFile(file, el) {
+		var form_data = new FormData();
+		form_data.append('file', file);
+		form_data.append('gb', 'post');
+		$.ajax({
+			data : form_data,
+			type : "POST",
+			url : '/image',
+			cache : false,
+			contentType : false,
+			enctype : 'multipart/form-data',
+			processData : false,
+			success : function(url) {
+				$(el).summernote('insertImage', url, function($image) {
+					$image.css('width', "100%");
+				});
+			}
+		});
+	}
+	
+	function saveEvent(){
+		var file = $("#cardImg")[0].files[0];
+		
+		if(file != undefined){
+			sendFileCardImg(file);
+		}else{
+			alert("카드 이미지를 첨부해주세요.");
+		}
+	}
+	
+	function sendFileCardImg(file) {
+		var form_data = new FormData();
+		form_data.append('file', file);
+		form_data.append('gb', 'event');
+		
+		$.ajax({
+			data : form_data,
+			type : "POST",
+			url : '/image',
+			cache : false,
+			contentType : false,
+			enctype : 'multipart/form-data',
+			processData : false,
+			success : function(url) {
+				$("#cardImgPath").val(url);
+				$("#eventForm").submit();
+			}
+		});
+	}
+	
+
+</script>
+
+</html>

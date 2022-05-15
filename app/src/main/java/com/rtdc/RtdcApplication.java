@@ -65,14 +65,14 @@ public class RtdcApplication {
 //            		User user = new User();
 //            		user = User.builder()
 //            				.username("admin")
-//            				.password("test")
-//            				.nickname("어드민")
+//            				.password("admin99!")
+//            				.nickname("관리자")
 //            				.role("ADMIN")
 //            				.build();
 //            		user.encodePassword(passwordEncoder);
 //            		userRepository.save(user);
 //            	}
-            	
+//            	
 //            	if(i < 13) {
 //            		UploadFile file = UploadFile.builder()
 //            				.contentType("image/jpeg")
@@ -84,6 +84,9 @@ public class RtdcApplication {
 //            				.build();
 //            		uploadFileRepository.save(file);
 //            		
+//            		User user = new User();
+//            		user.setUsername("admin");
+//            		
 //            		Event event = Event.builder()
 //            				.title("이벤트테스트" + i)
 //            				.cardImg("<p><img src=\"/image/1\" class=\"card-img-top\"><br></p>")
@@ -91,11 +94,12 @@ public class RtdcApplication {
 //            				.startDateTime(LocalDateTime.now())
 //            				.endDateTime(LocalDateTime.now().plusDays(i))
 //            				.status("0")
+//            				.user(user)
 //            				.build();
 //            		
 //            		eventRepository.save(event);
 //            	}
-//            	
+            	
 //            	Board board = new Board();
 //            	board.setBoardId(3);
 //            	User user = new User();

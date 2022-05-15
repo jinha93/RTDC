@@ -19,9 +19,17 @@ public class EventService {
 	
 	public Page<Event> getEventList(Pageable pageable, String status){
 		int page = (pageable.getPageNumber() == 0) ? 0 : (pageable.getPageNumber() - 1); //page는 0부터 시작
-		pageable = PageRequest.of(page, 12, Sort.by("eventId").descending());
+		pageable = PageRequest.of(page, 6, Sort.by("eventId").descending());
 		
 		return eventRepository.findByStatus(pageable, status);
+	}
+	
+	public Event getEvent(long eventId) {
+		return eventRepository.findByEventId(eventId);
+	}
+	
+	public Event save(Event event) {
+		return eventRepository.save(event);
 	}
 	
 }

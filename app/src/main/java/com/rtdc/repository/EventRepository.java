@@ -11,5 +11,7 @@ import com.rtdc.model.Event;
 public interface EventRepository extends JpaRepository<Event, Long>{
 
 	Page<Event> findByStatus(Pageable pageable, String status);
+	
+	Event findByEventId(Long eventId);
 
 }

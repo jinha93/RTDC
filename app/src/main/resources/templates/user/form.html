@@ -26,7 +26,7 @@
 							<div class="invalid-feedback" th:if="${#fields.hasErrors('nickname')}" th:errors="*{nickname}"></div>
 						</div>
 						<div class="mb-3">
-							<input type="file" class="form-control" id="profileImg">
+							<input type="file" class="form-control" id="profileImg" accept=".png, .jpg, .jpeg">
 							<input type="hidden" class="form-control" id="profileImgPath" th:field="*{profileImgPath}">
 						</div>
 						<div class="d-grid gap-2">
@@ -49,7 +49,6 @@
 		var file = $("#profileImg")[0].files[0];
 		
 		if(file != undefined){
-			console.log(file);
 			sendFile(file);
 		}else{
 			$("#signUpForm").submit();

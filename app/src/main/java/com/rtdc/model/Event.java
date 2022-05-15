@@ -7,6 +7,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+
+import org.springframework.format.annotation.DateTimeFormat;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -29,7 +33,7 @@ public class Event {
 	private String title;
 	
 	@Column(length = 500)
-	private String cardImg;
+	private String cardImgPath;
 	
 	@Column(length = 4000)
 	private String content;
@@ -39,4 +43,8 @@ public class Event {
 	private LocalDateTime endDateTime;
 	
 	private String status;
+	
+	@ManyToOne
+    @JoinColumn(name = "username", nullable = false)
+	private User user;
 }
