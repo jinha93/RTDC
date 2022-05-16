@@ -25,4 +25,8 @@ services:
       - database
     environment:
       TZ: "Asia/Seoul"
+    volumes:
+      - /home/ec2-user/RTDC/upload-file:/home/ec2-user/RTDC/upload-file
+      - /home/ec2-user/RTDC/event-file:/home/ec2-user/RTDC/event-file
+      - /home/ec2-user/RTDC/profile-file:/home/ec2-user/RTDC/profile-file
     

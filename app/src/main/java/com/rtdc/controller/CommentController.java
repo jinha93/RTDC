@@ -10,9 +10,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.rtdc.model.Comment;
+import com.rtdc.model.Post;
 import com.rtdc.model.User;
 import com.rtdc.service.CommentService;
 import com.rtdc.service.PointHistoryService;
+import com.rtdc.service.PostService;
 import com.rtdc.service.UserService;
 
 @Controller
@@ -21,6 +23,9 @@ public class CommentController {
 	
 	@Autowired
 	private CommentService commentService;
+	
+	@Autowired
+	private PostService postService;
 	
 	@Autowired
 	private PointHistoryService pointHistoryService;
@@ -40,8 +45,12 @@ public class CommentController {
 		
 		User user = userService.getUser(userName);
 		comment.setUser(user);
-		
 		commentService.save(comment);
+		
+		//게시물 댓글 수 증가
+		Post post = postService.getPost(postId);
+		post.setCommentCnt(post.getCommentCnt() + 1);
+		postService.save(post);
 		
 		//댓글 작성 시 +5p
 		int point = pointHistoryService.savePoint(user, 5, "댓글 작성");

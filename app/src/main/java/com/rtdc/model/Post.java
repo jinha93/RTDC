@@ -55,6 +55,9 @@ public class Post {
     @ColumnDefault("0") //default 0
     private Integer likeCnt;
     
+    @ColumnDefault("0") //default 0
+    private Integer commentCnt;
+    
     @Column(columnDefinition = "varchar(1) default 'N'")
     private String delYn;
     

@@ -59,7 +59,11 @@
 							<tr th:each="post, i : ${postList}" class="border-top">
 								<td class="text-start">
 									<img th:src="@{/assets/img/paper.png}" style="width:18px;"/>
-									<a class="text-dark text-decoration-none" th:text="${post.title}" th:href="@{/post/view(boardId=${post.board.boardId},postId=${post.postId})}"></a>
+									<a class="text-dark text-decoration-none" th:href="@{/post/view(boardId=${post.board.boardId},postId=${post.postId})}">
+										[[${post.title}]]
+										<span class="text-black-50" th:text="'['+${post.commentCnt}+']'"></span>
+									</a>
+									
 								</td>								
 								<td th:text="${post.user.nickname}"></td>
 								<td th:with="regDateTime=${#temporals.format(post.regDateTime, 'yyyy.MM.dd')}, curDateTime=${#calendars.format(#calendars.createNow(), 'yyyy.MM.dd')}" 
@@ -120,6 +124,7 @@
 							<div class="sbAggroM">
 								<img th:src="@{/assets/img/paper.png}" style="width:18px;"/>
 								<span th:text="${post.title}"></span>
+								<span class="text-black-50" th:text="'['+${post.commentCnt}+']'"></span>
 							</div>
 							<div>
 								<span th:text="${post.user.nickname}"></span>

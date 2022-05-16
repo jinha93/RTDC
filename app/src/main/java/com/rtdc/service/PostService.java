@@ -43,6 +43,9 @@ public class PostService {
 	}
 
 	
+	public Post getPost(Long postId) {
+		return postRepository.findByPostId(postId);
+	}
 	public Post getPost(Board board, Long postId) {
 		return postRepository.findByBoardAndPostId(board,postId);
 	}

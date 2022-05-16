@@ -14,23 +14,31 @@
 				<div class="py-5 px-md-5">
 					<form class="p-3" action="#" th:action=@{/user/signup} th:object="${user}" method="post" enctype="multipart/form-data" id="signUpForm">
 						<div class="mb-3">
+							<span class="sbAggroM"><span class="red">*</span>아이디</span>
 							<input type="text" class="form-control" th:classappend="${#fields.hasErrors('username')} ? 'is-invalid'" id="username" th:field="*{username}" placeholder="아이디" required autofocus>
 							<div class="invalid-feedback" th:if="${#fields.hasErrors('username')}" th:errors="*{username}"></div>
 						</div>
 						<div class="mb-3">
+							<span class="sbAggroM"><span class="red">*</span>비밀번호</span>
 							<input type="password" class="form-control" th:classappend="${#fields.hasErrors('password')} ? 'is-invalid'" id="password" th:field="*{password}" placeholder="비밀번호" required>
 							<div class="invalid-feedback" th:if="${#fields.hasErrors('password')}" th:errors="*{password}"></div>
 						</div>
 						<div class="mb-3">
+							<span class="sbAggroM"><span class="red">*</span>비밀번호확인</span>
+							<input type="password" class="form-control" id="passwordCheck" placeholder="비밀번호확인" required>
+						</div>
+						<div class="mb-3">
+							<span class="sbAggroM"><span class="red">*</span>닉네임</span>
 							<input type="text" class="form-control" th:classappend="${#fields.hasErrors('nickname')} ? 'is-invalid'" id="nickname" th:field="*{nickname}" placeholder="닉네임" required>
 							<div class="invalid-feedback" th:if="${#fields.hasErrors('nickname')}" th:errors="*{nickname}"></div>
 						</div>
 						<div class="mb-3">
+							<span class="sbAggroM">프로필사진</span>
 							<input type="file" class="form-control" id="profileImg" accept=".png, .jpg, .jpeg">
 							<input type="hidden" class="form-control" id="profileImgPath" th:field="*{profileImgPath}">
 						</div>
 						<div class="d-grid gap-2">
-							<button type="button" class="btn btn-primary" onclick="signUp();">회원가입</button>
+							<button type="button" class="btn btn-rtdc" onclick="signUp();">회원가입</button>
 						</div>
 						<input name="_csrf" type="hidden" value="79c76bfb-72b4-4bff-bd7d-4675a8270d84">
 					</form>
@@ -46,13 +54,52 @@
 <script>
 
 	function signUp(){
-		var file = $("#profileImg")[0].files[0];
+		if(!vaildate()){
+			return;
+		}
 		
+		var file = $("#profileImg")[0].files[0];
 		if(file != undefined){
 			sendFile(file);
 		}else{
 			$("#signUpForm").submit();
 		}
+	}
+	
+	function vaildate(){
+		if($("#username").val() == ''){
+			alert("아이디를 입력해주세요.")
+			$("#username").focus();
+			$("#username").addClass("is-invalid");
+			return false;
+		}
+		if($("#password").val() == ''){
+			alert("비밀번호를 입력해주세요.")
+			$("#password").focus();
+			$("#password").addClass("is-invalid");
+			return false;
+		}
+		if($("#passwordCheck").val() == ''){
+			alert("비밀번호 확인을 입력해주세요.")
+			$("#passwordCheck").focus();
+			$("#passwordCheck").addClass("is-invalid");
+			return false;
+		}
+		if($("#nickname").val() == ''){
+			alert("닉네임을 입력해주세요.")
+			$("#nickname").focus();
+			$("#nickname").addClass("is-invalid");
+			return false;
+		}
+		var p1 = $("#password").val();
+		var p2 = $("#passwordCheck").val();
+		if(p1 != p2){
+			alert("비밀번호가 일치하지 않습니다.");
+			$("#password").addClass("is-invalid");
+			$("#passwordCheck").addClass("is-invalid");
+			return false;
+		}
+		return true;
 	}
 	
 	function sendFile(file) {
