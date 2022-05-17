@@ -151,4 +151,9 @@ public class PostController {
 		
 		return "redirect:/post/list?boardId=" + post.getBoard().getBoardId();
 	}
+	
+	@GetMapping("/view2")
+	public String view2(Model model) {
+		return "post/view2";
+	}
 }

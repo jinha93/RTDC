@@ -44,7 +44,7 @@
 					<div th:each="event, i : ${eventList}" th:if="${event.status == '0'}" class="col col-lg-4 col-md-6 col-sm-12 col-12">
 						<div class="card mt-3" data-bs-toggle="modal" th:attr="data-bs-target=${'#exampleModal' + i.index}">
 <!-- 							<div th:utext="${event.cardImgPath}"></div> -->
-							<img th:src="${event.cardImgPath}" style="height: 250px;">
+							<img th:src="${event.cardImgPath}" style="height: 300px;">
 							<div class="card-body">
 								<h5 th:text="${event.title}" class="card-title sbAggroM"></h5>
 								<span th:text="${#temporals.format(event.startDateTime, 'yyyy.MM.dd')}" class="card-text"></span>
@@ -57,7 +57,7 @@
 			</div>
 		</div>
 		
-		<div class="text-end">
+		<div class="text-end mt-3">
 			<a type="button" class="btn btn-rtdc" th:href=@{/event/form}>작성</a>
 		</div>
 	</div>

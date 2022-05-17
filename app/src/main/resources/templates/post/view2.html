@@ -1,0 +1,49 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!-- head -->
+<head th:replace="fragment/header :: head"></head>
+<style>
+	table{
+		border: 1px solid;
+		border-collapse: collapse;
+	}
+	td{
+		border: 1px solid;
+		width: 20px;
+		height: 20px;
+	}
+</style>
+<body>
+	<!-- header -->
+	<header th:replace="fragment/header :: header"></header>
+
+
+	<!-- content -->
+	<div class="container">
+		<div class="row justify-content-center mt-5 mb-5">
+			<div id="content">
+			</div>
+		</div>
+	</div>
+
+
+	<!-- footer -->
+	<footer th:replace="fragment/footer :: footer"></footer>
+</body>
+<script>
+	$(document).ready(function(){
+		var html = '';
+		html += '<table>';
+		for(var i=0; i<10; i++){
+			html += '<tr>';
+			for(var j=0; j<10; j++){
+				html += '<td></td>';
+			}
+			html += '</tr>';
+		}
+		html += '</table>';
+		
+		$('#content').html(html);
+	})
+</script>
+</html>
