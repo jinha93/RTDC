@@ -84,4 +84,10 @@ public class EventController {
 		
 		return "redirect:/event/list?status=0";
 	}
+	
+	@GetMapping("/toyroom")
+	public String view2(Model model) {
+		return "event/toyroom";
+	}
 }
+
