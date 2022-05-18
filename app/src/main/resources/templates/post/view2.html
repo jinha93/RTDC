@@ -3,15 +3,38 @@
 <!-- head -->
 <head th:replace="fragment/header :: head"></head>
 <style>
+	.pixelDiv{
+		background-image: url("/assets/img/pixel-bg.png");
+		background-repeat: no-repeat;
+ 		background-size: 100%;
+ 		min-height: 1500px;
+ 		
+	}
+	.pixelContent{
+ 		padding-top: 6.8%;
+ 		padding-left: 9.4%;
+	}
+	
+	.box{
+/*  		border: 1px solid red;  */
+		width:47%;
+	}
+	
 	table{
-		border: 1px solid;
-		border-collapse: collapse;
+/* 		border: 1px solid blue; */
+/* 		background-color: yellow; */
+		width: 100%;
+		height: 100%;
+	}
+	tr,td{
+		margin: 0px;
+		padding:0px;
 	}
 	td{
-		border: 1px solid;
-		width: 20px;
-		height: 20px;
+		padding-bottom: 10%;
 	}
+	
+	
 </style>
 <body>
 	<!-- header -->
@@ -19,10 +42,10 @@
 
 
 	<!-- content -->
-	<div class="container">
-		<div class="row justify-content-center mt-5 mb-5">
-			<div id="content">
-			</div>
+	
+	<div class="pixelDiv">
+		<div class="pixelContent" id="content">	
+			<div class="box"></div>
 		</div>
 	</div>
 
@@ -36,14 +59,21 @@
 		html += '<table>';
 		for(var i=0; i<10; i++){
 			html += '<tr>';
-			for(var j=0; j<10; j++){
-				html += '<td></td>';
-			}
+				html += '<td style="background-color: red;"></td>';
+				html += '<td style="background-color: orange;"></td>';
+				html += '<td style="background-color: yellow;"></td>';
+				html += '<td style="background-color: green;"></td>';
+				html += '<td style="background-color: blue;"></td>';
+				html += '<td style="background-color: red;"></td>';
+				html += '<td style="background-color: orange;"></td>';
+				html += '<td style="background-color: yellow;"></td>';
+				html += '<td style="background-color: green;"></td>';
+				html += '<td style="background-color: blue;"></td>';
 			html += '</tr>';
 		}
 		html += '</table>';
 		
-		$('#content').html(html);
+		$('.box').html(html);
 	})
 </script>
 </html>
