@@ -36,7 +36,7 @@ public class HomeController{
 	
 	private String getFp(String url, String href) throws IOException {
 		Connection connect = Jsoup.connect(url);
-		connect.header("User-Agent", "Chrome/101.0.4951.54");
+		connect.header("User-Agent", "Chrome/101.0.4951.64");
 		
 		Document document = connect.get();
 		Elements elements = document.getElementsByAttributeValue("href", href);

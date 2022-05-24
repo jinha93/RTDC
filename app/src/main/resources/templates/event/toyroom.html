@@ -45,8 +45,11 @@
 	}
 	.sp-replacer{
 		margin-top: 6.2%;
-		margin-right: 4%;
-		width: 18.5%;
+		margin-right: -13.5%;
+		width: 18.3%;
+		height: 1.1rem;
+		border: none;
+		position: relative;
 	}
 	.eraser{
 		margin-top: 4%;
@@ -55,6 +58,14 @@
 		padding: 0px;
  		padding-bottom: 4%;
  		opacity: 0;
+	}
+	.whitebox{
+ 		background-color: white; 
+		margin-top: 6.2%;
+		margin-right: 6.4%;
+		width: 11%;
+		padding-bottom: 1%;
+		position: relative;
 	}
 	
 	
@@ -72,6 +83,7 @@
 				<div class="box">
 					<div class="pickerDiv d-flex justify-content-end mt-1">
 						<input type="text" id="picker" class="picker" value="black"><br>
+						<span class="whitebox"></span>
 						<button class="eraser" id="eraser" onclick="eraser()"></button>
 					</div>
 				</div>
