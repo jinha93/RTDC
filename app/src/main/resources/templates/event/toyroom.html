@@ -80,7 +80,7 @@
 		padding-bottom: 1%;
 		position: relative;
 	}
-	.sp-preview:hover{
+	.sp-replacer.sp-active, .sp-replacer:hover{
 		border: none;
 	}
 	
@@ -99,7 +99,7 @@
 				<div class="box">
 					<div class="pickerDiv d-flex justify-content-end mt-1">
 						<input type="text" id="picker" class="picker" value="black"><br>
-						<span class="whitebox"></span>
+						<span class="whitebox" onclick="whitboxClick();"></span>
 						<button class="eraser" id="eraser" onclick="eraser()"></button>
 					</div>
 				</div>
@@ -148,6 +148,8 @@
 	
 	function eraser(){
 		$("#picker").val("");
+	}
+	function whitboxClick(){
 	}
 </script>
 </html>
