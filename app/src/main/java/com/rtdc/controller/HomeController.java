@@ -7,6 +7,7 @@ import java.util.List;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
@@ -39,8 +40,8 @@ public class HomeController{
 		connect.header("User-Agent", "Chrome/101.0.4951.64");
 		
 		Document document = connect.get();
-		Elements elements = document.getElementsByAttributeValue("href", href);
-		String fp = elements.text().toString();
+		Element element = document.getElementsByAttributeValue("href", href).get(0);
+		String fp = element.text().toString();
 		fp = fp.replaceAll("[^0-9]", "");
 		return fp;
 	}

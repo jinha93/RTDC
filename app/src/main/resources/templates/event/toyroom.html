@@ -147,13 +147,15 @@
 
 	//이미지(png)로 다운로드
 	function downImg() {
+		$("#showLoading").click();
+		
 		//백그라운드 이미지 임시저장 및 삭제
 		var bgImgStyle = $("#bgImgStyle").text();
 		$("#bgImgStyle").text("");
 		
 		html2canvas($("#pixelTable")[0]).then(function(canvas) {
 			var myImage = canvas.toDataURL();
-			downloadURI(myImage, "저장할 파일명.png")
+			downloadURI(myImage, "TOYROOM.png")
 		});
 		
 		//백그라운드 이미지 다시 삽입
@@ -166,6 +168,10 @@
 		link.href = uri;
 		document.body.appendChild(link);
 		link.click();
+		
+		setTimeout(function() {
+			$("#hideLoading").click();
+		}, 1);
 	}
 	
 	
