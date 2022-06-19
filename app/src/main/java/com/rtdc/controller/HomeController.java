@@ -8,7 +8,6 @@ import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
@@ -16,13 +15,11 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.rtdc.model.Post;
 import com.rtdc.model.User;
-import com.rtdc.service.EventService;
 import com.rtdc.service.PostService;
 import com.rtdc.service.UserService;
 
@@ -42,7 +39,7 @@ public class HomeController{
 		Document document = connect.get();
 		Element element = document.getElementsByAttributeValue("href", href).get(0);
 		String fp = element.text().toString();
-		fp = fp.replaceAll("[^0-9]", "");
+		fp = fp.replaceAll("[^0-9.]", "");
 		return fp;
 	}
 	
@@ -77,5 +74,10 @@ public class HomeController{
     	String href = (String) param.get("href");
     	
     	return getFp(url, href);
+    }
+    
+    @GetMapping("/aboutus")
+    public String index(Model model){
+    	return "aboutus";
     }
 }

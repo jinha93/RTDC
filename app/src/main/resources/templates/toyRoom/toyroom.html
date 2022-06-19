@@ -1,0 +1,292 @@
+<!doctype html>
+<html xmlns:th="http://www.thymeleaf.org">
+<!-- head -->
+<head th:replace="fragment/header :: head"></head>
+<style>
+	.pixelDiv{
+		background-image: url("/assets/img/pixel-bg.png");
+		background-repeat: no-repeat;
+  		background-size: 100%; 
+ 		
+ 		max-width: 1600px;
+ 		height: 900px;
+ 		
+	}
+	.pixelContent{
+ 		padding-top: 6.8%;
+ 		padding-left: 9.4%;
+	}
+	.box{
+		cursor: pointer;
+		width:47%;
+	}
+	
+	.box table{
+		width: 100%;
+		height: 100%;
+		position: relative;
+		z-index: 1;
+	}
+	.box tr,td{
+		margin: 0px;
+		padding:0px;
+	}
+	.box td{
+		padding-bottom: 1%;
+	}
+	.box td:hover{
+		background-color: #adb5bd !important; 
+	}
+	
+	
+	.pickerDiv{
+		display: inline;
+	}
+	.sp-dd{
+		display: none;
+	}
+	.sp-replacer{
+		margin-top: 6.2%;
+		margin-right: -13.5%;
+		width: 18.4%;
+		height: 1.1rem;
+		border: none;
+		position: relative;
+	}
+	.eraser{
+		margin-top: 4%;
+		width: 17%;
+		height: 0;
+		padding: 0px;
+ 		padding-bottom: 4%;
+ 		opacity: 0;
+	}
+	.whitebox{
+ 		background-color: white; 
+		margin-top: 6.2%;
+		margin-right: 6.4%;
+		width: 11%;
+		padding-bottom: 1%;
+		position: relative;
+	}
+	.sp-replacer.sp-active, .sp-replacer:hover{
+		border: none;
+	}
+	
+	
+</style>
+<body>
+	<!-- header -->
+	<header th:replace="fragment/header :: header"></header>
+
+
+	<!-- content -->
+	<div style="background-color: #87c7e7;">
+		
+		<div class="pixelDiv mx-auto">
+			<div class="pixelContent" id="content">	
+				<button type="button" onclick="save();" style="width:10%; height:10%; font-size:2em; float:right; margin-top:2%; margin-right:35%;">저장</button>
+				<div class="box">
+					<div class="pickerDiv d-flex justify-content-end mt-1">
+						<input type="text" id="picker" class="picker" value="black"><br>
+						<span class="whitebox" onclick="whitboxClick();"></span>
+						<button class="eraser" id="eraser" onclick="eraser()"></button>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+	<div class="text-center mt-5">
+		<button type="button" onclick="save();" style="width:200px;height: 100px; font-size: 2em;">저장</button>
+<!-- 		<input type="file" class="form-control mx-auto mb-3" id="profileImg" onchange="sendFile();" accept=".png, .jpg, .jpeg" style="display: none;"> -->
+<!-- 		<button type="button" onclick="insBgImg();" style="width:200px;height: 100px; font-size: 2em;">이미지 삽입</button> -->
+<!-- 		<button type="button" onclick="downImg();" style="width:200px;height: 100px; font-size: 2em;">이미지 저장</button> -->
+	</div>
+
+
+	<!-- footer -->
+	<footer th:replace="fragment/footer :: footer"></footer>
+</body>
+<script th:inline="javascript">
+	$(document).ready(function(){
+		$(".picker").spectrum({
+			type: "color"
+		});
+		
+		/* <![CDATA[ */
+		var toyRoomList = /*[[${toyRoomList}]]*/;
+		/* ]]> */
+		
+		var html = '';
+		html += '<table id="pixelTable">';
+		for(var i=0; i<100; i++){
+			html += '<tr>';
+			for(var j=0; j<100; j++){
+				
+				html += '<td id="'
+						+ toyRoomList[i * 100 + j].id
+						+ '" class="pixel" data-chgYn="N" data-value="'
+						+ toyRoomList[i * 100 + j].backgroundColor
+						+ '" style="background-color:'
+						+ toyRoomList[i * 100 + j].backgroundColor
+						+ '" onmousedown="mouseDown()" onmouseup="mouseUp()" onmousemove="paint(this.id)" ondragstart="return false"></td>';
+			}
+			html += '</tr>';
+		}
+		html += '</table>';
+
+		$('.box').prepend(html);
+	})
+
+	var paintBoolean = false;
+	function mouseDown() {
+		paintBoolean = true;
+	}
+	function mouseUp() {
+		paintBoolean = false;
+	}
+	
+	
+	function paint(target) {
+		if (paintBoolean) {
+			var cnt = 0;
+			$('.pixel').each(function() {
+				if ($(this).attr('data-chgYn') == 'Y') {
+					cnt++;
+				}
+			});
+			
+			if(cnt >= 100){
+				alert("한번에 최대 100칸까지 가능합니다.");
+				paintBoolean = false;
+				return;
+			}
+			
+			var colorCode = $(".picker").val();
+			$('#' + target).css('background-color', colorCode);
+			$('#' + target).attr('data-chgYn', 'Y');
+		}
+	}
+	function eraser() {
+		$("#picker").val("");
+	}
+
+	function save() {
+		var pixelArr = [];
+
+		$('.pixel').each(function() {
+			var dataObj = {};
+			if ($(this).attr('data-chgYn') == 'Y') {
+				var value = $(this).attr('data-value');
+				var bgColor = $(this).css('background-color');
+				if (value != bgColor) {
+					dataObj.id = $(this).attr('id');
+					dataObj.backgroundColor = $(this).css('background-color');
+					pixelArr.push(dataObj);
+				}
+			}
+		});
+
+		var jsonData = JSON.stringify(pixelArr);
+
+		$.ajax({
+			type : "POST",
+			url : "/toyRoom/save",
+			data : jsonData,
+			contentType : 'application/json; charset=UTF-8',
+			success : function(result) {
+				console.log(result);
+			}
+		});
+
+	}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+
+	//이미지(png)로 다운로드
+	function downImg() {
+		$("#showLoading").click();
+
+		//백그라운드 이미지 임시저장 및 삭제
+		var bgImgStyle = $("#bgImgStyle").text();
+		$("#bgImgStyle").text("");
+
+		html2canvas($("#pixelTable")[0]).then(function(canvas) {
+			var myImage = canvas.toDataURL();
+			downloadURI(myImage, "TOYROOM.png")
+		});
+
+		//백그라운드 이미지 다시 삽입
+		$("#bgImgStyle").text(bgImgStyle);
+	}
+
+	function downloadURI(uri, name) {
+		var link = document.createElement("a")
+		link.download = name;
+		link.href = uri;
+		document.body.appendChild(link);
+		link.click();
+
+		setTimeout(function() {
+			$("#hideLoading").click();
+		}, 1);
+	}
+
+	function insBgImg() {
+		$('#profileImg').trigger('click')
+
+	}
+
+	//이미지 업로드(백그라운드 img)
+	function sendFile() {
+		var file = $("#profileImg")[0].files[0];
+
+		var form_data = new FormData();
+		form_data.append('file', file);
+		form_data.append('gb', 'profile');
+
+		$.ajax({
+			data : form_data,
+			type : "POST",
+			url : '/image',
+			cache : false,
+			contentType : false,
+			enctype : 'multipart/form-data',
+			processData : false,
+			success : function(url) {
+				console.log(url);
+
+				var css = "";
+				css += "<style id='bgImgStyle'>";
+				css += ".box table::before{"
+				css += 'content: "";';
+				css += 'background-image: url("' + url + '");';
+				css += 'background-repeat: no-repeat;';
+				css += 'background-size: cover;';
+				css += 'position:absolute;';
+				css += 'width:100%;';
+				css += 'height: 100%;';
+				css += 'opacity: 0.3;';
+				css += 'z-index: -1;';
+				css += "</style>";
+
+				$("head").append(css);
+			}
+		});
+	}
+</script>
+</html>
