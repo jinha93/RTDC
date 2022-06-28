@@ -1,0 +1,19 @@
+const ownerAddress = '0x850F09C020e964FC09F835d26813b5A99e8c6C09';
+const apiUrl = 'https://th-api.klaytnapi.com/v2/contract/nft/0x46dbdc7965cf3cd2257c054feab941a05ff46488/owner/' + ownerAddress;
+
+const settings = {
+  "async": true,
+  "crossDomain": true,
+  "url": apiUrl,
+  "method": "GET",
+  "headers": {
+    "Content-Type": "application/json",
+    "x-chain-id": "8217",
+    "Authorization": "Basic S0FTS0pWWUJFOE1YSjJIMTNINDVRODlaOl9IY181Q2pWeGdOSHJfY3psc1EzMm5HMUE0cy1rQ09tdmhRTXpNZWQ="
+  }
+};
+
+$.ajax(settings).done(function (response) {
+  console.log(response.items.length);
+  console.log(response);
+});
