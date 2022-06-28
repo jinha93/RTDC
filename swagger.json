@@ -1,0 +1,4716 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Token History API",
+    "description": "# Introduction\n\nToken History API는 KLAY, FT (KIP-7, Labeled ERC-20), NFT (KIP-17, Labeled ERC-721), MT (KIP-37, Labeled ERC-1155) 토큰 정보, 이들 토큰을 주고받은 기록을 조회하는 기능을 제공합니다. 여러분은 특정 EOA가 KLAY를 주고받은 기록을 확인하거나 EOA가 가지고 있는 NFT 정보를 불러오는 등 Token History API를 다양하게 활용할 수 있습니다.\n\n\nToken History API 사용에 관한 자세한 내용은 [튜토리얼](https://klaytn.com)을 확인하십시오.\n\n\n이 문서 혹은 KAS에 관한 문의는 [KAS 개발자 포럼](https://support.klaytnapi.com/hc/ko/community/topics)을 방문해 도움을 받으십시오\n\n# Authentication\n\n<!-- ReDoc-Inject: <security-definitions> -->"
+  },
+  "tags": [
+    {
+      "name": "th-contract",
+      "x-displayName": "Contract"
+    },
+    {
+      "name": "th-token",
+      "x-displayName": "Token"
+    },
+    {
+      "name": "th-token-ownership",
+      "x-displayName": "Token Ownership"
+    },
+    {
+      "name": "token-history",
+      "x-displayName": "Token History"
+    }
+  ],
+  "x-tagGroups": [
+    {
+      "name": "API",
+      "tags": [
+        "th-contract",
+        "th-token",
+        "th-token-ownership",
+        "token-history"
+      ]
+    }
+  ],
+  "paths": {
+    "/v2/transfer": {
+      "get": {
+        "description": "거래내역을 통합 조회합니다. 거래내역은 KLAY 전송 (`KlayTransfer`), FT 전송 (`FtTransfer`), NFT 전송 (`NftTransfer`), MT 전송 (`MtTransfer`)으로 나뉩니다. <p></p>\n\n## FT/NFT/MT 거래내역 조회 결과에 포함된 KlayTransfer <p></p>\n\nFT, NFT, MT 전송의 경우 토큰 전송을 실행한 `KlayTransfer` 전송내역이 조회 결과에 포함됩니다. 이것은 FT/NFT/MT 토큰 전송은 기본적으로 FT/NFT/MT 컨트랙트 함수의 실행이기 때문이며 `transfer`는 토큰 전송 함수를 실행하는 트랜잭션에 대응하는 `KlayTransfer`를 응답에 포함합니다. 컨트랙트 함수를 실행하는 트랜잭션들은 대체로 KLAY를 전송하지 않기 때문에 FT, NFT, MT 전송을 실행한 `KlayTransfer`의 `value`는 0일 수 있습니다. `exclude-zero-klay=true` 쿼리를 통해 `KlayTransfer`를 제외할 수 있습니다. <p></p>\n\n## 거래유형<p></p>\n\n* `kind` 파라메터를 설정하여 KLAY, FT, NFT, MT 중 한 가지 유형을 골라 거래내역을 조회할 수 있습니다<br>\n* `kind`가 설정되지 않으면 모든 유형의 거래내역이 조회됩니다<p></p><br>\n\n## 조회기간<p></p>\n\n* `range`의 경우 `range={from},{to}` 포맷으로 질의합니다<br>\n* `{from}`과 `{to}`가 정수일 경우 Unix time으로, 16진수 문자열일 경우 블록 번호로 간주합니다<br>\n* `{to}`값이 없는 경우 현재 시간 또는 최신 블록 번호가 사용됩니다<br>\n* 한 번에 불러올 수 있는 거래내역은 최대 과거 6개월 분량입니다(Unix time, 블록 두 경우 모두 해당)<p></p><br>\n\n## Preset<p></p>\n\nPreset은 EOA, FT, NFT, MT 컨트랙트 주소들의 집합입니다. 반복적으로 특정 어카운트들의 거래내역만을 쉽고 빠르게 조회할 때 사용할 수 있습니다.<p></p>\n\n* `presets` 쿼리 파라미터는 필수 파라미터입니다<br>\n* [Preset](https://console.klaytnapi.com/service/th/preset/list)은 KAS Console에서 사전에 생성되어 있어야 합니다<br>\n* Preset ID는 KAS Console에서 확인하실 수 있습니다<p></p><br>\n\n## Size<p></p>\n\n* `size` 쿼리 파라미터는 선택 파라미터입니다 (최소값 = 1, 최대값 = 1000, 기본값 = 100)<br>\n* 음수를 입력하면 오류를 반환합니다<br>\n* 0을 입력하면 기본값(`size=100`)을 사용합니다<br>\n* 최대값보다 큰 값을 입력하면 최대값을 사용합니다<br>\n",
+        "parameters": [
+          {
+            "description": " Klaytn 네트워크 체인 ID (1001 or 8217)",
+            "in": "header",
+            "name": "x-chain-id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "(csv) [“klay”, “ft”, “nft”,“mt”] 중 포함 할 유형, 지정안될 경우 모든 유형을 조회 ",
+            "in": "query",
+            "name": "kind",
+            "required": false,
+            "explode": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "klay,ft,nft,mt"
+          },
+          {
+            "description": "조회 범위 지정 (블록번호 또는 Unix time)",
+            "in": "query",
+            "name": "range",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "0x1,0x2"
+          },
+          {
+            "description": "응답 아이템 개수 (min=1, max=1000, default=100)",
+            "in": "query",
+            "name": "size",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "example": 100
+          },
+          {
+            "description": "응답 오프셋",
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": ""
+          },
+          {
+            "description": "0 klay 전송 제외 여부(default=false)",
+            "in": "query",
+            "name": "exclude-zero-klay",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "true"
+          },
+          {
+            "description": " (csv) 검색에 사용할 Preset ID들, Preset ID는 KAS Console에서 확인",
+            "in": "query",
+            "name": "presets",
+            "required": true,
+            "explode": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "65,68"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "PageableTransfers",
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "title": "TransferArray",
+                      "type": "array",
+                      "items": {
+                        "title": "TransferItem",
+                        "anyOf": [
+                          {
+                            "title": "KlayTransfer",
+                            "type": "object",
+                            "properties": {
+                              "feePayer": {
+                                "type": "string",
+                                "description": "수수료 대납 계정 주소 (20-byte)",
+                                "example": "0xd0ea3e0eabaea095ea3ba231c043dbf8c0feb40a"
+                              },
+                              "feeRatio": {
+                                "type": "integer",
+                                "format": "int32",
+                                "description": "수수료 대납 비율",
+                                "example": 100
+                              },
+                              "fee": {
+                                "type": "string",
+                                "description": "가스비",
+                                "example": "0xa455"
+                              },
+                              "status": {
+                                "type": "integer",
+                                "format": "int32",
+                                "description": "트랜잭션 상태(`1`: 성공, `0`: 실패)",
+                                "example": 1
+                              },
+                              "from": {
+                                "type": "string",
+                                "description": "보낸 사람 EOA (20-byte)",
+                                "example": "0x5e47b195eeb11d72f5e1d27aebb6d341f1a9bedb"
+                              },
+                              "to": {
+                                "type": "string",
+                                "description": "받은 사람 EOA (20-byte)",
+                                "example": "0xb4bf60383c64d47f2e667f2fe8f7ed0c9380f770"
+                              },
+                              "transactionHash": {
+                                "type": "string",
+                                "description": "트랜잭션 해시",
+                                "example": "0xc4a32f41e829f50c4e8774be68864f522120a2047db2143b59b3919ebd9234f8"
+                              },
+                              "transactionIndex": {
+                                "type": "integer",
+                                "format": "int32",
+                                "description": "트랜잭션 인덱스",
+                                "example": 1
+                              },
+                              "blockNumber": {
+                                "type": "integer",
+                                "format": "int64",
+                                "description": "해당 트랜잭션이 있는 블록의 번호",
+                                "example": "5312105"
+                              },
+                              "transferType": {
+                                "type": "string",
+                                "description": "거래내역 유형",
+                                "example": "klay"
+                              },
+                              "typeInt": {
+                                "type": "integer",
+                                "format": "int32",
+                                "description": "트랜잭션 유형",
+                                "example": 50
+                              },
+                              "timestamp": {
+                                "type": "integer",
+                                "format": "int64",
+                                "description": "트랜잭션 발생 시간 (timestamp)",
+                                "example": 1592180992
+                              },
+                              "value": {
+                                "type": "string",
+                                "description": "KLAY 전송량 (16진수)",
+                                "example": "0xa"
+                              }
+                            },
+                            "required": [
+                              "feePayer",
+                              "feeRatio",
+                              "fee",
+                              "status",
+                              "from",
+                              "to",
+                              "transactionHash",
+                              "transactionIndex",
+                              "blockNumber",
+                              "transferType",
+                              "typeInt",
+                              "timestamp",
+                              "value"
+                            ]
+                          },
+                          {
+                            "title": "FtTransfer",
+                            "type": "object",
+                            "properties": {
+                              "contract": {
+                                "title": "FtContract",
+                                "type": "object",
+                                "properties": {
+                                  "address": {
+                                    "type": "string",
+                                    "description": "컨트랙트 주소 (20-byte)",
+                                    "example": "0x5e47b195eeb11d72f5e1d27aebb6d341f1a9bedb"
+                                  },
+                                  "decimals": {
+                                    "type": "integer",
+                                    "format": "int64",
+                                    "description": "토큰 자릿수",
+                                    "example": 8
+                                  },
+                                  "name": {
+                                    "type": "string",
+                                    "description": "토큰 이름",
+                                    "example": "Test Coin"
+                                  },
+                                  "symbol": {
+                                    "type": "string",
+                                    "description": "토큰 심볼",
+                                    "example": "TSTC"
+                                  }
+                                },
+                                "required": [
+                                  "address",
+                                  "decimals",
+                                  "name",
+                                  "symbol"
+                                ]
+                              },
+                              "formattedValue": {
+                                "type": "string",
+                                "description": "컨트랙트의 `decimals` 값을 적용한 변환값",
+                                "example": "0.000000000000000002"
+                              },
+                              "from": {
+                                "type": "string",
+                                "description": "보낸 사람 EOA (20-byte)",
+                                "example": "0x5e47b195eeb11d72f5e1d27aebb6d341f1a9bedb"
+                              },
+                              "to": {
+                                "type": "string",
+                                "description": "받은 사람 EOA (20-byte)",
+                                "example": "0xb4bf60383c64d47f2e667f2fe8f7ed0c9380f770"
+                              },
+                              "transaction": {
+                                "title": "Transaction",
+                                "type": "object",
+                                "properties": {
+                                  "feePayer": {
+                                    "type": "string",
+                                    "description": "수수료 대납 계정 주소 (20-byte)",
+                                    "example": "0xd0ea3e0eabaea095ea3ba231c043dbf8c0feb40a"
+                                  },
+                                  "feeRatio": {
+                                    "type": "integer",
+                                    "format": "int32",
+                                    "description": "수수료 대납 비율",
+                                    "example": 100
+                                  },
+                                  "fee": {
+                                    "type": "string",
+                                    "description": "가스비",
+                                    "example": "0xa455"
+                                  },
+                                  "from": {
+                                    "type": "string",
+                                    "description": "트랜잭션을 전송한 사람의 EOA (20-byte)",
+                                    "example": "0x5e47b195eeb11d72f5e1d27aebb6d341f1a9bedb"
+                                  },
+                                  "timestamp": {
+                                    "type": "integer",
+                                    "format": "int64",
+                                    "description": "트랜잭션 발생 시간 (timestamp)",
+                                    "example": 1592180992
+                                  },
+                                  "transactionHash": {
+                                    "type": "string",
+                                    "description": "트랜잭션 해시 (32-byte)",
+                                    "example": "0xc4a32f41e829f50c4e8774be68864f522120a2047db2143b59b3919ebd9234f8"
+                                  },
+                                  "blockNumber": {
+                                    "type": "integer",
+                                    "format": "int64",
+                                    "description": "해당 트랜잭션이 있는 블록의 번호",
+                                    "example": "5312105"
+                                  },
+                                  "typeInt": {
+                                    "type": "integer",
+                                    "format": "int32",
+                                    "description": "트랜잭션 유형",
+                                    "example": 10
+                                  },
+                                  "value": {
+                                    "type": "string",
+                                    "description": "KLAY 전송량 (16진수)",
+                                    "example": "0xa"
+                                  }
+                                },
+                                "required": [
+                                  "feePayer",
+                                  "feeRatio",
+                                  "fee",
+                                  "from",
+                                  "timestamp",
+                                  "transactionHash",
+                                  "blockNumber",
+                                  "typeInt",
+                                  "value"
+                                ]
+                              },
+                              "transferType": {
+                                "type": "string",
+                                "description": "거래내역 유형",
+                                "example": "ft"
+                              },
+                              "value": {
+                                "type": "string",
+                                "description": "전송한 토큰 개수 (16진수)",
+                                "example": "0xa"
+                              }
+                            },
+                            "required": [
+                              "contract",
+                              "formattedValue",
+                              "from",
+                              "to",
+                              "transaction",
+                              "transferType",
+                              "value"
+                            ]
+                          },
+                          {
+                            "title": "NftTransfer",
+                            "type": "object",
+                            "properties": {
+                              "contract": {
+                                "title": "NftContract",
+                                "type": "object",
+                                "properties": {
+                                  "address": {
+                                    "type": "string",
+                                    "description": "컨트랙트 주소 (20-byte)",
+                                    "example": "0x5e47b195eeb11d72f5e1d27aebb6d341f1a9bedb"
+                                  },
+                                  "name": {
+                                    "type": "string",
+                                    "description": "토큰 이름",
+                                    "example": "Test contract"
+                                  },
+                                  "symbol": {
+                                    "type": "string",
+                                    "description": "토큰 심볼",
+                                    "example": "TSTC"
+                                  }
+                                },
+                                "required": [
+                                  "address",
+                                  "name",
+                                  "symbol"
+                                ]
+                              },
+                              "from": {
+                                "type": "string",
+                                "description": "보낸 사람 EOA (20-byte)",
+                                "example": "0x5e47b195eeb11d72f5e1d27aebb6d341f1a9bedb"
+                              },
+                              "to": {
+                                "type": "string",
+                                "description": "받은 사람 EOA (20-byte)",
+                                "example": "0xb4bf60383c64d47f2e667f2fe8f7ed0c9380f770"
+                              },
+                              "transaction": {
+                                "$ref": "#/paths/~1v2~1transfer/get/responses/200/content/application~1json/schema/properties/items/items/anyOf/1/properties/transaction"
+                              },
+                              "transferType": {
+                                "type": "string",
+                                "description": "거래내역 유형",
+                                "example": "nft"
+                              },
+                              "tokenId": {
+                                "type": "string",
+                                "description": "토큰 식별자 (16진수)",
+                                "example": "0x1"
+                              }
+                            },
+                            "required": [
+                              "contract",
+                              "from",
+                              "to",
+                              "transaction",
+                              "transferType",
+                              "tokenId"
+                            ]
+                          },
+                          {
+                            "title": "MtTransfer",
+                            "type": "object",
+                            "properties": {
+                              "contract": {
+                                "title": "MtContract",
+                                "type": "object",
+                                "properties": {
+                                  "address": {
+                                    "type": "string",
+                                    "description": "컨트랙트 주소 (20-byte)",
+                                    "example": "0x5e47b195eeb11d72f5e1d27aebb6d341f1a9bedb"
+                                  }
+                                },
+                                "required": [
+                                  "address"
+                                ]
+                              },
+                              "operator": {
+                                "type": "string",
+                                "description": "승인한 사람 EOA (20-byte)",
+                                "example": "0x5e47b195eeb11d72f5e1d27aebb6d341f1a9bedb"
+                              },
+                              "from": {
+                                "type": "string",
+                                "description": "보낸 사람 EOA (20-byte)",
+                                "example": "0x5e47b195eeb11d72f5e1d27aebb6d341f1a9bedb"
+                              },
+                              "to": {
+                                "type": "string",
+                                "description": "받은 사람 EOA (20-byte)",
+                                "example": "0xb4bf60383c64d47f2e667f2fe8f7ed0c9380f770"
+                              },
+                              "transaction": {
+                                "$ref": "#/paths/~1v2~1transfer/get/responses/200/content/application~1json/schema/properties/items/items/anyOf/1/properties/transaction"
+                              },
+                              "transferType": {
+                                "type": "string",
+                                "description": "거래내역 유형",
+                                "example": "mt"
+                              },
+                              "ids": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                },
+                                "description": "토큰 식별자 배열(16진수)",
+                                "example": "[0x1,0x2]"
+                              },
+                              "values": {
+                                "type": "array",
+                                "items": {
+                                  "type": "string"
+                                },
+                                "description": "전송한 토큰 개수 배열(16진수)",
+                                "example": "[0xa,0xb]"
+                              }
+                            },
+                            "required": [
+                              "contract",
+                              "operator",
+                              "from",
+                              "to",
+                              "transaction",
+                              "transferType",
+                              "ids",
+                              "values"
+                            ]
+                          }
+                        ]
+                      }
+                    },
+                    "cursor": {
+                      "type": "string",
+                      "description": "다음 페이지 커서",
+                      "example": "z2o87adeLbW4Aqm53gpq6VbGZg3JmE5vodrwD9XKmY5vMl4Gkw9PZO1NoBpV8LR83y0Edb3Aar7eKQqzJWDg6X2xOe1P27l4kzY0xQa8LNABMWv0VJQ6MpNlr9O1xBDE"
+                    }
+                  },
+                  "required": [
+                    "items",
+                    "cursor"
+                  ]
+                },
+                "examples": {
+                  "Success": {
+                    "summary": "Success",
+                    "description": "",
+                    "value": {
+                      "items": [
+                        {
+                          "transferType": "mt",
+                          "transaction": {
+                            "from": "0xbdfaeffb231ed4ef4600a8be4f5aa02ba4821708",
+                            "fee": "0x661625fab1200",
+                            "transactionHash": "0x6826275ccdec83711277de86c773d9ce987fb8bcd7edf26b623d3117b1d01b52",
+                            "blockNumber": 5312085,
+                            "typeInt": 48,
+                            "timestamp": 1607993827,
+                            "value": "0x0",
+                            "feePayer": "",
+                            "feeRatio": 0
+                          },
+                          "contract": {
+                            "address": "0xda781766c4ca2d6f35dab8c5d26ad3d3021e69c8"
+                          },
+                          "operator": "0xbdfaeffb231ed4ef4600a8be4f5aa02ba4821708",
+                          "from": "0xbdfaeffb231ed4ef4600a8be4f5aa02ba4821708",
+                          "to": "0x9c7fe1c0af1cba4d341b46ac624464e3462b863b",
+                          "ids": [
+                            "0x1"
+                          ],
+                          "values": [
+                            "0x1c2"
+                          ]
+                        },
+                        {
+                          "transferType": "nft",
+                          "transaction": {
+                            "from": "0xbdfaeffb231ed4ef4600a8be4f5aa02ba4821708",
+                            "fee": "0x70aafcc4b0e00",
+                            "transactionHash": "0x4341fe79a5b69847a284e20aea3d1fdb3377724661bf224f38e02d34b2940c96",
+                            "blockNumber": 5312080,
+                            "typeInt": 48,
+                            "timestamp": 1607993827,
+                            "value": "0x0",
+                            "feePayer": "",
+                            "feeRatio": 0
+                          },
+                          "contract": {
+                            "address": "0x67faa05618e00cde1e3d9092b90c0876855c39e4",
+                            "name": "KASNFT",
+                            "symbol": "KNFT"
+                          },
+                          "from": "0xbdfaeffb231ed4ef4600a8be4f5aa02ba4821708",
+                          "to": "0x9c7fe1c0af1cba4d341b46ac624464e3462b863b",
+                          "tokenId": "0x1"
+                        },
+                        {
+                          "transferType": "ft",
+                          "transaction": {
+                            "from": "0xbdfaeffb231ed4ef4600a8be4f5aa02ba4821708",
+                            "fee": "0x4fe85ad649c00",
+                            "transactionHash": "0x196862e12efc8d4ea83a792d9bafbcc5d87b21805c7fe4ae76b8e3d7fac9e3f3",
+                            "blockNumber": 5312079,
+                            "typeInt": 48,
+                            "timestamp": 1607993827,
+                            "value": "0x0",
+                            "feePayer": "",
+                            "feeRatio": 0
+                          },
+                          "contract": {
+                            "address": "0xf2a8ab5b6c14f33a3b470ac7505712c8665e81d3",
+                            "name": "KASFT",
+                            "symbol": "KFT",
+                            "decimals": 18
+                          },
+                          "from": "0xbdfaeffb231ed4ef4600a8be4f5aa02ba4821708",
+                          "to": "0x9c7fe1c0af1cba4d341b46ac624464e3462b863b",
+                          "value": "0x15e",
+                          "formattedValue": "0.00000000000000035"
+                        },
+                        {
+                          "transferType": "klay",
+                          "from": "0xbdfaeffb231ed4ef4600a8be4f5aa02ba4821708",
+                          "fee": "0x1dd7c1681d000",
+                          "status": 1,
+                          "to": "0x9c7fe1c0af1cba4d341b46ac624464e3462b863b",
+                          "transactionHash": "0xe5ba3d97ed0e2b69e2e0da7aa1abdc22a17b3f79141f67f4784b5ce5433736c7",
+                          "transactionIndex": 0,
+                          "blockNumber": 5312080,
+                          "typeInt": 8,
+                          "timestamp": 1607993821,
+                          "value": "0xde0b6b3a7640000",
+                          "feePayer": "",
+                          "feeRatio": 0
+                        }
+                      ],
+                      "cursor": "KGvdzQDxL2AYZzAMk1dLK6g9OrJN02G7aqwaNpWkPJlL07V51MZ8xmBOR17GPp1KDXE5bKhYnv93XgGbrz6EdAKeoQ2Y4Dq3peQV45vDPWmoXxlYB8wbEVPXBb9a7Z6O"
+                    }
+                  },
+                  "Empty transfers": {
+                    "summary": "Empty transfers",
+                    "description": "",
+                    "value": {
+                      "items": [],
+                      "cursor": ""
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "ErrorResponse",
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "integer",
+                      "description": "에러 코드입니다."
+                    },
+                    "message": {
+                      "type": "string",
+                      "description": "에러 메시지입니다."
+                    },
+                    "requestId": {
+                      "type": "string",
+                      "description": "요청을 식별하기 위한 ID입니다."
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "message",
+                    "requestId"
+                  ]
+                },
+                "examples": {
+                  "Empty presets": {
+                    "summary": "Empty presets",
+                    "description": "",
+                    "value": {
+                      "code": 1040010,
+                      "message": "[InvalidQueryParameterValue]required presets",
+                      "requestId": "aeed9ea2-5300-4d1e-b898-8d02c3e352a9"
+                    }
+                  },
+                  "Invalid preset query": {
+                    "summary": "Invalid preset query",
+                    "description": "",
+                    "value": {
+                      "code": 1040010,
+                      "message": "[InvalidQueryParameterValue]invalid presets query",
+                      "requestId": "aeed9ea2-5300-4d1e-b898-8d02c3e352a9"
+                    }
+                  },
+                  "Invalid query": {
+                    "summary": "Invalid query",
+                    "description": "",
+                    "value": {
+                      "code": 1040010,
+                      "message": "[InvalidQueryParameterValue]invalid query value",
+                      "requestId": "aeed9ea2-5300-4d1e-b898-8d02c3e352a9"
+                    }
+                  },
+                  "Out of range timestamp": {
+                    "summary": "Out of range timestamp",
+                    "description": "",
+                    "value": {
+                      "code": 1040011,
+                      "message": "[OutOfRangeQueryParameterValue]invalid timestamp range",
+                      "requestId": "aeed9ea2-5300-4d1e-b898-8d02c3e352a9"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/paths/~1v2~1transfer/get/responses/400/content/application~1json/schema"
+                },
+                "examples": {
+                  "Presets not found": {
+                    "summary": "Presets not found",
+                    "description": "",
+                    "value": {
+                      "code": 1040400,
+                      "message": "[ResourceNotFound]preset not found",
+                      "requestId": "aeed9ea2-5300-4d1e-b898-8d02c3e352a9"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "토큰 송/수신 기록 조회",
+        "operationId": "getTransfers",
+        "tags": [
+          "token-history"
+        ]
+      }
+    },
+    "/v2/transfer/tx/{transaction-hash}": {
+      "get": {
+        "description": "트랜잭션 해시로 거래내역을 조회합니다. 거래내역은 KLAY 전송 (`KlayTransfer`), FT 전송 (`FtTransfer`), NFT 전송 (`NftTransfer`), MT 전송 (`MtTransfer`)으로 나뉘며 FT, NFT, MT 전송의 경우 토큰 전송을 실행한 `KlayTransfer` 전송내역이 조회 결과에 포함됩니다. FT, NFT, MT 전송을 실행한 `KlayTransfer`의 `value`는 0일 수 있습니다. 이와 관련된 자세한 설명은 `GET /v2/transfer`를 참조하여 주시기 바랍니다.\n",
+        "parameters": [
+          {
+            "description": " Klaytn 네트워크 체인 ID (1001 or 8217)",
+            "in": "header",
+            "name": "x-chain-id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "조회할 트랜잭션 해시",
+            "in": "path",
+            "name": "transaction-hash",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Transfers",
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "$ref": "#/paths/~1v2~1transfer/get/responses/200/content/application~1json/schema/properties/items"
+                    }
+                  },
+                  "required": [
+                    "items"
+                  ]
+                },
+                "examples": {
+                  "Success": {
+                    "summary": "Success",
+                    "description": "",
+                    "value": {
+                      "items": [
+                        {
+                          "transferType": "ft",
+                          "transaction": {
+                            "from": "0x5bf30ff4a1a3a905531c5e1b52c635892a9fc28d",
+                            "fee": "0x48abe561cf400",
+                            "transactionHash": "0x9fb236689b26fc8b8a938a8eb2b7e5a6afc1c7a837c61751f08eac7358db8d73",
+                            "blockNumber": 5312085,
+                            "typeInt": 49,
+                            "timestamp": 1597649114,
+                            "value": "0x0",
+                            "feePayer": "0xacb22916b804ac088c61c8711ec196b518f2e7fc",
+                            "feeRatio": 0
+                          },
+                          "contract": {
+                            "address": "0xb1a7abe0c5a9e06cc7585a435e74976d2dee07f3",
+                            "name": "BlockchainPetToken",
+                            "symbol": "BPT",
+                            "decimals": 2
+                          },
+                          "from": "0x5bf30ff4a1a3a905531c5e1b52c635892a9fc28d",
+                          "to": "0xeb7f7926cc4f866cec135728d35a7531c1d12791",
+                          "value": "0x3e8",
+                          "formattedValue": "10"
+                        },
+                        {
+                          "transferType": "klay",
+                          "from": "0x5bf30ff4a1a3a905531c5e1b52c635892a9fc28d",
+                          "fee": "0x48abe561cf400",
+                          "status": 1,
+                          "to": "0xb1a7abe0c5a9e06cc7585a435e74976d2dee07f3",
+                          "transactionHash": "0x9fb236689b26fc8b8a938a8eb2b7e5a6afc1c7a837c61751f08eac7358db8d73",
+                          "transactionIndex": 1,
+                          "blockNumber": 5312085,
+                          "typeInt": 49,
+                          "timestamp": 1597649114,
+                          "value": "0x0",
+                          "feePayer": "0xacb22916b804ac088c61c8711ec196b518f2e7fc",
+                          "feeRatio": 0
+                        }
+                      ]
+                    }
+                  },
+                  "Transaction not found": {
+                    "summary": "Transaction not found",
+                    "description": "",
+                    "value": {
+                      "items": []
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/paths/~1v2~1transfer/get/responses/400/content/application~1json/schema"
+                },
+                "example": {
+                  "code": 1040020,
+                  "message": "[InvalidUriValue]invalid tx hash",
+                  "requestId": "f40a1377-5b58-9157-9514-eda8d3158c2b"
+                }
+              }
+            }
+          }
+        },
+        "summary": "트랜잭션 해시로 토큰 송/수신 기록 조회",
+        "operationId": "getTransfersByTxHash",
+        "tags": [
+          "token-history"
+        ]
+      }
+    },
+    "/v2/transfer/account/{address}": {
+      "get": {
+        "description": "특정 EOA의 토큰 거래내역을 조회합니다. 기능적으로 `GET /v2/transfer`와 같습니다. 단, 결과로 반환된 Transfer 객체에서 이 EOA가 토큰을 받았다면 `to`가, 토큰을 보냈다면 `from`이 EOA와 같습니다.\n   \n거래내역은 KLAY 전송 (`KlayTransfer`), FT 전송 (`FtTransfer`), NFT 전송 (`NftTransfer`), MT 전송 (`MtTransfer`)으로 나뉘며 FT, NFT, MT 전송의 경우 토큰 전송을 실행한 `KlayTransfer` 전송내역이 조회 결과에 포함됩니다. FT, NFT, MT 전송을 실행한 `KlayTransfer`의 `value`는 0일 수 있습니다. `exclude-zero-klay=true` 쿼리를 통해 `KlayTransfer`를 제외할 수 있습니다. 이와 관련된 자세한 설명은 `GET /v2/transfer`를 참조하여 주시기 바랍니다.<p></p>\n\n## 거래유형<p></p>\n\n* `kind` 파라메터를 설정하여 여러 유형의 거래내역을 조회할 수 있습니다<br>\n* `kind`가 설정되지 않으면 모든 유형의 거래내역이 조회됩니다<p></p><br>\n\n## 조회기간<p></p>\n\n* `range`의 경우 `range={from},{to}` 포맷으로 질의합니다<br>\n* `{from}`과 `{to}`가 정수일 경우 Unix time으로, 16진수 문자열일 경우 블록 번호로 간주합니다<br>\n* `{to}`값이 없는 경우 현재 시간 또는 최신 블록 번호가 사용됩니다<br>\n* 최대 검색기간은 6개월로 제한됩니다 (Unix time, 블록 두 경우 모두 해당)<p></p><br>\n\n## Size<p></p>\n\n* `size` 쿼리 파라미터는 선택 파라미터입니다 (최소값 = 1, 최대값 = 1000, 기본값 = 100)<br>\n* 음수를 입력하면 오류를 반환합니다<br>\n* 0을 입력하면 기본값(`size=100`)을 사용합니다<br>\n* 최대값보다 큰 값을 입력하면 최대값을 사용합니다<br>",
+        "parameters": [
+          {
+            "description": " Klaytn 체인 네트워크 ID (1001 or 8217)",
+            "in": "header",
+            "name": "x-chain-id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "(csv) [“klay”, “ft”, “nft”,\"mt\"] 중 포함 할 유형, 지정안될 경우 모든 유형을 조회\n",
+            "in": "query",
+            "name": "kind",
+            "required": false,
+            "explode": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "klay,ft,nft,mt"
+          },
+          {
+            "description": "조회할 FT 또는 NFT, MT 컨트랙트의 주소, 설정될 경우 `transferType`이 \"ft\" 또는 \"nft\",\"mt\"인 것들 중 ca-filter 값과 같은 것들만 결과물로 반환.\n",
+            "in": "query",
+            "name": "ca-filter",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "0xc7565d24af561fe783aa73747ca0eda1f09f1118"
+          },
+          {
+            "description": "(csv) 조회 범위 지정 (블록번호 또는 Unix time)",
+            "in": "query",
+            "name": "range",
+            "required": false,
+            "explode": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "0x1,0x2"
+          },
+          {
+            "description": "응답 아이템 개수(min=1, max=1000, default=100)",
+            "in": "query",
+            "name": "size",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "example": 100
+          },
+          {
+            "description": "특정 위치를 지정하기 위한 오프셋",
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": ""
+          },
+          {
+            "description": "0 klay 전송 제외 여부(default=false)",
+            "in": "query",
+            "name": "exclude-zero-klay",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "false"
+          },
+          {
+            "description": "받은 내역만 포함할 지 여부(default=false)",
+            "in": "query",
+            "name": "from-only",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "false"
+          },
+          {
+            "description": "보낸 내역만 포함할 지 여부(default=false)",
+            "in": "query",
+            "name": "to-only",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "false"
+          },
+          {
+            "description": "조회할 EOA 주소",
+            "in": "path",
+            "name": "address",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/paths/~1v2~1transfer/get/responses/200/content/application~1json/schema"
+                },
+                "examples": {
+                  "Success": {
+                    "summary": "Success",
+                    "description": "",
+                    "value": {
+                      "items": [
+                        {
+                          "transferType": "mt",
+                          "transaction": {
+                            "from": "0xbdfaeffb231ed4ef4600a8be4f5aa02ba4821708",
+                            "fee": "0x661625fab1200",
+                            "transactionHash": "0x6826275ccdec83711277de86c773d9ce987fb8bcd7edf26b623d3117b1d01b52",
+                            "blockNumber": 5312085,
+                            "typeInt": 48,
+                            "timestamp": 1607993827,
+                            "value": "0x0",
+                            "feePayer": "",
+                            "feeRatio": 0
+                          },
+                          "contract": {
+                            "address": "0xda781766c4ca2d6f35dab8c5d26ad3d3021e69c8"
+                          },
+                          "operator": "0xbdfaeffb231ed4ef4600a8be4f5aa02ba4821708",
+                          "from": "0xbdfaeffb231ed4ef4600a8be4f5aa02ba4821708",
+                          "to": "0x9c7fe1c0af1cba4d341b46ac624464e3462b863b",
+                          "ids": [
+                            "0x1"
+                          ],
+                          "values": [
+                            "0x1c2"
+                          ]
+                        },
+                        {
+                          "transferType": "nft",
+                          "transaction": {
+                            "from": "0xbdfaeffb231ed4ef4600a8be4f5aa02ba4821708",
+                            "fee": "0x70aafcc4b0e00",
+                            "transactionHash": "0x4341fe79a5b69847a284e20aea3d1fdb3377724661bf224f38e02d34b2940c96",
+                            "blockNumber": 5312085,
+                            "typeInt": 48,
+                            "timestamp": 1607993827,
+                            "value": "0x0",
+                            "feePayer": "",
+                            "feeRatio": 0
+                          },
+                          "contract": {
+                            "address": "0x67faa05618e00cde1e3d9092b90c0876855c39e4",
+                            "name": "KASNFT",
+                            "symbol": "KNFT"
+                          },
+                          "from": "0xbdfaeffb231ed4ef4600a8be4f5aa02ba4821708",
+                          "to": "0x9c7fe1c0af1cba4d341b46ac624464e3462b863b",
+                          "tokenId": "0x1"
+                        },
+                        {
+                          "transferType": "ft",
+                          "transaction": {
+                            "from": "0xbdfaeffb231ed4ef4600a8be4f5aa02ba4821708",
+                            "fee": "0x4fe85ad649c00",
+                            "transactionHash": "0x196862e12efc8d4ea83a792d9bafbcc5d87b21805c7fe4ae76b8e3d7fac9e3f3",
+                            "blockNumber": 5312085,
+                            "typeInt": 48,
+                            "timestamp": 1607993827,
+                            "value": "0x0",
+                            "feePayer": "",
+                            "feeRatio": 0
+                          },
+                          "contract": {
+                            "address": "0xf2a8ab5b6c14f33a3b470ac7505712c8665e81d3",
+                            "name": "KASFT",
+                            "symbol": "KFT",
+                            "decimals": 18
+                          },
+                          "from": "0xbdfaeffb231ed4ef4600a8be4f5aa02ba4821708",
+                          "to": "0x9c7fe1c0af1cba4d341b46ac624464e3462b863b",
+                          "value": "0x15e",
+                          "formattedValue": "0.00000000000000035"
+                        },
+                        {
+                          "transferType": "klay",
+                          "from": "0xbdfaeffb231ed4ef4600a8be4f5aa02ba4821708",
+                          "fee": "0x1dd7c1681d000",
+                          "status": 1,
+                          "to": "0x9c7fe1c0af1cba4d341b46ac624464e3462b863b",
+                          "transactionHash": "0xe5ba3d97ed0e2b69e2e0da7aa1abdc22a17b3f79141f67f4784b5ce5433736c7",
+                          "transactionIndex": 0,
+                          "blockNumber": 5312085,
+                          "typeInt": 8,
+                          "timestamp": 1607993821,
+                          "value": "0xde0b6b3a7640000",
+                          "feePayer": "",
+                          "feeRatio": 0
+                        }
+                      ],
+                      "cursor": "KGvdzQDxL2AYZzAMk1dLK6g9OrJN02G7aqwaNpWkPJlL07V51MZ8xmBOR17GPp1KDXE5bKhYnv93XgGbrz6EdAKeoQ2Y4Dq3peQV45vDPWmoXxlYB8wbEVPXBb9a7Z6O"
+                    }
+                  },
+                  "Empty transfers": {
+                    "summary": "Empty transfers",
+                    "description": "",
+                    "value": {
+                      "items": [],
+                      "cursor": ""
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/paths/~1v2~1transfer/get/responses/400/content/application~1json/schema"
+                },
+                "examples": {
+                  "Invalid query": {
+                    "summary": "Invalid query",
+                    "description": "",
+                    "value": {
+                      "code": 1040010,
+                      "message": "[InvalidQueryParameterValue]invalid query value",
+                      "requestId": "aeed9ea2-5300-4d1e-b898-8d02c3e352a9"
+                    }
+                  },
+                  "Invalid from-only, to-only query": {
+                    "summary": "Invalid from-only, to-only query",
+                    "description": "",
+                    "value": {
+                      "code": 1040010,
+                      "message": "[InvalidQueryParameterValue]both from-only and to-only could not be true",
+                      "requestId": "aeed9ea2-5300-4d1e-b898-8d02c3e352a9"
+                    }
+                  },
+                  "Out of range timestamp": {
+                    "summary": "Out of range timestamp",
+                    "description": "",
+                    "value": {
+                      "code": 1040011,
+                      "message": "[OutOfRangeQueryParameterValue]invalid timestamp range",
+                      "requestId": "aeed9ea2-5300-4d1e-b898-8d02c3e352a9"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "EOA로 토큰 송/수신 기록 조회",
+        "operationId": "getTransfersByEoa",
+        "tags": [
+          "token-history"
+        ]
+      }
+    },
+    "/v2/contract/ft": {
+      "get": {
+        "description": "라벨링된 모든 FT 컨트랙트들의 정보를 불러옵니다.<p></p>\n\n## Size<p></p>\n\n* `size` 쿼리 파라미터는 선택 파라미터입니다 (최소값 = 1, 최대값 = 1000, 기본값 = 100)<br>\n* 음수를 입력하면 오류를 반환합니다<br>\n* 0을 입력하면 기본값(`size=100`)을 사용합니다<br>\n* 최대값보다 큰 값을 입력하면 최대값을 사용합니다<br>",
+        "parameters": [
+          {
+            "description": " Klaytn 체인 네트워크 ID (1001 or 8217)",
+            "in": "header",
+            "name": "x-chain-id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "라벨링 상태 [completed, processing, failed, cancelled]",
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "completed"
+          },
+          {
+            "description": "컨트랙트 타입 [KIP-7, ERC-20], 지정하지 않을 경우 모든 타입 반환",
+            "in": "query",
+            "name": "type",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "KIP-17"
+          },
+          {
+            "description": "응답 아이템 개수(min=1, max=1000, default=100)",
+            "in": "query",
+            "name": "size",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "example": 100
+          },
+          {
+            "description": "특정 위치를 지정하기 위한 오프셋",
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "PageableFtContractDetails",
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "title": "FtContractDetail",
+                        "type": "object",
+                        "properties": {
+                          "address": {
+                            "type": "string",
+                            "description": "컨트랙트 주소 (20-byte)",
+                            "example": "0xaD15bCa7D0f1e077f43eC18ACBA7eE2a347ADE87"
+                          },
+                          "decimals": {
+                            "type": "integer",
+                            "format": "int32",
+                            "description": "토큰 자릿수",
+                            "example": 8
+                          },
+                          "name": {
+                            "type": "string",
+                            "description": "토큰 이름",
+                            "example": "Test Token"
+                          },
+                          "symbol": {
+                            "type": "string",
+                            "description": "토큰 심볼",
+                            "example": "TSC"
+                          },
+                          "status": {
+                            "type": "string",
+                            "description": "컨트랙트 라벨링 상태 (completed, processing, failed, cancelled)",
+                            "example": "completed"
+                          },
+                          "totalSupply": {
+                            "type": "string",
+                            "description": "총 발행량 (16진수로 표기)",
+                            "example": "0x174876e800"
+                          },
+                          "createdAt": {
+                            "type": "integer",
+                            "format": "int64",
+                            "description": "라벨링된 시점 (timestamp)",
+                            "example": 1592180992
+                          },
+                          "updatedAt": {
+                            "type": "integer",
+                            "format": "int64",
+                            "description": "라벨링 정보가 마지막으로 변경된 시점 (timestamp)",
+                            "example": 1592180992
+                          },
+                          "deletedAt": {
+                            "type": "integer",
+                            "format": "int64",
+                            "description": "라벨링이 삭제된 시점 (timestamp); 삭제되지 않았을 경우 0",
+                            "example": 1592180992
+                          },
+                          "type": {
+                            "type": "string",
+                            "description": "컨트랙트 유형 (KIP-7, ERC-20)"
+                          }
+                        },
+                        "required": [
+                          "address",
+                          "decimals",
+                          "name",
+                          "symbol",
+                          "totalSupply",
+                          "createdAt",
+                          "updatedAt",
+                          "deletedAt",
+                          "link",
+                          "type",
+                          "status"
+                        ]
+                      }
+                    },
+                    "cursor": {
+                      "type": "string",
+                      "description": "다음 페이지 커서",
+                      "example": "z2o87adeLbW4Aqm53gpq6VbGZg3JmE5vodrwD9XKmY5vMl4Gkw9PZO1NoBpV8LR83y0Edb3Aar7eKQqzJWDg6X2xOe1P27l4kzY0xQa8LNABMWv0VJQ6MpNlr9O1xBDE"
+                    }
+                  },
+                  "required": [
+                    "items",
+                    "cursor"
+                  ]
+                },
+                "examples": {
+                  "Success": {
+                    "summary": "Success",
+                    "description": "",
+                    "value": {
+                      "items": [
+                        {
+                          "address": "0xf2a8ab5b6c14f33a3b470ac7505712c8665e81d3",
+                          "decimals": 18,
+                          "name": "KASFT",
+                          "symbol": "KFT",
+                          "totalSupply": "0xde0b6b3a7640000",
+                          "status": "completed",
+                          "type": "KIP-7",
+                          "createdAt": 1607993824,
+                          "updatedAt": 1607993825,
+                          "deletedAt": 0
+                        },
+                        {
+                          "address": "0x7d7c73a49321738101030e23a5bf30fc68287e26",
+                          "decimals": 18,
+                          "name": "SummerToken",
+                          "symbol": "JUN",
+                          "totalSupply": "0x52b7d2dcc80cd2e4000000",
+                          "status": "completed",
+                          "type": "ERC-20",
+                          "createdAt": 1606127642,
+                          "updatedAt": 1606385006,
+                          "deletedAt": 0
+                        }
+                      ],
+                      "cursor": "JePBOQ20pEXl389k1K6W1AEzp2VBJ80b5MgowlXZYlkao45O0WMgr73BpPD6d9Rb97yKwbqezELvmN8Gx1Q2JVAXZGQqmxd9a7e4krKN3YLDPOvNY7Zvbom5MrDA4VW6"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/paths/~1v2~1transfer/get/responses/400/content/application~1json/schema"
+                },
+                "examples": {
+                  "Invalid query": {
+                    "summary": "Invalid query",
+                    "description": "",
+                    "value": {
+                      "code": 1040010,
+                      "message": "[InvalidQueryParameterValue]invalid query value",
+                      "requestId": "b4ff73f0-c32c-971a-8b01-933acd1c0a1f"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "모든 FT 컨트랙트 정보 목록 조회",
+        "operationId": "getListofFtContracts",
+        "tags": [
+          "th-contract"
+        ]
+      }
+    },
+    "/v2/contract/ft/{ft-address}": {
+      "get": {
+        "description": "라벨링된 FT 컨트랙트 1개의 정보를 불러옵니다.\n",
+        "parameters": [
+          {
+            "description": " Klaytn 네트워크 체인 ID (1001 or 8217)",
+            "in": "header",
+            "name": "x-chain-id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "FT 컨트랙트 주소 ",
+            "in": "path",
+            "name": "ft-address",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "FtContractDetail",
+                  "type": "object",
+                  "properties": {
+                    "address": {
+                      "type": "string",
+                      "description": "컨트랙트 주소 (20-byte)",
+                      "example": "0xaD15bCa7D0f1e077f43eC18ACBA7eE2a347ADE87"
+                    },
+                    "decimals": {
+                      "type": "integer",
+                      "format": "int32",
+                      "description": "토큰 자릿수",
+                      "example": 8
+                    },
+                    "name": {
+                      "type": "string",
+                      "description": "토큰 이름",
+                      "example": "Test Token"
+                    },
+                    "symbol": {
+                      "type": "string",
+                      "description": "토큰 심볼",
+                      "example": "TSC"
+                    },
+                    "status": {
+                      "type": "string",
+                      "description": "컨트랙트 라벨링 상태 (completed, processing, failed, cancelled)",
+                      "example": "completed"
+                    },
+                    "totalSupply": {
+                      "type": "string",
+                      "description": "총 발행량 (16진수로 표기)",
+                      "example": "0x174876e800"
+                    },
+                    "createdAt": {
+                      "type": "integer",
+                      "format": "int64",
+                      "description": "라벨링된 시점 (timestamp)",
+                      "example": 1592180992
+                    },
+                    "updatedAt": {
+                      "type": "integer",
+                      "format": "int64",
+                      "description": "라벨링 정보가 마지막으로 변경된 시점 (timestamp)",
+                      "example": 1592180992
+                    },
+                    "deletedAt": {
+                      "type": "integer",
+                      "format": "int64",
+                      "description": "라벨링이 삭제된 시점 (timestamp); 삭제되지 않았을 경우 0",
+                      "example": 1592180992
+                    },
+                    "type": {
+                      "type": "string",
+                      "description": "컨트랙트 유형 (KIP-7, ERC-20)"
+                    }
+                  },
+                  "required": [
+                    "address",
+                    "decimals",
+                    "name",
+                    "symbol",
+                    "totalSupply",
+                    "createdAt",
+                    "updatedAt",
+                    "deletedAt",
+                    "link",
+                    "type",
+                    "status"
+                  ]
+                },
+                "examples": {
+                  "Success": {
+                    "summary": "Success",
+                    "description": "",
+                    "value": {
+                      "address": "0x7d7c73a49321738101030e23a5bf30fc68287e26",
+                      "decimals": 18,
+                      "name": "SummerToken",
+                      "symbol": "JUN",
+                      "totalSupply": "0x52b7d2dcc80cd2e4000000",
+                      "status": "completed",
+                      "type": "ERC-20",
+                      "createdAt": 1606127642,
+                      "updatedAt": 1606385006,
+                      "deletedAt": 0
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/paths/~1v2~1transfer/get/responses/400/content/application~1json/schema"
+                },
+                "examples": {
+                  "Invalid URI": {
+                    "summary": "Invalid URI",
+                    "description": "",
+                    "value": {
+                      "code": 1040020,
+                      "message": "[InvalidUriValue]invalid ft address",
+                      "requestId": "1d9743f5-d3d1-9158-8a96-ab37de4daef5"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/paths/~1v2~1transfer/get/responses/400/content/application~1json/schema"
+                },
+                "examples": {
+                  "FT not found": {
+                    "summary": "FT not found",
+                    "description": "",
+                    "value": {
+                      "code": 1040400,
+                      "message": "[ResourceNotFound]not found ft",
+                      "requestId": "1108a8bf-ef05-9511-95d1-5fcecd959517"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "특정 FT 컨트랙트 정보 조회",
+        "operationId": "getFtContractDetail",
+        "tags": [
+          "th-contract"
+        ]
+      }
+    },
+    "/v2/contract/nft": {
+      "get": {
+        "description": "라벨링된 모든 NFT 컨트랙트들의 정보를 불러옵니다.<p></p>\n\n## Size<p></p>\n\n* `size` 쿼리 파라미터는 선택 파라미터입니다 (최소값 = 1, 최대값 = 1000, 기본값 = 100)<br>\n* 음수를 입력하면 오류를 반환합니다<br>\n* 0을 입력하면 기본값(`size=100`)을 사용합니다<br>\n* 최대값보다 큰 값을 입력하면 최대값을 사용합니다<br>",
+        "parameters": [
+          {
+            "description": " Klaytn 체인 네트워크 ID (1001 or 8217)",
+            "in": "header",
+            "name": "x-chain-id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "라벨링 상태 [completed, processing, failed, cancelled]",
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "completed"
+          },
+          {
+            "description": "컨트랙트 타입 [KIP-17, ERC-721], 지정하지 않을 경우 모든 타입 반환",
+            "in": "query",
+            "name": "type",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "KIP-17"
+          },
+          {
+            "description": "응답 아이템 개수(min=1, max=1000, default=100)",
+            "in": "query",
+            "name": "size",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "example": 10
+          },
+          {
+            "description": "응답 오프셋 (pagination)\n",
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "PageableNftContractDetails",
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "title": "NftContractDetail",
+                        "type": "object",
+                        "properties": {
+                          "address": {
+                            "type": "string",
+                            "description": "컨트랙트 주소 (20-byte)",
+                            "example": "0xc7565d24af561fe783aa73747ca0eda1f09f1118"
+                          },
+                          "name": {
+                            "type": "string",
+                            "description": "토큰 이름",
+                            "example": "Test Token"
+                          },
+                          "symbol": {
+                            "type": "string",
+                            "description": "토큰 심볼",
+                            "example": "TSTC"
+                          },
+                          "totalSupply": {
+                            "type": "string",
+                            "description": "총 발행량 (16진수로 표기)",
+                            "example": "0x174876e800"
+                          },
+                          "createdAt": {
+                            "type": "integer",
+                            "format": "int64",
+                            "description": "라벨링된 시점 (timestamp)",
+                            "example": 1592180992
+                          },
+                          "updatedAt": {
+                            "type": "integer",
+                            "format": "int64",
+                            "description": "라벨링 정보가 마지막으로 변경된 시점 (timestamp)",
+                            "example": 1592180992
+                          },
+                          "deletedAt": {
+                            "type": "integer",
+                            "format": "int64",
+                            "description": "라벨링이 삭제된 시점 (timestamp); 삭제되지 않았을 경우 0",
+                            "example": 1592180992
+                          },
+                          "type": {
+                            "type": "string",
+                            "description": "컨트랙트 유형 (KIP-17, ERC-721)",
+                            "example": "KIP-7"
+                          },
+                          "status": {
+                            "type": "string",
+                            "description": "컨트랙트 라벨링 상태 (completed, processing, failed, cancelled)",
+                            "example": "completed"
+                          }
+                        },
+                        "required": [
+                          "address",
+                          "name",
+                          "symbol",
+                          "totalSupply",
+                          "createdAt",
+                          "updatedAt",
+                          "deletedAt",
+                          "type",
+                          "status"
+                        ]
+                      }
+                    },
+                    "cursor": {
+                      "type": "string",
+                      "description": "다음 페이지 커서",
+                      "example": "z2o87adeLbW4Aqm53gpq6VbGZg3JmE5vodrwD9XKmY5vMl4Gkw9PZO1NoBpV8LR83y0Edb3Aar7eKQqzJWDg6X2xOe1P27l4kzY0xQa8LNABMWv0VJQ6MpNlr9O1xBDE"
+                    }
+                  },
+                  "required": [
+                    "items",
+                    "cursor"
+                  ]
+                },
+                "examples": {
+                  "Success": {
+                    "summary": "Success",
+                    "description": "",
+                    "value": {
+                      "items": [
+                        {
+                          "address": "0x67faa05618e00cde1e3d9092b90c0876855c39e4",
+                          "name": "KASNFT",
+                          "symbol": "KNFT",
+                          "totalSupply": "0x1",
+                          "status": "completed",
+                          "type": "KIP-17",
+                          "createdAt": 1607993824,
+                          "updatedAt": 1607993826,
+                          "deletedAt": 0
+                        },
+                        {
+                          "address": "0x73d6b2cbd8d84faa81c0eb3806b7b9a956150e98",
+                          "name": "evagon",
+                          "symbol": "en",
+                          "totalSupply": "0x1aaf",
+                          "status": "completed",
+                          "type": "ERC-721",
+                          "createdAt": 1607866073,
+                          "updatedAt": 1607866077,
+                          "deletedAt": 0
+                        }
+                      ],
+                      "cursor": "omYpAQ8xGDrlz5O3akAbYDPolJ1r7kx3ZWg2L5mwDQ5GAk7ONYdpzXW0LBZVq2n6pWRJKPg8469bvxMl1rmoaew3EQVa6Gq8KpeEdzB0O9vMX4NE1X9eb206gBNLJ7qW"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/paths/~1v2~1transfer/get/responses/400/content/application~1json/schema"
+                },
+                "examples": {
+                  "Invalid query": {
+                    "summary": "Invalid query",
+                    "description": "",
+                    "value": {
+                      "code": 1040010,
+                      "message": "[InvalidQueryParameterValue]invalid query value",
+                      "requestId": "b4ff73f0-c32c-971a-8b01-933acd1c0a1f"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "모든 NFT 컨트랙트 정보 목록 조회",
+        "operationId": "getListOfNftContracts",
+        "tags": [
+          "th-contract"
+        ]
+      }
+    },
+    "/v2/contract/nft/{nft-address}": {
+      "get": {
+        "description": "라벨링된 NFT 컨트랙트 1개의 정보를 불러옵니다.\n",
+        "parameters": [
+          {
+            "description": " Klaytn 체인 네트워크 ID (1001 or 8217)",
+            "in": "header",
+            "name": "x-chain-id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "NFT 컨트랙트 주소",
+            "in": "path",
+            "name": "nft-address",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "NftContractDetail",
+                  "type": "object",
+                  "properties": {
+                    "address": {
+                      "type": "string",
+                      "description": "컨트랙트 주소 (20-byte)",
+                      "example": "0xc7565d24af561fe783aa73747ca0eda1f09f1118"
+                    },
+                    "name": {
+                      "type": "string",
+                      "description": "토큰 이름",
+                      "example": "Test Token"
+                    },
+                    "symbol": {
+                      "type": "string",
+                      "description": "토큰 심볼",
+                      "example": "TSTC"
+                    },
+                    "totalSupply": {
+                      "type": "string",
+                      "description": "총 발행량 (16진수로 표기)",
+                      "example": "0x174876e800"
+                    },
+                    "createdAt": {
+                      "type": "integer",
+                      "format": "int64",
+                      "description": "라벨링된 시점 (timestamp)",
+                      "example": 1592180992
+                    },
+                    "updatedAt": {
+                      "type": "integer",
+                      "format": "int64",
+                      "description": "라벨링 정보가 마지막으로 변경된 시점 (timestamp)",
+                      "example": 1592180992
+                    },
+                    "deletedAt": {
+                      "type": "integer",
+                      "format": "int64",
+                      "description": "라벨링이 삭제된 시점 (timestamp); 삭제되지 않았을 경우 0",
+                      "example": 1592180992
+                    },
+                    "type": {
+                      "type": "string",
+                      "description": "컨트랙트 유형 (KIP-17, ERC-721)",
+                      "example": "KIP-7"
+                    },
+                    "status": {
+                      "type": "string",
+                      "description": "컨트랙트 라벨링 상태 (completed, processing, failed, cancelled)",
+                      "example": "completed"
+                    }
+                  },
+                  "required": [
+                    "address",
+                    "name",
+                    "symbol",
+                    "totalSupply",
+                    "createdAt",
+                    "updatedAt",
+                    "deletedAt",
+                    "type",
+                    "status"
+                  ]
+                },
+                "examples": {
+                  "Success": {
+                    "summary": "Success",
+                    "description": "",
+                    "value": {
+                      "address": "0x251f622e8b5e713f357e9c4d990e91da2f448134",
+                      "name": "MineralNFT",
+                      "symbol": "FSI",
+                      "totalSupply": "0x9",
+                      "status": "completed",
+                      "type": "kip",
+                      "createdAt": 1597284956,
+                      "updatedAt": 1597284956,
+                      "deletedAt": 0
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/paths/~1v2~1transfer/get/responses/400/content/application~1json/schema"
+                },
+                "examples": {
+                  "Invalid URI": {
+                    "summary": "Invalid URI",
+                    "description": "",
+                    "value": {
+                      "code": 1040020,
+                      "message": "[InvalidUriValue]invalid nft address",
+                      "requestId": "a9b68119-7b98-9f07-b21f-17890f6f6d6b"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/paths/~1v2~1transfer/get/responses/400/content/application~1json/schema"
+                },
+                "examples": {
+                  "NFT not found": {
+                    "summary": "NFT not found",
+                    "description": "",
+                    "value": {
+                      "code": 1040400,
+                      "message": "[ResourceNotFound]not found nft",
+                      "requestId": "0d5f6e9a-e1f6-94e3-a325-de540a33bb6d"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "특정 NFT 컨트랙트 정보 조회",
+        "operationId": "getNftContractDetail",
+        "tags": [
+          "th-contract"
+        ]
+      }
+    },
+    "/v2/contract/nft/{nft-address}/holder": {
+      "get": {
+        "description": "NFT 컨트랙트에서 발행된 모든 NFT의 소유자 수를 불러옵니다.\n",
+        "parameters": [
+          {
+            "description": " Klaytn 체인 네트워크 ID (1001 or 8217)",
+            "in": "header",
+            "name": "x-chain-id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "",
+            "in": "path",
+            "name": "nft-address",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "NftTokenHolder",
+                  "type": "object",
+                  "properties": {
+                    "address": {
+                      "type": "string",
+                      "description": "CA (20-byte)",
+                      "example": "0x2c2382bcca41295495973be1d5a997d21f77b50e"
+                    },
+                    "totalHolder": {
+                      "type": "integer",
+                      "format": "int64",
+                      "description": "총 소유자 수",
+                      "example": 48
+                    }
+                  },
+                  "required": [
+                    "address",
+                    "totalHolder"
+                  ]
+                },
+                "examples": {
+                  "Success": {
+                    "summary": "Success",
+                    "description": "",
+                    "value": {
+                      "address": "0x251f622e8b5e713f357e9c4d990e91da2f448134",
+                      "totalHolder": 48
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/paths/~1v2~1transfer/get/responses/400/content/application~1json/schema"
+                },
+                "examples": {
+                  "Invalid URI": {
+                    "summary": "Invalid URI",
+                    "description": "",
+                    "value": {
+                      "code": 1040020,
+                      "message": "[InvalidUriValue]invalid nft address",
+                      "requestId": "3e288b01-1c93-97fa-8850-18c89ebc340a"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/paths/~1v2~1transfer/get/responses/400/content/application~1json/schema"
+                },
+                "examples": {
+                  "MT not found": {
+                    "summary": "NFT not found",
+                    "description": "",
+                    "value": {
+                      "code": 1040400,
+                      "message": "[ResourceNotFound]not found nft",
+                      "requestId": "0d5f6e9a-e1f6-94e3-a325-de540a33bb6d"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "NFT 소유자 수 조회",
+        "operationId": "getNFTTokenHolder",
+        "tags": [
+          "th-contract"
+        ]
+      }
+    },
+    "/v2/contract/mt": {
+      "get": {
+        "description": "라벨링된 모든 MT 컨트랙트들의 정보를 불러옵니다.<p></p>\n\n## Size<p></p>\n\n* `size` 쿼리 파라미터는 선택 파라미터입니다 (최소값 = 1, 최대값 = 1000, 기본값 = 100)<br>\n* 음수를 입력하면 오류를 반환합니다<br>\n* 0을 입력하면 기본값(`size=100`)을 사용합니다<br>\n* 최대값보다 큰 값을 입력하면 최대값을 사용합니다<br>",
+        "parameters": [
+          {
+            "description": " Klaytn 체인 네트워크 ID (1001 or 8217)",
+            "in": "header",
+            "name": "x-chain-id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "라벨링 상태 [completed, processing, failed, cancelled]",
+            "in": "query",
+            "name": "status",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "completed"
+          },
+          {
+            "description": "컨트랙트 타입 [KIP-37, ERC-1155], 지정하지 않을 경우 모든 타입 반환",
+            "in": "query",
+            "name": "type",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "KIP-37"
+          },
+          {
+            "description": "응답 아이템 개수(min=1, max=1000, default=100)",
+            "in": "query",
+            "name": "size",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "example": 10
+          },
+          {
+            "description": "응답 오프셋 (pagination)\n",
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": ""
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "PageableMtContractDetails",
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "title": "MtContractDetail",
+                        "type": "object",
+                        "properties": {
+                          "address": {
+                            "type": "string",
+                            "description": "컨트랙트 주소 (20-byte)",
+                            "example": "0xaD15bCa7D0f1e077f43eC18ACBA7eE2a347ADE87"
+                          },
+                          "status": {
+                            "type": "string",
+                            "description": "컨트랙트 라벨링 상태 (completed, processing, failed, cancelled)",
+                            "example": "completed"
+                          },
+                          "createdAt": {
+                            "type": "integer",
+                            "format": "int64",
+                            "description": "라벨링된 시점 (timestamp)",
+                            "example": 1592180992
+                          },
+                          "updatedAt": {
+                            "type": "integer",
+                            "format": "int64",
+                            "description": "라벨링 정보가 마지막으로 변경된 시점 (timestamp)",
+                            "example": 1592180992
+                          },
+                          "deletedAt": {
+                            "type": "integer",
+                            "format": "int64",
+                            "description": "라벨링이 삭제된 시점 (timestamp); 삭제되지 않았을 경우 0",
+                            "example": 1592180992
+                          },
+                          "type": {
+                            "type": "string",
+                            "description": "컨트랙트 유형 (KIP-7, ERC-20)"
+                          }
+                        },
+                        "required": [
+                          "address",
+                          "status",
+                          "createdAt",
+                          "updatedAt",
+                          "deletedAt",
+                          "type"
+                        ]
+                      }
+                    },
+                    "cursor": {
+                      "type": "string",
+                      "description": "다음 페이지 커서",
+                      "example": "z2o87adeLbW4Aqm53gpq6VbGZg3JmE5vodrwD9XKmY5vMl4Gkw9PZO1NoBpV8LR83y0Edb3Aar7eKQqzJWDg6X2xOe1P27l4kzY0xQa8LNABMWv0VJQ6MpNlr9O1xBDE"
+                    }
+                  },
+                  "required": [
+                    "items",
+                    "cursor"
+                  ]
+                },
+                "examples": {
+                  "Success": {
+                    "summary": "Success",
+                    "description": "",
+                    "value": {
+                      "items": [
+                        {
+                          "address": "0xda781766c4ca2d6f35dab8c5d26ad3d3021e69c8",
+                          "status": "completed",
+                          "type": "KIP-37",
+                          "createdAt": 1607993824,
+                          "updatedAt": 1607993826,
+                          "deletedAt": 0
+                        },
+                        {
+                          "address": "0x76457bce70262e6f7b642abb0684077eea604414",
+                          "status": "completed",
+                          "type": "ERC-1155",
+                          "createdAt": 1607993804,
+                          "updatedAt": 1607993806,
+                          "deletedAt": 0
+                        }
+                      ],
+                      "cursor": "B9104rmYdAoabWP3Nlw7NvAWQP082aB13Xpqdx463kvX67eqw2gLdJWb0laZAQjvrj8ON194xzoVpmrGY5PDKMEBogJmVEYlkKMD5e9LrGbzOZvxMkEzGpXVg6728OZL"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/paths/~1v2~1transfer/get/responses/400/content/application~1json/schema"
+                },
+                "examples": {
+                  "Invalid query": {
+                    "summary": "Invalid query",
+                    "description": "",
+                    "value": {
+                      "code": 1040010,
+                      "message": "[InvalidQueryParameterValue]invalid query value",
+                      "requestId": "9d1596d8-1228-9fca-a4ac-b03d403a6c02"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "모든 MT 컨트랙트 정보 목록 조회",
+        "operationId": "getListOfMtContracts",
+        "tags": [
+          "th-contract"
+        ]
+      }
+    },
+    "/v2/contract/mt/{mt-address}": {
+      "get": {
+        "description": "라벨링된 MT 컨트랙트 1개의 정보를 불러옵니다.\n",
+        "parameters": [
+          {
+            "description": " Klaytn 체인 네트워크 ID (1001 or 8217)",
+            "in": "header",
+            "name": "x-chain-id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "",
+            "in": "path",
+            "name": "mt-address",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "MtContractDetail",
+                  "type": "object",
+                  "properties": {
+                    "address": {
+                      "type": "string",
+                      "description": "컨트랙트 주소 (20-byte)",
+                      "example": "0xaD15bCa7D0f1e077f43eC18ACBA7eE2a347ADE87"
+                    },
+                    "status": {
+                      "type": "string",
+                      "description": "컨트랙트 라벨링 상태 (completed, processing, failed, cancelled)",
+                      "example": "completed"
+                    },
+                    "createdAt": {
+                      "type": "integer",
+                      "format": "int64",
+                      "description": "라벨링된 시점 (timestamp)",
+                      "example": 1592180992
+                    },
+                    "updatedAt": {
+                      "type": "integer",
+                      "format": "int64",
+                      "description": "라벨링 정보가 마지막으로 변경된 시점 (timestamp)",
+                      "example": 1592180992
+                    },
+                    "deletedAt": {
+                      "type": "integer",
+                      "format": "int64",
+                      "description": "라벨링이 삭제된 시점 (timestamp); 삭제되지 않았을 경우 0",
+                      "example": 1592180992
+                    },
+                    "type": {
+                      "type": "string",
+                      "description": "컨트랙트 유형 (KIP-7, ERC-20)"
+                    }
+                  },
+                  "required": [
+                    "address",
+                    "status",
+                    "createdAt",
+                    "updatedAt",
+                    "deletedAt",
+                    "type"
+                  ]
+                },
+                "examples": {
+                  "Success": {
+                    "summary": "Success",
+                    "description": "",
+                    "value": {
+                      "address": "0x251f622e8b5e713f357e9c4d990e91da2f448134",
+                      "name": "MineralNFT",
+                      "symbol": "FSI",
+                      "totalSupply": "0x9",
+                      "status": "completed",
+                      "type": "kip",
+                      "createdAt": 1597284956,
+                      "updatedAt": 1597284956,
+                      "deletedAt": 0
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/paths/~1v2~1transfer/get/responses/400/content/application~1json/schema"
+                },
+                "examples": {
+                  "Invalid URI": {
+                    "summary": "Invalid URI",
+                    "description": "",
+                    "value": {
+                      "code": 1040020,
+                      "message": "[InvalidUriValue]invalid mt address",
+                      "requestId": "3e288b01-1c93-97fa-8850-18c89ebc340a"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/paths/~1v2~1transfer/get/responses/400/content/application~1json/schema"
+                },
+                "examples": {
+                  "MT not found": {
+                    "summary": "MT not found",
+                    "description": "",
+                    "value": {
+                      "code": 1040400,
+                      "message": "[ResourceNotFound]not found mt",
+                      "requestId": "0d5f6e9a-e1f6-94e3-a325-de540a33bb6d"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "특정 MT 컨트랙트 정보 조회",
+        "operationId": "getMtContractDetail",
+        "tags": [
+          "th-contract"
+        ]
+      }
+    },
+    "/v2/contract/mt/{mt-address}/holder": {
+      "get": {
+        "description": "MT 컨트랙트에서 발행된 모든 MT의 소유자 수를 불러옵니다.\n",
+        "parameters": [
+          {
+            "description": " Klaytn 체인 네트워크 ID (1001 or 8217)",
+            "in": "header",
+            "name": "x-chain-id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "",
+            "in": "path",
+            "name": "mt-address",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "MtTokenHolder",
+                  "type": "object",
+                  "properties": {
+                    "address": {
+                      "type": "string",
+                      "description": "CA (20-byte)",
+                      "example": "0x2c2382bcca41295495973be1d5a997d21f77b50e"
+                    },
+                    "totalHolder": {
+                      "type": "integer",
+                      "format": "int64",
+                      "description": "총 소유자 수",
+                      "example": 48
+                    }
+                  },
+                  "required": [
+                    "address",
+                    "totalHolder"
+                  ]
+                },
+                "examples": {
+                  "Success": {
+                    "summary": "Success",
+                    "description": "",
+                    "value": {
+                      "address": "0x251f622e8b5e713f357e9c4d990e91da2f448134",
+                      "totalHolder": 48
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/paths/~1v2~1transfer/get/responses/400/content/application~1json/schema"
+                },
+                "examples": {
+                  "Invalid URI": {
+                    "summary": "Invalid URI",
+                    "description": "",
+                    "value": {
+                      "code": 1040020,
+                      "message": "[InvalidUriValue]invalid mt address",
+                      "requestId": "3e288b01-1c93-97fa-8850-18c89ebc340a"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/paths/~1v2~1transfer/get/responses/400/content/application~1json/schema"
+                },
+                "examples": {
+                  "MT not found": {
+                    "summary": "MT not found",
+                    "description": "",
+                    "value": {
+                      "code": 1040400,
+                      "message": "[ResourceNotFound]not found mt",
+                      "requestId": "0d5f6e9a-e1f6-94e3-a325-de540a33bb6d"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "MT 소유자 수 조회",
+        "operationId": "getMtTokenHolder",
+        "tags": [
+          "th-contract"
+        ]
+      }
+    },
+    "/v2/contract/nft/{nft-address}/token": {
+      "get": {
+        "description": "NFT 컨트랙트를 지정하면, 이 NFT 컨트랙트에서 발행된 모든 NFT의 정보를 불러옵니다.<p></p>\n\n## Size<p></p>\n\n* `size` 쿼리 파라미터는 선택 파라미터입니다 (최소값 = 1, 최대값 = 1000, 기본값 = 100)<br>\n* 음수를 입력하면 오류를 반환합니다<br>\n* 0을 입력하면 기본값(`size=100`)을 사용합니다<br>\n* 최대값보다 큰 값을 입력하면 최대값을 사용합니다<br>",
+        "parameters": [
+          {
+            "description": " Klaytn 체인 네트워크 ID (1001 or 8217)",
+            "in": "header",
+            "name": "x-chain-id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "응답 아이템 개수(min=1, max=1000, default=100)",
+            "in": "query",
+            "name": "size",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "example": 100
+          },
+          {
+            "description": "특정 위치를 지정하기 위한 오프셋",
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": ""
+          },
+          {
+            "description": "",
+            "in": "path",
+            "name": "nft-address",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "PageableNfts",
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "title": "Nft",
+                        "type": "object",
+                        "properties": {
+                          "owner": {
+                            "type": "string",
+                            "description": "소유자 EOA (20-byte)",
+                            "example": "0x5e47b195eeb11d72f5e1d27aebb6d341f1a9bedb"
+                          },
+                          "previousOwner": {
+                            "type": "string",
+                            "description": "직전 소유자 EOA (20-byte)",
+                            "example": "0xb4bf60383c64d47f2e667f2fe8f7ed0c9380f770"
+                          },
+                          "tokenId": {
+                            "type": "string",
+                            "description": "토큰 ID (16진수)",
+                            "example": "0x1"
+                          },
+                          "tokenUri": {
+                            "type": "string",
+                            "description": "토큰 고유의 URL",
+                            "example": "https://link.to/nft/1"
+                          },
+                          "transactionHash": {
+                            "type": "string",
+                            "description": "마지막 트랜잭션 해시 (32-byte)",
+                            "example": "0xc4a32f41e829f50c4e8774be68864f522120a2047db2143b59b3919ebd9234f8"
+                          },
+                          "createdAt": {
+                            "type": "integer",
+                            "format": "int64",
+                            "description": "토큰이 생성된 시점 (timestamp)",
+                            "example": 1592180992
+                          },
+                          "updatedAt": {
+                            "type": "integer",
+                            "format": "int64",
+                            "description": "토큰 정보가 마지막으로 변경된 시점 (timestamp)",
+                            "example": 1592180992
+                          }
+                        },
+                        "required": [
+                          "owner",
+                          "previousOwner",
+                          "tokenId",
+                          "tokenUri",
+                          "createdAt",
+                          "updatedAt",
+                          "transactionHash"
+                        ]
+                      }
+                    },
+                    "cursor": {
+                      "type": "string",
+                      "description": "다음 페이지 커서",
+                      "example": "z2o87adeLbW4Aqm53gpq6VbGZg3JmE5vodrwD9XKmY5vMl4Gkw9PZO1NoBpV8LR83y0Edb3Aar7eKQqzJWDg6X2xOe1P27l4kzY0xQa8LNABMWv0VJQ6MpNlr9O1xBDE"
+                    }
+                  },
+                  "required": [
+                    "items",
+                    "cursor"
+                  ]
+                },
+                "examples": {
+                  "Success": {
+                    "summary": "Success",
+                    "description": "",
+                    "value": {
+                      "items": [
+                        {
+                          "tokenId": "0x9",
+                          "owner": "0x36884a060be5438226c4deaf799b0f7de5abd5df",
+                          "previousOwner": "0x0000000000000000000000000000000000000000",
+                          "tokenUri": "http://ec2-13-125-244-0.ap-northeast-2.compute.amazonaws.com:8080/meta/item9",
+                          "transactionHash": "0x2f6e8113862c1dbdc76a2fb29cda2dbefeca5878897af0bb3df6822323e89440",
+                          "createdAt": 1597718863,
+                          "updatedAt": 1597718863
+                        }
+                      ],
+                      "cursor": ""
+                    }
+                  },
+                  "Empty tokens": {
+                    "summary": "Empty tokens",
+                    "description": "",
+                    "value": {
+                      "items": [],
+                      "cursor": ""
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/paths/~1v2~1transfer/get/responses/400/content/application~1json/schema"
+                },
+                "examples": {
+                  "Invalid query": {
+                    "summary": "Invalid query",
+                    "description": "",
+                    "value": {
+                      "code": 1040020,
+                      "message": "[InvalidUriValue]invalid nft address",
+                      "requestId": "e877af5f-99d8-98fb-9817-1e8bd970ae29"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/paths/~1v2~1transfer/get/responses/400/content/application~1json/schema"
+                },
+                "examples": {
+                  "NFT not found": {
+                    "summary": "NFT not found",
+                    "description": "",
+                    "value": {
+                      "code": 1040400,
+                      "message": "[ResourceNotFound]not found nft",
+                      "requestId": "5562b6ed-bb19-91f1-8897-b32999b9879e"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "특정 NFT 컨트랙트의 모든 토큰 정보 조회",
+        "operationId": "getNftsByContractAddress",
+        "tags": [
+          "th-token"
+        ]
+      }
+    },
+    "/v2/contract/nft/{nft-address}/owner/{owner-address}": {
+      "get": {
+        "description": "NFT 컨트랙트와 EOA를 지정하면, 이 NFT 컨트랙트에서 발행된 NFT 중 EOA가 가지고 있는 NFT의 정보를 불러옵니다.<p></p>\n\n## Size<p></p>\n\n* `size` 쿼리 파라미터는 선택 파라미터입니다 (최소값 = 1, 최대값 = 1000, 기본값 = 100)<br>\n* 음수를 입력하면 오류를 반환합니다<br>\n* 0을 입력하면 기본값(`size=100`)을 사용합니다<br>\n* 최대값보다 큰 값을 입력하면 최대값을 사용합니다<br>",
+        "parameters": [
+          {
+            "description": " Klaytn 네트워크 체인 ID (1001 or 8217)",
+            "in": "header",
+            "name": "x-chain-id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "응답 아이템 개수(min=1, max=1000, default=100)",
+            "in": "query",
+            "name": "size",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "example": 100
+          },
+          {
+            "description": "특정 위치를 지정하기 위한 오프셋",
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": ""
+          },
+          {
+            "description": "조회할 컨트랙트 주소",
+            "in": "path",
+            "name": "nft-address",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "조회할 EOA 주소",
+            "in": "path",
+            "name": "owner-address",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/paths/~1v2~1contract~1nft~1%7Bnft-address%7D~1token/get/responses/200/content/application~1json/schema"
+                },
+                "examples": {
+                  "Success": {
+                    "summary": "Success",
+                    "description": "",
+                    "value": {
+                      "items": [
+                        {
+                          "tokenId": "0x7",
+                          "owner": "0xe5389503156ee02775ee18552f0c9d9846b66a91",
+                          "previousOwner": "0x0000000000000000000000000000000000000000",
+                          "tokenUri": "http://172.16.15.49:8080/meta/item7",
+                          "transactionHash": "0x9b9d553d8b3141eabdc6ececd44958475366b1bc289088248b2b3dadcecf8ab4",
+                          "createdAt": 1597308968,
+                          "updatedAt": 1597308968
+                        }
+                      ],
+                      "cursor": ""
+                    }
+                  },
+                  "Empty tokens": {
+                    "summary": "Empty tokens",
+                    "description": "",
+                    "value": {
+                      "items": [],
+                      "cursor": ""
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/paths/~1v2~1transfer/get/responses/400/content/application~1json/schema"
+                },
+                "examples": {
+                  "Invalid query": {
+                    "summary": "Invalid query",
+                    "description": "",
+                    "value": {
+                      "code": 1040010,
+                      "message": "[InvalidQueryParameterValue]invalid query value",
+                      "requestId": "c9b6092a-ff75-9dab-a493-48672ef62169"
+                    }
+                  },
+                  "Invalid URI - NFT": {
+                    "summary": "Invalid URI - NFT",
+                    "description": "",
+                    "value": {
+                      "code": 1040020,
+                      "message": "[InvalidUriValue]invalid nft address",
+                      "requestId": "c9b6092a-ff75-9dab-a493-48672ef62169"
+                    }
+                  },
+                  "Invalid URI - owner": {
+                    "summary": "Invalid URI - owner",
+                    "description": "",
+                    "value": {
+                      "code": 1040020,
+                      "message": "[InvalidUriValue]invalid owner address",
+                      "requestId": "c9b6092a-ff75-9dab-a493-48672ef62169"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/paths/~1v2~1transfer/get/responses/400/content/application~1json/schema"
+                },
+                "examples": {
+                  "NFT not found": {
+                    "summary": "NFT not found",
+                    "description": "",
+                    "value": {
+                      "code": 1040400,
+                      "message": "[ResourceNotFound]not found nft",
+                      "requestId": "d371921f-8198-98cb-89d5-cf3e9eb420c7"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "특정 EOA가 가진 모든 NFT 토큰 정보 조회",
+        "operationId": "getNftsByOwnerAddress",
+        "tags": [
+          "th-token"
+        ]
+      }
+    },
+    "/v2/contract/nft/{nft-address}/token/{token-id}": {
+      "get": {
+        "description": "특정 NFT의 정보를 불러옵니다.\n",
+        "parameters": [
+          {
+            "description": " Klaytn 네트워크 체인 ID (1001 or 8217)",
+            "in": "header",
+            "name": "x-chain-id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "조회할 NFT 컨트랙트 주소 ",
+            "in": "path",
+            "name": "nft-address",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "조회할 NFT ID (16진수)",
+            "in": "path",
+            "name": "token-id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "Nft",
+                  "type": "object",
+                  "properties": {
+                    "owner": {
+                      "type": "string",
+                      "description": "소유자 EOA (20-byte)",
+                      "example": "0x5e47b195eeb11d72f5e1d27aebb6d341f1a9bedb"
+                    },
+                    "previousOwner": {
+                      "type": "string",
+                      "description": "직전 소유자 EOA (20-byte)",
+                      "example": "0xb4bf60383c64d47f2e667f2fe8f7ed0c9380f770"
+                    },
+                    "tokenId": {
+                      "type": "string",
+                      "description": "토큰 ID (16진수)",
+                      "example": "0x1"
+                    },
+                    "tokenUri": {
+                      "type": "string",
+                      "description": "토큰 고유의 URL",
+                      "example": "https://link.to/nft/1"
+                    },
+                    "transactionHash": {
+                      "type": "string",
+                      "description": "마지막 트랜잭션 해시 (32-byte)",
+                      "example": "0xc4a32f41e829f50c4e8774be68864f522120a2047db2143b59b3919ebd9234f8"
+                    },
+                    "createdAt": {
+                      "type": "integer",
+                      "format": "int64",
+                      "description": "토큰이 생성된 시점 (timestamp)",
+                      "example": 1592180992
+                    },
+                    "updatedAt": {
+                      "type": "integer",
+                      "format": "int64",
+                      "description": "토큰 정보가 마지막으로 변경된 시점 (timestamp)",
+                      "example": 1592180992
+                    }
+                  },
+                  "required": [
+                    "owner",
+                    "previousOwner",
+                    "tokenId",
+                    "tokenUri",
+                    "createdAt",
+                    "updatedAt",
+                    "transactionHash"
+                  ]
+                },
+                "examples": {
+                  "Success": {
+                    "summary": "Success",
+                    "description": "",
+                    "value": {
+                      "tokenId": "0x2",
+                      "owner": "0xe5389503156ee02775ee18552f0c9d9846b66a91",
+                      "previousOwner": "0x0000000000000000000000000000000000000000",
+                      "tokenUri": "http://172.16.15.49:8080/meta/item2",
+                      "transactionHash": "0xc7d07066e4e42a7d896c34420ed43568ba44ae15a8ef771b13ba1f6f2d2820c4",
+                      "createdAt": 1597304701,
+                      "updatedAt": 1597304701
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/paths/~1v2~1transfer/get/responses/400/content/application~1json/schema"
+                },
+                "examples": {
+                  "Invalid URI - NFT": {
+                    "summary": "Invalid URI - NFT",
+                    "description": "",
+                    "value": {
+                      "code": 1040020,
+                      "message": "[InvalidUriValue]invalid nft address",
+                      "requestId": "5d63e976-063d-984f-8676-881d71729d66"
+                    }
+                  },
+                  "Invalid URI - token": {
+                    "summary": "Invalid URI - token",
+                    "description": "",
+                    "value": {
+                      "code": 1040020,
+                      "message": "[InvalidUriValue]invalid token id",
+                      "requestId": "5d63e976-063d-984f-8676-881d71729d66"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/paths/~1v2~1transfer/get/responses/400/content/application~1json/schema"
+                },
+                "examples": {
+                  "Token not found": {
+                    "summary": "Token not found",
+                    "description": "",
+                    "value": {
+                      "code": 1040400,
+                      "message": "[ResourceNotFound]not found nft token",
+                      "requestId": "615a2f6a-5aa3-90f8-b714-b8005e42e985"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "특정 NFT 토큰 정보 조회",
+        "operationId": "getNftById",
+        "tags": [
+          "th-token"
+        ]
+      }
+    },
+    "/v2/contract/mt/{mt-address}/token": {
+      "get": {
+        "description": "MT 컨트랙트를 지정하면 해당 컨트랙트에서 발행된 모든 토큰의 정보를 불러옵니다.<p></p>\n\n## Sort<p></p>\n\n* 응답값에 포함되는 아이템은 토큰 아이디를 기준으로 오름차순 사전식 순서(lexicographical order)로 정렬됩니다.  <p></p><br>\n\n## Size<p></p>\n\n* `size` 쿼리 파라미터는 선택 파라미터입니다 (최소값 = 1, 최대값 = 1000, 기본값 = 100)<br>\n* 음수를 입력하면 오류를 반환합니다<br>\n* 0을 입력하면 기본값(`size=100`)을 사용합니다<br>\n* 최대값보다 큰 값을 입력하면 최대값을 사용합니다<br>",
+        "parameters": [
+          {
+            "description": " Klaytn 체인 네트워크 ID (1001 or 8217)",
+            "in": "header",
+            "name": "x-chain-id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "응답 아이템 개수(min=1, max=1000, default=100)",
+            "in": "query",
+            "name": "size",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "example": 2
+          },
+          {
+            "description": "특정 위치를 지정하기 위한 오프셋",
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": ""
+          },
+          {
+            "description": "조회할 NFT 컨트랙트 주소",
+            "in": "path",
+            "name": "mt-address",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "PageableMts",
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "title": "Mt",
+                        "type": "object",
+                        "properties": {
+                          "tokenId": {
+                            "type": "string",
+                            "description": "토큰 ID (16진수)",
+                            "example": "0x1"
+                          },
+                          "totalSupply": {
+                            "type": "string",
+                            "description": "총 발행량 (16진수로 표기)",
+                            "example": "0xaf298d050e4395d69670b12b7f41"
+                          },
+                          "tokenUri": {
+                            "type": "string",
+                            "description": "토큰의 URL",
+                            "example": "https://link.to/mt/1"
+                          }
+                        },
+                        "required": [
+                          "tokenId",
+                          "totalSupply",
+                          "tokenUri"
+                        ]
+                      }
+                    },
+                    "cursor": {
+                      "type": "string",
+                      "description": "다음 페이지 커서",
+                      "example": "z2o87adeLbW4Aqm53gpq6VbGZg3JmE5vodrwD9XKmY5vMl4Gkw9PZO1NoBpV8LR83y0Edb3Aar7eKQqzJWDg6X2xOe1P27l4kzY0xQa8LNABMWv0VJQ6MpNlr9O1xBDE"
+                    }
+                  },
+                  "required": [
+                    "items",
+                    "cursor"
+                  ]
+                },
+                "examples": {
+                  "Success": {
+                    "summary": "Success",
+                    "description": "",
+                    "value": {
+                      "items": [
+                        {
+                          "tokenId": "0x1",
+                          "totalSupply": "0xaf298d050e4395d69670b12b7f41000000000000",
+                          "tokenUri": "http://evahello.com"
+                        }
+                      ],
+                      "cursor": "z53x014AdOQJGNl6V99k3wAap7M08oLKedg5DVqlLdZqWwPQzo3aM7v8A9J6V2nmqnpgDNOeGkblm1BKEX5x0Yr46bW2ZN4YGmQPJO1xBvrEzXrW2gbvDZ7EKMaYmkew"
+                    }
+                  },
+                  "Empty tokens": {
+                    "summary": "Empty tokens",
+                    "description": "",
+                    "value": {
+                      "items": [],
+                      "cursor": ""
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/paths/~1v2~1transfer/get/responses/400/content/application~1json/schema"
+                },
+                "examples": {
+                  "Invalid URI": {
+                    "summary": "Invalid URI",
+                    "description": "",
+                    "value": {
+                      "code": 1040020,
+                      "message": "[InvalidUriValue]invalid mt address",
+                      "requestId": "28a79540-89b3-9c4c-ab6c-00ef6fbb5004"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/paths/~1v2~1transfer/get/responses/400/content/application~1json/schema"
+                },
+                "examples": {
+                  "MT not found": {
+                    "summary": "MT not found",
+                    "description": "",
+                    "value": {
+                      "code": 1040400,
+                      "message": "[ResourceNotFound]not found mt",
+                      "requestId": "8339f2bf-1b9e-9150-a563-60f731c33a4e"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "특정 MT 컨트랙트의 모든 토큰 정보 조회",
+        "operationId": "getMtsByContractAddress",
+        "tags": [
+          "th-token"
+        ]
+      }
+    },
+    "/v2/contract/mt/{mt-address}/token/{token-id}": {
+      "get": {
+        "description": "MT 컨트랙트 및 토큰 ID를 지정하면 해당 토큰을 소유한 EOA 정보를 불러옵니다.<p></p>\n\n## Size<p></p>\n\n* `size` 쿼리 파라미터는 선택 파라미터입니다 (최소값 = 1, 최대값 = 1000, 기본값 = 100)<br>\n* 음수를 입력하면 오류를 반환합니다<br>\n* 0을 입력하면 기본값(`size=100`)을 사용합니다<br>\n* 최대값보다 큰 값을 입력하면 최대값을 사용합니다<br>",
+        "parameters": [
+          {
+            "description": " Klaytn 체인 네트워크 ID (1001 or 8217)",
+            "in": "header",
+            "name": "x-chain-id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "특정 위치를 지정하기 위한 오프셋",
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": ""
+          },
+          {
+            "description": "응답 아이템 개수(min=1, max=1000, default=100)",
+            "in": "query",
+            "name": "size",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "example": 1
+          },
+          {
+            "description": "조회할 NFT 컨트랙트 주소",
+            "in": "path",
+            "name": "mt-address",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "조회할 MT ID (16진수)",
+            "in": "path",
+            "name": "token-id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "PageableMtTokens",
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "title": "MtToken",
+                        "type": "object",
+                        "properties": {
+                          "tokenId": {
+                            "type": "string",
+                            "description": "토큰 ID (16진수)",
+                            "example": "0x1"
+                          },
+                          "owner": {
+                            "type": "string",
+                            "description": "소유자 EOA (20-byte)",
+                            "example": "0x5e47b195eeb11d72f5e1d27aebb6d341f1a9bedb"
+                          },
+                          "tokenAddress": {
+                            "type": "string",
+                            "description": "CA (20-byte)",
+                            "example": "0x2c2382bcca41295495973be1d5a997d21f77b50e"
+                          },
+                          "totalSupply": {
+                            "type": "string",
+                            "description": "총 발행량 (16진수로 표기)",
+                            "example": "0xaf298d050e4395d69670b12b7f41"
+                          },
+                          "tokenUri": {
+                            "type": "string",
+                            "description": "토큰의 URL",
+                            "example": "https://link.to/mt/1"
+                          },
+                          "balance": {
+                            "type": "string",
+                            "description": "소유자 EOA의 잔액",
+                            "example": "0xaf298d050e4395d69670b12b7f4"
+                          },
+                          "transactionHash": {
+                            "type": "string",
+                            "description": "마지막 트랜잭션 해시 (32-byte)",
+                            "example": "0xc4a32f41e829f50c4e8774be68864f522120a2047db2143b59b3919ebd9234f8"
+                          },
+                          "transferFrom": {
+                            "type": "string",
+                            "description": "최근 TransferSingle 또는 TransferBatch의 보낸 사람 EOA (20-byte)",
+                            "example": "0x5e47b195eeb11d72f5e1d27aebb6d341f1a9bedb"
+                          },
+                          "transferTo": {
+                            "type": "string",
+                            "description": "최근 TransferSingle 또는 TransferBatch의 받은 사람 EOA (20-byte)",
+                            "example": "0xbe02aba56bae1624e2c4f029e3a79308e2a19e98"
+                          },
+                          "updatedAt": {
+                            "type": "integer",
+                            "format": "int64",
+                            "description": "토큰 정보가 마지막으로 변경된 시점 (timestamp)",
+                            "example": 1592180992
+                          }
+                        },
+                        "required": [
+                          "tokenId",
+                          "owner",
+                          "tokenAddress",
+                          "totalSupply",
+                          "tokenUri",
+                          "balance",
+                          "transactionHash",
+                          "transferFrom",
+                          "transferTo",
+                          "updatedAt"
+                        ]
+                      }
+                    },
+                    "cursor": {
+                      "type": "string",
+                      "description": "다음 페이지 커서",
+                      "example": "z2o87adeLbW4Aqm53gpq6VbGZg3JmE5vodrwD9XKmY5vMl4Gkw9PZO1NoBpV8LR83y0Edb3Aar7eKQqzJWDg6X2xOe1P27l4kzY0xQa8LNABMWv0VJQ6MpNlr9O1xBDE"
+                    }
+                  },
+                  "required": [
+                    "items",
+                    "cursor"
+                  ]
+                },
+                "examples": {
+                  "Success": {
+                    "summary": "Success",
+                    "description": "",
+                    "value": {
+                      "items": [
+                        {
+                          "tokenId": "0x1",
+                          "owner": "0xb8bb4b109f18eb6f292757aaec623200f1a41369",
+                          "tokenAddress": "0x2c2382bcca41295495973be1d5a997d21f77b50e",
+                          "totalSupply": "0xaf298d050e4395d69670b12b7f41000000000000",
+                          "tokenUri": "http://evahello.com",
+                          "balance": "0x1f",
+                          "transactionHash": "0x23586a41831bd2044e1793d136ee7b9ac387ea376208dcd87bbded6f7c9032ee",
+                          "transferFrom": "0xb8bb4b109f18eb6f292757aaec623200f1a41369",
+                          "transferTo": "0xae02aba56bae1624e2c4f029e3a79308e2a19e98",
+                          "updatedAt": 1607319007
+                        }
+                      ],
+                      "cursor": ""
+                    }
+                  },
+                  "Empty tokens": {
+                    "summary": "Empty tokens",
+                    "description": "",
+                    "value": {
+                      "items": [],
+                      "cursor": ""
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/paths/~1v2~1transfer/get/responses/400/content/application~1json/schema"
+                },
+                "examples": {
+                  "Invalid URI": {
+                    "summary": "Invalid URI",
+                    "description": "",
+                    "value": {
+                      "code": 1040020,
+                      "message": "[InvalidUriValue]invalid token id",
+                      "requestId": "aeca8406-9dda-9ece-bf9e-cf8569fccfbf"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/paths/~1v2~1transfer/get/responses/400/content/application~1json/schema"
+                },
+                "examples": {
+                  "MT not found": {
+                    "summary": "MT not found",
+                    "description": "",
+                    "value": {
+                      "code": 1040400,
+                      "message": "[ResourceNotFound]not found mt",
+                      "requestId": "116aece2-f79f-9cc9-b1ba-f77467afe89d"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "특정 MT의 모든 소유자 기록 조회",
+        "operationId": "getMtTokensByContractAddressAndTokenId",
+        "tags": [
+          "th-token-ownership"
+        ]
+      }
+    },
+    "/v2/contract/mt/{mt-address}/owner/{owner-address}": {
+      "get": {
+        "description": "MT 컨트랙트와 EOA를 지정하면 해당 컨트랙트에서 발행된 MT 중 EOA가 가지고 있는 MT의 정보를 불러옵니다.<p></p>\n\n## Size<p></p>\n\n* `size` 쿼리 파라미터는 선택 파라미터입니다 (최소값 = 1, 최대값 = 1000, 기본값 = 100)<br>\n* 음수를 입력하면 오류를 반환합니다<br>\n* 0을 입력하면 기본값(`size=100`)을 사용합니다<br>\n* 최대값보다 큰 값을 입력하면 최대값을 사용합니다<br>",
+        "parameters": [
+          {
+            "description": " Klaytn 체인 네트워크 ID (1001 or 8217)",
+            "in": "header",
+            "name": "x-chain-id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "특정 위치를 지정하기 위한 오프셋",
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": ""
+          },
+          {
+            "description": "응답 아이템 개수(min=1, max=1000, default=100)",
+            "in": "query",
+            "name": "size",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "example": 1
+          },
+          {
+            "description": "조회할 NFT 컨트랙트 주소",
+            "in": "path",
+            "name": "mt-address",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "조회할 EOA 주소",
+            "in": "path",
+            "name": "owner-address",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "PageableMtTokensWithBalance",
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/paths/~1v2~1contract~1mt~1%7Bmt-address%7D~1token~1%7Btoken-id%7D/get/responses/200/content/application~1json/schema/properties/items/items"
+                      }
+                    },
+                    "totalBalance": {
+                      "type": "string",
+                      "description": "해당 EOA가 소유한 전체 토큰의 잔액",
+                      "example": "0xf1"
+                    },
+                    "cursor": {
+                      "type": "string",
+                      "description": "다음 페이지 커서",
+                      "example": "z2o87adeLbW4Aqm53gpq6VbGZg3JmE5vodrwD9XKmY5vMl4Gkw9PZO1NoBpV8LR83y0Edb3Aar7eKQqzJWDg6X2xOe1P27l4kzY0xQa8LNABMWv0VJQ6MpNlr9O1xBDE"
+                    }
+                  },
+                  "required": [
+                    "items",
+                    "totalBalance",
+                    "cursor"
+                  ]
+                },
+                "examples": {
+                  "Success": {
+                    "summary": "Success",
+                    "description": "",
+                    "value": {
+                      "items": [
+                        {
+                          "tokenId": "0x1",
+                          "owner": "0xb8bb4b109f18eb6f292757aaec623200f1a41369",
+                          "tokenAddress": "0x2c2382bcca41295495973be1d5a997d21f77b50e",
+                          "totalSupply": "0xaf298d050e4395d69670b12b7f41000000000000",
+                          "tokenUri": "http://evahello.com",
+                          "balance": "0x1f",
+                          "transactionHash": "0x23586a41831bd2044e1793d136ee7b9ac387ea376208dcd87bbded6f7c9032ee",
+                          "transferFrom": "0x39262962d3889b02915f943d6f917edcf6c71f5a",
+                          "transferTo": "0xb8bb4b109f18eb6f292757aaec623200f1a41369",
+                          "updatedAt": 1607319007
+                        }
+                      ],
+                      "totalBalance": "0xfa",
+                      "cursor": "PBOQ20pEXl389k1K6W1AEzp2VBJ80b5MgowlXZYlkao45O0WMgr73BpPD6d9Rb9ZPK13yKwbqezELvmN8Gx1Q2JVAXZGQqmxd9a7e4krKN3YLDPOvNY7Zvbom5MrDA4V"
+                    }
+                  },
+                  "Empty tokens": {
+                    "summary": "Empty tokens",
+                    "description": "",
+                    "value": {
+                      "items": [],
+                      "totalBalance": "0x0",
+                      "cursor": ""
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/paths/~1v2~1transfer/get/responses/400/content/application~1json/schema"
+                },
+                "examples": {
+                  "Invalid URI - MT": {
+                    "summary": "",
+                    "description": "",
+                    "value": {
+                      "code": 1040020,
+                      "message": "[InvalidUriValue]invalid mt address",
+                      "requestId": "42132a53-17c8-9100-a857-9c42b48d5141"
+                    }
+                  },
+                  "Invalid URI - owner": {
+                    "summary": "",
+                    "description": "",
+                    "value": {
+                      "code": 1040020,
+                      "message": "[InvalidUriValue]invalid owner address",
+                      "requestId": "42132a53-17c8-9100-a857-9c42b48d5141"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/paths/~1v2~1transfer/get/responses/400/content/application~1json/schema"
+                },
+                "examples": {
+                  "MT not found": {
+                    "summary": "MT not found",
+                    "description": "",
+                    "value": {
+                      "code": 1040400,
+                      "message": "[ResourceNotFound]not found mt",
+                      "requestId": "0c4f6ba5-bc92-9d35-812c-e97f9f00d5ee"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "특정 EOA가 가진 모든 MT 토큰 정보 조회",
+        "operationId": "getMtTokensByContractAddressAndOwnerAddress",
+        "tags": [
+          "th-token"
+        ]
+      }
+    },
+    "/v2/contract/mt/{mt-address}/owner/{owner-address}/token/{token-id}": {
+      "get": {
+        "description": "특정 MT 정보를 조회합니다. ",
+        "parameters": [
+          {
+            "description": " Klaytn 체인 네트워크 ID (1001 or 8217)",
+            "in": "header",
+            "name": "x-chain-id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "조회할 NFT 컨트랙트 주소",
+            "in": "path",
+            "name": "mt-address",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "조회할 EOA 주소",
+            "in": "path",
+            "name": "owner-address",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "조회할 MT ID (16진수)",
+            "in": "path",
+            "name": "token-id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "MtToken",
+                  "type": "object",
+                  "properties": {
+                    "tokenId": {
+                      "type": "string",
+                      "description": "토큰 ID (16진수)",
+                      "example": "0x1"
+                    },
+                    "owner": {
+                      "type": "string",
+                      "description": "소유자 EOA (20-byte)",
+                      "example": "0x5e47b195eeb11d72f5e1d27aebb6d341f1a9bedb"
+                    },
+                    "tokenAddress": {
+                      "type": "string",
+                      "description": "CA (20-byte)",
+                      "example": "0x2c2382bcca41295495973be1d5a997d21f77b50e"
+                    },
+                    "totalSupply": {
+                      "type": "string",
+                      "description": "총 발행량 (16진수로 표기)",
+                      "example": "0xaf298d050e4395d69670b12b7f41"
+                    },
+                    "tokenUri": {
+                      "type": "string",
+                      "description": "토큰의 URL",
+                      "example": "https://link.to/mt/1"
+                    },
+                    "balance": {
+                      "type": "string",
+                      "description": "소유자 EOA의 잔액",
+                      "example": "0xaf298d050e4395d69670b12b7f4"
+                    },
+                    "transactionHash": {
+                      "type": "string",
+                      "description": "마지막 트랜잭션 해시 (32-byte)",
+                      "example": "0xc4a32f41e829f50c4e8774be68864f522120a2047db2143b59b3919ebd9234f8"
+                    },
+                    "transferFrom": {
+                      "type": "string",
+                      "description": "최근 TransferSingle 또는 TransferBatch의 보낸 사람 EOA (20-byte)",
+                      "example": "0x5e47b195eeb11d72f5e1d27aebb6d341f1a9bedb"
+                    },
+                    "transferTo": {
+                      "type": "string",
+                      "description": "최근 TransferSingle 또는 TransferBatch의 받은 사람 EOA (20-byte)",
+                      "example": "0xbe02aba56bae1624e2c4f029e3a79308e2a19e98"
+                    },
+                    "updatedAt": {
+                      "type": "integer",
+                      "format": "int64",
+                      "description": "토큰 정보가 마지막으로 변경된 시점 (timestamp)",
+                      "example": 1592180992
+                    }
+                  },
+                  "required": [
+                    "tokenId",
+                    "owner",
+                    "tokenAddress",
+                    "totalSupply",
+                    "tokenUri",
+                    "balance",
+                    "transactionHash",
+                    "transferFrom",
+                    "transferTo",
+                    "updatedAt"
+                  ]
+                },
+                "examples": {
+                  "Success": {
+                    "summary": "Success",
+                    "description": "",
+                    "value": {
+                      "tokenId": "0x1",
+                      "owner": "0xb8bb4b109f18eb6f292757aaec623200f1a41369",
+                      "tokenAddress": "0x2c2382bcca41295495973be1d5a997d21f77b50e",
+                      "totalSupply": "0xaf298d050e4395d69670b12b7f41000000000000",
+                      "tokenUri": "http://evahello.com",
+                      "balance": "0x1f",
+                      "transactionHash": "0x23586a41831bd2044e1793d136ee7b9ac387ea376208dcd87bbded6f7c9032ee",
+                      "transferFrom": "0x39262962d3889b02915f943d6f917edcf6c71f5a",
+                      "transferTo": "0xb8bb4b109f18eb6f292757aaec623200f1a41369",
+                      "updatedAt": 1607319007
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/paths/~1v2~1transfer/get/responses/400/content/application~1json/schema"
+                },
+                "examples": {
+                  "Invalid URI - MT": {
+                    "summary": "Invalid URI - MT",
+                    "description": "",
+                    "value": {
+                      "code": 1040020,
+                      "message": "[InvalidUriValue]invalid mt address",
+                      "requestId": "42132a53-17c8-9100-a857-9c42b48d5141"
+                    }
+                  },
+                  "Invalid URI - owner": {
+                    "summary": "Invalid URI - owner",
+                    "description": "",
+                    "value": {
+                      "code": 1040020,
+                      "message": "[InvalidUriValue]invalid owner address",
+                      "requestId": "42132a53-17c8-9100-a857-9c42b48d5141"
+                    }
+                  },
+                  "Invalid URI - token": {
+                    "summary": "Invalid URI - token",
+                    "description": "",
+                    "value": {
+                      "code": 1040020,
+                      "message": "[InvalidUriValue]invalid token id",
+                      "requestId": "42132a53-17c8-9100-a857-9c42b48d5141"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/paths/~1v2~1transfer/get/responses/400/content/application~1json/schema"
+                },
+                "examples": {
+                  "MT not found": {
+                    "summary": "MT not found",
+                    "description": "",
+                    "value": {
+                      "code": 1040400,
+                      "message": "[ResourceNotFound]not found mt",
+                      "requestId": "0c4f6ba5-bc92-9d35-812c-e97f9f00d5ee"
+                    }
+                  },
+                  "Token not found": {
+                    "summary": "Token not found",
+                    "description": "",
+                    "value": {
+                      "code": 1040400,
+                      "message": "[ResourceNotFound]not found mt token",
+                      "requestId": "0c4f6ba5-bc92-9d35-812c-e97f9f00d5ee"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "특정 EOA가 가진 MT 토큰 정보 조회",
+        "operationId": "getMtTokensByContractAddressAndOwnerAddressAndTokenId",
+        "tags": [
+          "th-token"
+        ]
+      }
+    },
+    "/v2/contract/nft/{nft-address}/token/{token-id}/history": {
+      "get": {
+        "description": "특정 NFT의 소유권 변경 기록을 조회합니다.<p></p>\n\n## Size<p></p>\n\n* `size` 쿼리 파라미터는 선택 파라미터입니다 (최소값 = 1, 최대값 = 1000, 기본값 = 100)<br>\n* 음수를 입력하면 오류를 반환합니다<br>\n* 0을 입력하면 기본값(`size=100`)을 사용합니다<br>\n* 최대값보다 큰 값을 입력하면 최대값을 사용합니다<br>",
+        "parameters": [
+          {
+            "description": " Klaytn 네트워크 체인 ID (1001 or 8217)",
+            "in": "header",
+            "name": "x-chain-id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "응답 아이템 개수(min=1, max=1000, default=100)",
+            "in": "query",
+            "name": "size",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "example": 100
+          },
+          {
+            "description": "특정 위치를 지정하기 위한 오프셋",
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": ""
+          },
+          {
+            "description": "조회할 NFT 컨트랙트 주소",
+            "in": "path",
+            "name": "nft-address",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "조회할 NFT ID (16진수)",
+            "in": "path",
+            "name": "token-id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "PageableNftOwnershipChanges",
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "title": "NftOwnershipChange",
+                        "type": "object",
+                        "properties": {
+                          "from": {
+                            "type": "string",
+                            "description": "보낸 사람 (직전 소유자) EOA (20-byte)",
+                            "example": "0x5e47b195eeb11d72f5e1d27aebb6d341f1a9bedb"
+                          },
+                          "to": {
+                            "type": "string",
+                            "description": "받은 사람 (이 시점의 소유자) EOA (20-byte)",
+                            "example": "0xb4bf60383c64d47f2e667f2fe8f7ed0c9380f770"
+                          },
+                          "transactionHash": {
+                            "type": "string",
+                            "description": "소유자 변경이 발생한 트랜잭션 해시 (32-byte)",
+                            "example": "0x3b8ce9536259bafe9dad83f620c438b587855764d1816ca004d4da5908c6eff7"
+                          },
+                          "timestamp": {
+                            "type": "integer",
+                            "format": "int64",
+                            "description": "NFT 소유권이 변경된 시점 (timestamp)",
+                            "example": 1592180992
+                          }
+                        },
+                        "required": [
+                          "to",
+                          "from",
+                          "transactionHash",
+                          "timestamp"
+                        ]
+                      }
+                    },
+                    "cursor": {
+                      "type": "string",
+                      "description": "다음 페이지 커서",
+                      "example": "z2o87adeLbW4Aqm53gpq6VbGZg3JmE5vodrwD9XKmY5vMl4Gkw9PZO1NoBpV8LR83y0Edb3Aar7eKQqzJWDg6X2xOe1P27l4kzY0xQa8LNABMWv0VJQ6MpNlr9O1xBDE"
+                    }
+                  },
+                  "required": [
+                    "items",
+                    "cursor"
+                  ]
+                },
+                "examples": {
+                  "Success": {
+                    "summary": "Success",
+                    "description": "",
+                    "value": {
+                      "items": [
+                        {
+                          "from": "0x0000000000000000000000000000000000000000",
+                          "to": "0x36884a060be5438226c4deaf799b0f7de5abd5df",
+                          "timestamp": 1597226350
+                        }
+                      ],
+                      "cursor": ""
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/paths/~1v2~1transfer/get/responses/400/content/application~1json/schema"
+                },
+                "examples": {
+                  "Invalid query": {
+                    "summary": "Invalid query",
+                    "description": "",
+                    "value": {
+                      "code": 1040010,
+                      "message": "[InvalidQueryParameterValue]invalid query value",
+                      "requestId": "42132a53-17c8-9100-a857-9c42b48d5141"
+                    }
+                  },
+                  "Invalid URI - MT": {
+                    "summary": "Invalid URI - NFT",
+                    "description": "",
+                    "value": {
+                      "code": 1040020,
+                      "message": "[InvalidUriValue]invalid nft address",
+                      "requestId": "42132a53-17c8-9100-a857-9c42b48d5141"
+                    }
+                  },
+                  "Invalid URI - token": {
+                    "summary": "Invalid URI - token",
+                    "description": "",
+                    "value": {
+                      "code": 1040020,
+                      "message": "[InvalidUriValue]invalid token id",
+                      "requestId": "42132a53-17c8-9100-a857-9c42b48d5141"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/paths/~1v2~1transfer/get/responses/400/content/application~1json/schema"
+                },
+                "examples": {
+                  "MT not found": {
+                    "summary": "Token not found",
+                    "description": "",
+                    "value": {
+                      "code": 1040400,
+                      "message": "[ResourceNotFound]not found nft token",
+                      "requestId": "0c4f6ba5-bc92-9d35-812c-e97f9f00d5ee"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "특정 NFT 소유권 변경 기록 조회",
+        "operationId": "getListOfNftOwnershipChanges",
+        "tags": [
+          "th-token-ownership"
+        ]
+      }
+    },
+    "/v2/account/{address}/contract": {
+      "get": {
+        "description": "EOA를 지정하면 해당 EOA가 소유한 토큰들의 컨트랙트 정보를 불러옵니다.<p></p>\n\n* `ft`: 해당 컨트랙트에 잔액이 존재하는 경우 데이터를 포함합니다<br>\n* `nft`: 해당 컨트랙트의 토큰이 존재하는 경우 데이터를 포함합니다<br>\n* `mt`: 해당 컨트랙트의 토큰 잔액이 존재하는 경우 데이터를 포함합니다<p></p><br>\n\n## Size<p></p>\n\n* `size` 쿼리 파라미터는 선택 파라미터입니다 (최소값 = 1, 최대값 = 1000, 기본값 = 100)<br>\n* 음수를 입력하면 오류를 반환합니다<br>\n* 0을 입력하면 기본값(`size=100`)을 사용합니다<br>\n* 최대값보다 큰 값을 입력하면 최대값을 사용합니다<br>",
+        "parameters": [
+          {
+            "description": " Klaytn 네트워크 체인 ID (1001 or 8217)",
+            "in": "header",
+            "name": "x-chain-id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "(csv) [“ft”, “nft”,“mt”] 중 포함 할 유형, 지정안될 경우 모든 유형을 조회 ",
+            "in": "query",
+            "name": "kind",
+            "required": false,
+            "explode": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "ft,nft,mt"
+          },
+          {
+            "description": "응답 아이템 개수(min=1, max=1000, default=100)",
+            "in": "query",
+            "name": "size",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "example": 100
+          },
+          {
+            "description": "특정 위치를 지정하기 위한 오프셋",
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": ""
+          },
+          {
+            "description": "조회할 EOA 주소",
+            "in": "path",
+            "name": "address",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "PageableContractSummary",
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "title": "ContractSummaryItem",
+                        "anyOf": [
+                          {
+                            "title": "ftContractSummary",
+                            "type": "object",
+                            "properties": {
+                              "kind": {
+                                "type": "string",
+                                "description": "컨트랙트 유형",
+                                "example": "ft"
+                              },
+                              "contractAddress": {
+                                "type": "string",
+                                "description": "컨트랙트 주소 (20-byte)",
+                                "example": "0x66ac22b457006c3f519e4a5c49ff19eb531bba4e"
+                              },
+                              "updatedAt": {
+                                "type": "integer",
+                                "format": "int64",
+                                "description": "토큰 잔액이 마지막으로 변경된 시점 (timestamp)",
+                                "example": 1607993770
+                              },
+                              "totalBalance": {
+                                "type": "string",
+                                "description": "잔액(16진수)",
+                                "example": "0x15e"
+                              },
+                              "extras": {
+                                "title": "ftContractSummaryExtras",
+                                "type": "object",
+                                "properties": {
+                                  "name": {
+                                    "type": "string",
+                                    "description": "토큰 이름",
+                                    "example": "KAS FCoin"
+                                  },
+                                  "decimals": {
+                                    "type": "integer",
+                                    "format": "int64",
+                                    "description": "토큰 자릿수",
+                                    "example": 8
+                                  },
+                                  "symbol": {
+                                    "type": "string",
+                                    "description": "토큰 심볼",
+                                    "example": "KFC"
+                                  },
+                                  "totalSupply": {
+                                    "type": "string",
+                                    "description": "총 발행량 (16진수로 표기)",
+                                    "example": "0xde0b6b3a7640000"
+                                  },
+                                  "formattedValue": {
+                                    "type": "string",
+                                    "description": "컨트랙트의 `decimals` 값을 적용한 변환값",
+                                    "example": "0.00000000000000035"
+                                  }
+                                }
+                              }
+                            },
+                            "required": [
+                              "kind",
+                              "contractAddress",
+                              "updatedAt",
+                              "totalBalance",
+                              "extras"
+                            ]
+                          },
+                          {
+                            "title": "nftContractSummary",
+                            "type": "object",
+                            "properties": {
+                              "kind": {
+                                "type": "string",
+                                "description": "컨트랙트 유형",
+                                "example": "nft"
+                              },
+                              "contractAddress": {
+                                "type": "string",
+                                "description": "컨트랙트 주소 (20-byte)",
+                                "example": "0xfa9a1b66b970dc713ae71d56a7cc44b573d4c8f7"
+                              },
+                              "updatedAt": {
+                                "type": "integer",
+                                "format": "int64",
+                                "description": "토큰 소유권이 마지막으로 변경된 시점 (timestamp)",
+                                "example": 1607993770
+                              },
+                              "totalBalance": {
+                                "type": "string",
+                                "description": "토큰 보유 내역 개수(16진수)",
+                                "example": "0x1"
+                              },
+                              "extras": {
+                                "title": "nftContractSummaryExtras",
+                                "type": "object",
+                                "properties": {
+                                  "name": {
+                                    "type": "string",
+                                    "description": "토큰 이름",
+                                    "example": "KAS NCoin"
+                                  },
+                                  "symbol": {
+                                    "type": "string",
+                                    "description": "토큰 심볼",
+                                    "example": "KNC"
+                                  },
+                                  "totalSupply": {
+                                    "type": "string",
+                                    "description": "토큰 발행 수량(16진수로 표기)",
+                                    "example": "0x1d"
+                                  }
+                                }
+                              }
+                            },
+                            "required": [
+                              "kind",
+                              "contractAddress",
+                              "updatedAt",
+                              "totalBalance",
+                              "extras"
+                            ]
+                          },
+                          {
+                            "title": "mtContractSummary",
+                            "type": "object",
+                            "properties": {
+                              "kind": {
+                                "type": "string",
+                                "description": "컨트랙트 유형",
+                                "example": "mt"
+                              },
+                              "contractAddress": {
+                                "type": "string",
+                                "description": "컨트랙트 주소 (20-byte)",
+                                "example": "0x2b2e50e8c8e0d097f22ac9389af2f354d18d2882"
+                              },
+                              "updatedAt": {
+                                "type": "integer",
+                                "format": "int64",
+                                "description": "토큰 소유권이 마지막으로 변경된 시점 (timestamp)",
+                                "example": 1607993770
+                              },
+                              "totalBalance": {
+                                "type": "string",
+                                "description": "보유 토큰의 전체 잔액 합(16진수)",
+                                "example": "0x1c2"
+                              },
+                              "extras": {
+                                "title": "mtContractSummaryExtras",
+                                "type": "object"
+                              }
+                            },
+                            "required": [
+                              "kind",
+                              "contractAddress",
+                              "updatedAt",
+                              "totalBalance",
+                              "extras"
+                            ]
+                          }
+                        ]
+                      }
+                    },
+                    "cursor": {
+                      "type": "string",
+                      "description": "다음 페이지 커서",
+                      "example": "z2o87adeLbW4Aqm53gpq6VbGZg3JmE5vodrwD9XKmY5vMl4Gkw9PZO1NoBpV8LR83y0Edb3Aar7eKQqzJWDg6X2xOe1P27l4kzY0xQa8LNABMWv0VJQ6MpNlr9O1xBDE"
+                    }
+                  },
+                  "required": [
+                    "items",
+                    "cursor"
+                  ]
+                },
+                "examples": {
+                  "Success": {
+                    "summary": "Success",
+                    "description": "",
+                    "value": {
+                      "items": [
+                        {
+                          "kind": "nft",
+                          "contractAddress": "0xfa9a1b66b970dc713ae71d56a7cc44b573d4c8f7",
+                          "updatedAt": 1607993770,
+                          "totalBalance": "0x1",
+                          "extras": {
+                            "name": "KASNFT",
+                            "symbol": "KNFT",
+                            "totalSupply": "0x1"
+                          }
+                        },
+                        {
+                          "kind": "ft",
+                          "contractAddress": "0x66ac22b457006c3f519e4a5c49ff19eb531bba4e",
+                          "updatedAt": 1607993770,
+                          "totalBalance": "0x15e",
+                          "extras": {
+                            "name": "KASFT",
+                            "symbol": "KFT",
+                            "decimals": 18,
+                            "totalSupply": "0xde0b6b3a7640000",
+                            "formattedValue": "0.00000000000000035"
+                          }
+                        },
+                        {
+                          "kind": "mt",
+                          "contractAddress": "0x2b2e50e8c8e0d097f22ac9389af2f354d18d2882",
+                          "updatedAt": 1607993770,
+                          "totalBalance": "0x1c2",
+                          "extras": {}
+                        }
+                      ],
+                      "cursor": ""
+                    }
+                  },
+                  "Empty contracts": {
+                    "summary": "Empty contracts",
+                    "description": "",
+                    "value": {
+                      "items": [],
+                      "cursor": ""
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/paths/~1v2~1transfer/get/responses/400/content/application~1json/schema"
+                },
+                "examples": {
+                  "Invalid query": {
+                    "summary": "Invalid query",
+                    "description": "",
+                    "value": {
+                      "code": 1040010,
+                      "message": "[InvalidQueryParameterValue]invalid query value",
+                      "requestId": "f8c0cbb7-c2a5-96b9-a3b5-23c0892d63bc"
+                    }
+                  },
+                  "Invalid query - kind": {
+                    "summary": "Invalid query - kind",
+                    "description": "",
+                    "value": {
+                      "code": 1040010,
+                      "message": "[InvalidQueryParameterValue]invalid kind:klay",
+                      "requestId": "f8c0cbb7-c2a5-96b9-a3b5-23c0892d63bc"
+                    }
+                  },
+                  "Invalid URI": {
+                    "summary": "Invalid URI",
+                    "description": "",
+                    "value": {
+                      "code": 1040020,
+                      "message": "[InvalidUriValue]invalid account address",
+                      "requestId": "f8c0cbb7-c2a5-96b9-a3b5-23c0892d63bc"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "특정 EOA가 가진 컨트랙트 정보 조회",
+        "operationId": "getListOfContractByOwnerAddress",
+        "tags": [
+          "th-token"
+        ]
+      }
+    },
+    "/v2/account/{address}/token": {
+      "get": {
+        "description": "EOA를 지정하면 해당 EOA가 소유한 토큰 정보를 불러옵니다.<p></p>\n\n* `ft`: 해당 컨트랙트에 잔액이 존재하는 경우 데이터를 포함합니다<br>\n* `nft`: 해당 컨트랙트의 토큰이 존재하는 경우 데이터를 포함합니다<br>\n* `mt`: 해당 컨트랙트의 토큰 잔액이 존재하는 경우 데이터를 포함합니다<p></p><br>\n\n## Size<p></p>\n\n* `size` 쿼리 파라미터는 선택 파라미터입니다 (최소값 = 1, 최대값 = 1000, 기본값 = 100)<br>\n* 음수를 입력하면 오류를 반환합니다<br>\n* 0을 입력하면 기본값(`size=100`)을 사용합니다<br>\n* 최대값보다 큰 값을 입력하면 최대값을 사용합니다<br>",
+        "parameters": [
+          {
+            "description": " Klaytn 네트워크 체인 ID (1001 or 8217)",
+            "in": "header",
+            "name": "x-chain-id",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "description": "(csv) [“ft”, “nft”,“mt”] 중 포함 할 유형, 지정안될 경우 모든 유형을 조회 ",
+            "in": "query",
+            "name": "kind",
+            "required": false,
+            "explode": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "ft,nft,mt"
+          },
+          {
+            "description": "응답 아이템 개수(min=1, max=1000, default=100)",
+            "in": "query",
+            "name": "size",
+            "required": false,
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            },
+            "example": 100
+          },
+          {
+            "description": "필터링 할 컨트랙트 주소 리스트(\",\"로 구분)",
+            "in": "query",
+            "name": "ca-filters",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": "0x4e1abf46b3cfba7c64755f280e3c7349cf0f65ac,0x251f622e8b5e713f357e9c4d990e91da2f448134"
+          },
+          {
+            "description": "특정 위치를 지정하기 위한 오프셋",
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "type": "string"
+            },
+            "example": ""
+          },
+          {
+            "description": "조회할 EOA 주소",
+            "in": "path",
+            "name": "address",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "title": "PageableTokenSummary",
+                  "type": "object",
+                  "properties": {
+                    "items": {
+                      "type": "array",
+                      "items": {
+                        "title": "TokenSummaryItem",
+                        "anyOf": [
+                          {
+                            "title": "FTTokenSummary",
+                            "type": "object",
+                            "properties": {
+                              "kind": {
+                                "type": "string",
+                                "description": "토큰 유형",
+                                "example": "ft"
+                              },
+                              "contractAddress": {
+                                "type": "string",
+                                "description": "컨트랙트 주소 (20-byte)",
+                                "example": "0x66ac22b457006c3f519e4a5c49ff19eb531bba4e"
+                              },
+                              "updatedAt": {
+                                "type": "integer",
+                                "format": "int64",
+                                "description": "토큰 잔액이 마지막으로 변경된 시점 (timestamp)",
+                                "example": 1607993770
+                              },
+                              "balance": {
+                                "type": "string",
+                                "description": "잔액(16진수)",
+                                "example": "0x15e"
+                              },
+                              "lastTransfer": {
+                                "title": "LastTransfer",
+                                "type": "object",
+                                "properties": {
+                                  "transactionHash": {
+                                    "type": "string",
+                                    "description": "트랜잭션 해시",
+                                    "example": "0xcd23a37616840f997298a6ae62effb8d28303b1a22ee0acc73f8e486714837ff"
+                                  },
+                                  "transferFrom": {
+                                    "type": "string",
+                                    "description": "보낸 사람 EOA (20-byte)",
+                                    "example": "0xbdfaeffb231ed4ef4600a8be4f5aa02ba4821708"
+                                  },
+                                  "transferTo": {
+                                    "type": "string",
+                                    "description": "받은 사람 EOA (20-byte)",
+                                    "example": "0x034e13e54e62c6ea3614a04b81e95cf4a4f18a21"
+                                  }
+                                },
+                                "required": [
+                                  "transactionHash",
+                                  "transferFrom",
+                                  "transferTo"
+                                ]
+                              },
+                              "extras": {
+                                "title": "FTTokenSummaryExtras",
+                                "type": "object",
+                                "properties": {
+                                  "name": {
+                                    "type": "string",
+                                    "description": "토큰 이름",
+                                    "example": "KAS FCoin"
+                                  },
+                                  "decimals": {
+                                    "type": "integer",
+                                    "format": "int64",
+                                    "description": "토큰 자릿수",
+                                    "example": 8
+                                  },
+                                  "symbol": {
+                                    "type": "string",
+                                    "description": "토큰 심볼",
+                                    "example": "KFC"
+                                  },
+                                  "totalSupply": {
+                                    "type": "string",
+                                    "description": "총 발행량 (16진수로 표기)",
+                                    "example": "0xde0b6b3a7640000"
+                                  },
+                                  "formattedValue": {
+                                    "type": "string",
+                                    "description": "컨트랙트의 `decimals` 값을 적용한 변환값",
+                                    "example": "0.00000000000000035"
+                                  }
+                                }
+                              }
+                            },
+                            "required": [
+                              "kind",
+                              "contractAddress",
+                              "updatedAt",
+                              "balance",
+                              "lastTransfer",
+                              "extras"
+                            ]
+                          },
+                          {
+                            "title": "NFTTokenSummary",
+                            "type": "object",
+                            "properties": {
+                              "kind": {
+                                "type": "string",
+                                "description": "컨트랙트 유형",
+                                "example": "nft"
+                              },
+                              "contractAddress": {
+                                "type": "string",
+                                "description": "컨트랙트 주소 (20-byte)",
+                                "example": "0xfa9a1b66b970dc713ae71d56a7cc44b573d4c8f7"
+                              },
+                              "updatedAt": {
+                                "type": "integer",
+                                "format": "int64",
+                                "description": "토큰 소유권이 마지막으로 변경된 시점 (timestamp)",
+                                "example": 1607993770
+                              },
+                              "balance": {
+                                "type": "string",
+                                "description": "토큰 소유량(16진수)",
+                                "example": "0x1"
+                              },
+                              "lastTransfer": {
+                                "$ref": "#/paths/~1v2~1account~1%7Baddress%7D~1token/get/responses/200/content/application~1json/schema/properties/items/items/anyOf/0/properties/lastTransfer"
+                              },
+                              "extras": {
+                                "title": "NFTTokenSummaryExtras",
+                                "type": "object",
+                                "properties": {
+                                  "tokenId": {
+                                    "type": "string",
+                                    "description": "토큰 ID(16진수)",
+                                    "example": "0x1"
+                                  },
+                                  "tokenUri": {
+                                    "type": "string",
+                                    "description": "토큰 고유의 URL",
+                                    "example": "https://link.to/nft/1"
+                                  }
+                                }
+                              }
+                            },
+                            "required": [
+                              "kind",
+                              "contractAddress",
+                              "updatedAt",
+                              "balance",
+                              "lastTransfer",
+                              "extras"
+                            ]
+                          },
+                          {
+                            "title": "MTTokenSummary",
+                            "type": "object",
+                            "properties": {
+                              "kind": {
+                                "type": "string",
+                                "description": "컨트랙트 유형",
+                                "example": "mt"
+                              },
+                              "contractAddress": {
+                                "type": "string",
+                                "description": "컨트랙트 주소 (20-byte)",
+                                "example": "0x2b2e50e8c8e0d097f22ac9389af2f354d18d2882"
+                              },
+                              "updatedAt": {
+                                "type": "integer",
+                                "format": "int64",
+                                "description": "토큰 잔액이 마지막으로 변경된 시점 (timestamp)",
+                                "example": 1607993770
+                              },
+                              "balance": {
+                                "type": "string",
+                                "description": "토큰 소유량(16진수)",
+                                "example": "0x1"
+                              },
+                              "lastTransfer": {
+                                "$ref": "#/paths/~1v2~1account~1%7Baddress%7D~1token/get/responses/200/content/application~1json/schema/properties/items/items/anyOf/0/properties/lastTransfer"
+                              },
+                              "extras": {
+                                "title": "MTTokenSummaryExtras",
+                                "type": "object",
+                                "properties": {
+                                  "tokenId": {
+                                    "type": "string",
+                                    "description": "토큰 ID(16진수)",
+                                    "example": "0x1"
+                                  },
+                                  "tokenUri": {
+                                    "type": "string",
+                                    "description": "토큰 고유의 URL",
+                                    "example": "https://link.to/mt/1"
+                                  },
+                                  "totalSupply": {
+                                    "type": "string",
+                                    "description": "총 발행량(16진수로 표기)",
+                                    "example": "0xde0b6b3a7640000"
+                                  }
+                                }
+                              }
+                            },
+                            "required": [
+                              "kind",
+                              "contractAddress",
+                              "updatedAt",
+                              "balance",
+                              "lastTransfer",
+                              "extras"
+                            ]
+                          }
+                        ]
+                      }
+                    },
+                    "cursor": {
+                      "type": "string",
+                      "description": "다음 페이지 커서",
+                      "example": "z2o87adeLbW4Aqm53gpq6VbGZg3JmE5vodrwD9XKmY5vMl4Gkw9PZO1NoBpV8LR83y0Edb3Aar7eKQqzJWDg6X2xOe1P27l4kzY0xQa8LNABMWv0VJQ6MpNlr9O1xBDE"
+                    }
+                  },
+                  "required": [
+                    "items",
+                    "cursor"
+                  ]
+                },
+                "examples": {
+                  "Success": {
+                    "summary": "Success",
+                    "description": "",
+                    "value": {
+                      "items": [
+                        {
+                          "kind": "nft",
+                          "contractAddress": "0xfa9a1b66b970dc713ae71d56a7cc44b573d4c8f7",
+                          "updatedAt": 1607993770,
+                          "balance": "0x1",
+                          "lastTransfer": {
+                            "transactionHash": "0xc724efc8bd9e62d6149cfcb6ae08b6eb7b47fff16dfe0c1f169160ed1b4870e5",
+                            "transferFrom": "0xbdfaeffb231ed4ef4600a8be4f5aa02ba4821708",
+                            "transferTo": "0x034e13e54e62c6ea3614a04b81e95cf4a4f18a21"
+                          },
+                          "extras": {
+                            "tokenId": "0x1",
+                            "tokenUri": "https://www.klaytnapi.com/nft/0x1.json"
+                          }
+                        },
+                        {
+                          "kind": "ft",
+                          "contractAddress": "0x66ac22b457006c3f519e4a5c49ff19eb531bba4e",
+                          "updatedAt": 1607993770,
+                          "balance": "0x15e",
+                          "lastTransfer": {
+                            "transactionHash": "0xcd23a37616840f997298a6ae62effb8d28303b1a22ee0acc73f8e486714837ff",
+                            "transferFrom": "0xbdfaeffb231ed4ef4600a8be4f5aa02ba4821708",
+                            "transferTo": "0x034e13e54e62c6ea3614a04b81e95cf4a4f18a21"
+                          },
+                          "extras": {
+                            "name": "KASFT",
+                            "symbol": "KFT",
+                            "decimals": 18,
+                            "totalSupply": "0xde0b6b3a7640000",
+                            "formattedValue": "0.00000000000000035"
+                          }
+                        },
+                        {
+                          "kind": "mt",
+                          "contractAddress": "0x2b2e50e8c8e0d097f22ac9389af2f354d18d2882",
+                          "updatedAt": 1607993770,
+                          "balance": "0x1c2",
+                          "lastTransfer": {
+                            "transactionHash": "0x85263b3d17fe92edd4a665bb65211c5b8a08e88ebeb0474f477bc4484eb26096",
+                            "transferFrom": "0xbdfaeffb231ed4ef4600a8be4f5aa02ba4821708",
+                            "transferTo": "0x034e13e54e62c6ea3614a04b81e95cf4a4f18a21"
+                          },
+                          "extras": {
+                            "tokenId": "0x1",
+                            "tokenUri": "https://www.klaytnapi.com/mt",
+                            "totalSupply": "0xde0b6b3a7640000"
+                          }
+                        }
+                      ],
+                      "cursor": ""
+                    }
+                  },
+                  "Empty tokens": {
+                    "summary": "Empty tokens",
+                    "description": "",
+                    "value": {
+                      "items": [],
+                      "cursor": ""
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/paths/~1v2~1transfer/get/responses/400/content/application~1json/schema"
+                },
+                "examples": {
+                  "Invalid query": {
+                    "summary": "Invalid query",
+                    "description": "",
+                    "value": {
+                      "code": 1040010,
+                      "message": "[InvalidQueryParameterValue]invalid query value",
+                      "requestId": "76269e63-28d9-9425-97fb-7a431dad1327"
+                    }
+                  },
+                  "Invalid query - kind": {
+                    "summary": "Invalid query - kind",
+                    "description": "",
+                    "value": {
+                      "code": 1040010,
+                      "message": "[InvalidQueryParameterValue]invalid kind:klay",
+                      "requestId": "76269e63-28d9-9425-97fb-7a431dad1327"
+                    }
+                  },
+                  "Invalid query - ca filters": {
+                    "summary": "Invalid query - ca filters",
+                    "description": "",
+                    "value": {
+                      "code": 1040010,
+                      "message": "[InvalidQueryParameterValue]invalid address: not address",
+                      "requestId": "76269e63-28d9-9425-97fb-7a431dad1327"
+                    }
+                  },
+                  "Invalid query - max size of ca filters": {
+                    "summary": "Invalid query - max size of ca filters",
+                    "description": "",
+                    "value": {
+                      "code": 1040010,
+                      "message": "[InvalidQueryParameterValue]too many ca-filters query value",
+                      "requestId": "76269e63-28d9-9425-97fb-7a431dad1327"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        },
+        "summary": "특정 EOA가 가진 토큰 정보 조회",
+        "operationId": "getListOfTokenByOwnerAddress",
+        "tags": [
+          "th-token"
+        ]
+      }
+    }
+  },
+  "servers": [
+    {
+      "url": "https://th-api.klaytnapi.com"
+    }
+  ],
+  "components": {
+    "securitySchemes": {
+      "basic": {
+        "description": "KAS는 Basic HTTP Auth를 사용합니다. 모든 요청은 반드시 올바른 Authorization 헤더를 가져야 하며 KAS 사용자는 access key ID를 `username`으로, secret access key를 `password`로 사용하여 Basic Auth에 사용할 자격증명을 생성합니다.\n\n> **참고**\n>\n> KAS 계정의 각 Credential은 모든 KAS 서비스를 사용할 수 있으며, Wallet API로 만든 Klaytn 계정에 대한 모든 권한을 소유하기 때문에, 생성한 Klaytn 계정의 자산(KLAY 등) 이동이나 [트랜잭션 실행](https://docs.klaytnapi.com/tutorial/wallet-transaction-api) 권한을 가집니다. KAS/Klaytn 계정 보안을 위해 KAS API 인증 키(Secret Access Key)를 타인과 함부로 공유하지 말고 주의해 관리하십시오.\n\n**cURL**\n```\ncurl --location --request GET 'https://th-api.klaytnapi.com/v2/contract/ft' \\\n-u ${your_accessKeyId}:${your_secretAccessKey} \\\n--header 'x-chain-id: 8217' \\\n--header 'Content-Type: application/json'\n```\n",
+        "type": "http",
+        "scheme": "basic"
+      }
+    }
+  },
+  "security": [
+    {
+      "basic": []
+    }
+  ]
+}
