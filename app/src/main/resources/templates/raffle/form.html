@@ -10,7 +10,7 @@
 
 	<!-- content -->
 	<div class="container p-3">
-		<form action="#" th:action=@{/event/form} th:object="${event}" method="post" enctype="multipart/form-data" id="eventForm">
+		<form action="#" th:action=@{/raffle/form} th:object="${raffle}" method="post" enctype="multipart/form-data" id="raffleForm">
 			<div class="form-gruop">
 				<h3>제목</h3>
 				<input type="text" class="form-control" id="title" th:field="*{title}">
@@ -35,7 +35,7 @@
 
 			<div class="text-end mt-2">
 				<button type="button" class="btn btn-rtdc" onclick="saveEvent();">작성</button>
-				<a type="button" class="btn btn-secondary" th:href=@{/event/list(status=0}>취소</a>
+				<a type="button" class="btn btn-secondary" th:href=@{/raffle/list(status=0}>취소</a>
 			</div>
 		</form>
 	</div>
@@ -123,7 +123,7 @@
 	function sendFileCardImg(file) {
 		var form_data = new FormData();
 		form_data.append('file', file);
-		form_data.append('gb', 'event');
+		form_data.append('gb', 'raffle');
 		
 		$.ajax({
 			data : form_data,
@@ -135,7 +135,7 @@
 			processData : false,
 			success : function(url) {
 				$("#cardImgPath").val(url);
-				$("#eventForm").submit();
+				$("#raffleForm").submit();
 			}
 		});
 	}

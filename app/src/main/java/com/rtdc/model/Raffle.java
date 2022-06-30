@@ -23,11 +23,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Event {
+public class Raffle {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private long eventId;
+	private long raffleId;
 	
 	@Column(length = 200)
 	private String title;

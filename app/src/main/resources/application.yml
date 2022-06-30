@@ -20,7 +20,7 @@ spring:
       max-request-size: 10MB
 custom:
   upload-img-path: /home/ec2-user/RTDC/upload-file/
-  event-img-path: /home/ec2-user/RTDC/event-file/
+  raffle-img-path: /home/ec2-user/RTDC/raffle-file/
   profile-img-path: /home/ec2-user/RTDC/profile-file/
   #upload-img-path: c:/dev/WORKSPACE/RTDC/upload-file/
   #event-img-path: c:/dev/WORKSPACE/RTDC/event-file/

@@ -25,25 +25,25 @@ public class ImageService {
 	private Path rootLocation;
 	
 	private final Path uploadFilePath;
-	private final Path eventFilePath;
+	private final Path raffleFilePath;
 	private final Path profileFilePath;
 	
 		
 	public ImageService(
 			@Value("${custom.upload-img-path}") String uploadFilePath
-			, @Value("${custom.event-img-path}") String eventFilePath
+			, @Value("${custom.raffle-img-path}") String raffleFilePath
 			, @Value("${custom.profile-img-path}") String profileFilePath
 			) {
 		this.uploadFilePath = Paths.get(uploadFilePath);
-		this.eventFilePath = Paths.get(eventFilePath);
+		this.raffleFilePath = Paths.get(raffleFilePath);
 		this.profileFilePath = Paths.get(profileFilePath);
 	}
 	
 	private void FilePathSetting(String gb) {
 		if("post".equals(gb)) {
 			this.rootLocation = this.uploadFilePath;
-		}else if("event".equals(gb)) {
-			this.rootLocation = this.eventFilePath;
+		}else if("raffle".equals(gb)) {
+			this.rootLocation = this.raffleFilePath;
 		}else if("profile".equals(gb)) {
 			this.rootLocation = this.profileFilePath;
 		}

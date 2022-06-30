@@ -5,13 +5,13 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.rtdc.model.Event;
+import com.rtdc.model.Raffle;
 
 @Repository
-public interface EventRepository extends JpaRepository<Event, Long>{
+public interface RaffleRepository extends JpaRepository<Raffle, Long>{
 
-	Page<Event> findByStatus(Pageable pageable, String status);
+	Page<Raffle> findByStatus(Pageable pageable, String status);
 	
-	Event findByEventId(Long eventId);
+	Raffle findByRaffleId(Long raffleId);
 
 }

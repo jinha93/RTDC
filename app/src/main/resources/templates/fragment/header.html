@@ -51,8 +51,8 @@
 				<ul class="nav d-none d-lg-flex col-lg-auto me-lg-auto justify-content-center sbAggroM">
 					<li class="nav-item ms-4"><a href="/aboutus" class="nav-link link-dark">ABOUT US</a></li>
 					<li class="nav-item ms-4"><a href="/toyRoom/view" class="nav-link link-dark">TOYROOM</a></li>
-<!-- 					<li class="nav-item ms-4"><a href="/event/list?status=0" class="nav-link link-dark">EVENT</a></li> -->
 					<li class="nav-item ms-4"><a href="/post/list?boardId=0" class="nav-link link-dark">COMMNUNITY</a></li>
+					<li class="nav-item ms-4"><a href="/raffle/list?status=0" class="nav-link link-dark" sec:authorize="hasRole('ADMIN')">RAFFLE</a></li>
 				</ul>
 
 				<div class="d-none d-lg-block">
@@ -100,14 +100,6 @@
 <!-- 										<li><a class="dropdown-item" href="#">Another action</a></li> -->
 <!-- 									</ul> -->
 <!-- 								</li> -->
-<!-- 								<li class="nav-item dropdown"> -->
-<!-- 									<a class="nav-link dropdown-toggle text-dark sbAggroM show" href="#" id="offcanvasNavbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="true">EVENT</a> -->
-<!-- 									<ul class="dropdown-menu show" aria-labelledby="offcanvasNavbarDropdown" data-bs-popper="none"> -->
-<!-- 										<li><a class="dropdown-item" href="/event/list?status=0">진행중 이벤트</a></li> -->
-<!-- 										<li><a class="dropdown-item" href="/event/list?status=1">종료된 이벤트</a></li> -->
-<!-- 										<li><a class="dropdown-item" href="/event/list?status=2">당첨자 발표</a></li> -->
-<!-- 									</ul> -->
-<!-- 								</li> -->
 								<li class="nav-item dropdown">
 									<a class="nav-link text-dark sbAggroM show" href="/aboutus">ABOUT US</a>
 								</li>
@@ -119,6 +111,14 @@
 										<li><a class="dropdown-item" href="/post/list?boardId=2">P2E(META TOY CITY)</a></li>
 										<li><a class="dropdown-item" href="/post/list?boardId=3">자유게시판</a></li>
 										<li><a class="dropdown-item" href="/post/list?boardId=4">건의/신고</a></li>
+									</ul>
+								</li>
+								<li class="nav-item dropdown" sec:authorize="hasRole('ADMIN')">
+									<a class="nav-link dropdown-toggle text-dark sbAggroM show" href="#" id="offcanvasNavbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="true">Raffle</a>
+									<ul class="dropdown-menu show" aria-labelledby="offcanvasNavbarDropdown" data-bs-popper="none">
+										<li><a class="dropdown-item" href="/raffle/list?status=0">진행중</a></li>
+										<li><a class="dropdown-item" href="/raffle/list?status=1">종료된</a></li>
+<!-- 										<li><a class="dropdown-item" href="/raffle/list?status=2">당첨자</a></li> -->
 									</ul>
 								</li>
 							</ul>

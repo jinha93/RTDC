@@ -11,12 +11,12 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.rtdc.model.Board;
-import com.rtdc.model.Event;
+import com.rtdc.model.Raffle;
 import com.rtdc.model.Post;
 import com.rtdc.model.UploadFile;
 import com.rtdc.model.User;
 import com.rtdc.repository.BoardRepository;
-import com.rtdc.repository.EventRepository;
+import com.rtdc.repository.RaffleRepository;
 import com.rtdc.repository.PostRepository;
 import com.rtdc.repository.UploadFileRepository;
 import com.rtdc.repository.UserRepository;
@@ -32,7 +32,7 @@ public class RtdcApplication {
 	private PasswordEncoder passwordEncoder;
 	
     @Bean
-    public CommandLineRunner initData(BoardRepository boardRepository, PostRepository postRepository, EventRepository eventRepository, UploadFileRepository uploadFileRepository, UserRepository userRepository) {
+    public CommandLineRunner initData(BoardRepository boardRepository, PostRepository postRepository, RaffleRepository eventRepository, UploadFileRepository uploadFileRepository, UserRepository userRepository) {
         return args -> 
             IntStream.rangeClosed(1, 154).forEach(i -> {
 //            	if(i == 1) {
