@@ -29,4 +29,7 @@ public class RaffleTarget implements Serializable{
 	
 	@Column(length = 100, nullable = false)
 	private String discordHandle;
+	
+	@Column(columnDefinition = "varchar(1) default 'N'")
+	private String winnerYn;
 }

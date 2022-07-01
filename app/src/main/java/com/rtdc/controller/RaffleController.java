@@ -1,5 +1,11 @@
 package com.rtdc.controller;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -39,6 +45,30 @@ public class RaffleController {
 		model.addAttribute("raffleList", raffleService.getRaffleList(pageable, status));
 		
 		return "raffle/list";
+	}
+	
+	@GetMapping("/test")
+	public String test(Model model) throws IOException {
+		try {
+			URL url = new URL("https://th-api.klaytnapi.com/v2/contract/nft/0x46dbdc7965cf3cd2257c054feab941a05ff46488/owner/0x850F09C020e964FC09F835d26813b5A99e8c6C09");
+			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+			conn.setRequestProperty("Content-Type", "application/json");
+			conn.setRequestProperty("x-chain-id", "8217");
+			conn.setRequestProperty("Authorization", "Basic S0FTS0pWWUJFOE1YSjJIMTNINDVRODlaOl9IY181Q2pWeGdOSHJfY3psc1EzMm5HMUE0cy1rQ09tdmhRTXpNZWQ=");
+			
+			StringBuffer sb = new StringBuffer();
+			BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
+			while(br.ready()) {
+				sb.append(br.readLine());
+			}
+			
+			System.out.println(sb.toString());
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return "index";
 	}
 	
 	@GetMapping("/form")

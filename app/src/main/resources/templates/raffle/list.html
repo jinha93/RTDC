@@ -1,5 +1,6 @@
 <!doctype html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <!-- head -->
 <head th:replace="fragment/header :: head"></head>
 <style>
@@ -27,7 +28,6 @@
 					<ul class="list-group list-group-flush">
 						<li class="list-group-item"><a class="text-dark text-decoration-none" href="/raffle/list?status=0" th:classappend="${status} == 0 ? sbAggroM">진행중</a></li>
 						<li class="list-group-item"><a class="text-dark text-decoration-none" href="/raffle/list?status=1" th:classappend="${status} == 1 ? sbAggroM">종료된</a></li>
-<!-- 						<li class="list-group-item"><a class="text-dark text-decoration-none" href="/raffle/list?status=2" th:classappend="${status} == 2 ? sbAggroM">당첨자 발표</a></li> -->
 					</ul>
 				</div>
 			</div>
@@ -37,14 +37,12 @@
 					<div class="my-auto">
 						<h4 class="fw-bold" th:if="${status} == 0">진행중</h4>
 						<h4 class="fw-bold" th:if="${status} == 1">종료된</h4>
-<!-- 						<h4 class="fw-bold" th:if="${status} == 2">당첨자 발표</h4> -->
 					</div>
 				</div>
 				<div class="row">
-					<div th:each="raffle, i : ${raffleList}" th:if="${raffle.status == '0'}" class="col col-lg-4 col-md-6 col-sm-12 col-12">
+					<div th:each="raffle, i : ${raffleList}" th:if="${raffle.status == status}" class="col col-lg-4 col-md-6 col-sm-12 col-12">
 						<div class="card mt-3" data-bs-toggle="modal" th:attr="data-bs-target=${'#exampleModal' + i.index}">
-<!-- 							<div th:utext="${raffle.cardImgPath}"></div> -->
-							<img th:src="${raffle.cardImgPath}" style="height: 300px;">
+							<img th:src="${raffle.cardImgPath}" style="height: 400px;">
 							<div class="card-body">
 								<h5 th:text="${raffle.title}" class="card-title sbAggroM"></h5>
 								<span th:text="${#temporals.format(raffle.startDateTime, 'yyyy.MM.dd')}" class="card-text"></span>
@@ -71,11 +69,46 @@
 					<h5 class="modal-title" id="exampleModalLabel" th:text="${raffle.title}">Modal title</h5>
 					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
 				</div>
-				<div class="modal-body">
+				<div class="modal-body text-center">
+					<img th:src="${raffle.cardImgPath}" style="height: 400px;">
 					<p th:utext="${raffle.content}" class="card-text"></p>
 				</div>
+				<div class="modal-body text-center" th:if="${raffle.status == '1'}">
+					<h5>당첨자</h5>
+				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-rtdc" th:if="${raffle.status == '0'}" th:attr="data-bs-target=${'#exampleModal2' + i.index}" data-bs-toggle="modal">신청</button>
+					<button type="button" class="btn btn-danger" th:if="${raffle.status == '0'}" sec:authorize="hasRole('ADMIN')" onclick="raffleEnd();">종료</button>
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+				</div>
+			</div>
+		</div>
+	</div>
+	
+	<!-- 신청 Modal -->
+	<div th:each="raffle, i : ${raffleList}" class="modal fade" th:attr="id=${'exampleModal2' + i.index}" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div class="modal-header">
+					<h5 class="modal-title" id="exampleModalLabel" th:text="${raffle.title}">Modal title</h5>
+					<button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+				</div>
+				<div class="modal-body">
+					<form>
+						<input type="hidden" name="raffleId" th:value="${raffle.raffleId}">
+						<div class="mb-3">
+							<label for="recipient-name" class="col-form-label">트위터:</label>
+							<input type="text" class="form-control" id="" name="twitterHandle">
+						</div>
+						<div class="mb-3">
+							<label for="message-text" class="col-form-label">디스코드:</label>
+							<input type="text" class="form-control" id="" name="discordHandle">
+						</div>
+					</form>
+				</div>
+				<div class="modal-footer">
+					<button type="button" class="btn btn-rtdc" th:if="${raffle.status == '0'}" onclick="raffleJoin();">저장</button>
+					<button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
 				</div>
 			</div>
 		</div>
@@ -85,4 +118,14 @@
 	<!-- footer -->
 	<footer th:replace="fragment/footer :: footer"></footer>
 </body>
+<script>
+	//래플 신청
+	function raffleJoin(){
+	}
+	
+	//래플 종료
+	function raffleEnd(){
+		
+	}
+</script>
 </html>

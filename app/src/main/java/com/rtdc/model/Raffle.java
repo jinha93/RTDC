@@ -35,7 +35,7 @@ public class Raffle {
 	@Column(length = 500)
 	private String cardImgPath;
 	
-	@Column(length = 4000)
+	@Column(length = 15000)
 	private String content;
 	
 	private LocalDateTime startDateTime;
