@@ -1,18 +1,22 @@
 package com.rtdc.model;
 
-import java.io.Serializable;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+
+import org.hibernate.annotations.DynamicInsert;
+import org.hibernate.annotations.DynamicUpdate;
 
 import lombok.Data;
 
 @Entity
 @Data
-public class RaffleTarget implements Serializable{
+@DynamicInsert	//insert 시점에 null이 아닌 컬럼들만 insert
+@IdClass(RaffleTargetId.class)
+public class RaffleTarget {
 	
 	@Id
 	@ManyToOne

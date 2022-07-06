@@ -10,7 +10,7 @@ import com.rtdc.model.Raffle;
 @Repository
 public interface RaffleRepository extends JpaRepository<Raffle, Long>{
 
-	Page<Raffle> findByStatus(Pageable pageable, String status);
+//	Page<Raffle> findByStatus(Pageable pageable, String status);
 	
 	Raffle findByRaffleId(Long raffleId);
 

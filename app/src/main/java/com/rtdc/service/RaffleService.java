@@ -17,11 +17,11 @@ public class RaffleService {
 	@Autowired
 	private RaffleRepository raffleRepository;
 	
-	public Page<Raffle> getRaffleList(Pageable pageable, String status){
+	public Page<Raffle> getRaffleList(Pageable pageable){
 		int page = (pageable.getPageNumber() == 0) ? 0 : (pageable.getPageNumber() - 1); //page는 0부터 시작
 		pageable = PageRequest.of(page, 6, Sort.by("raffleId").descending());
 		
-		return raffleRepository.findByStatus(pageable, status);
+		return raffleRepository.findAll(pageable);
 	}
 	
 	public Raffle getRaffle(long raffleId) {

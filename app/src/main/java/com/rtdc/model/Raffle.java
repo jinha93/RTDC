@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import org.hibernate.annotations.ColumnDefault;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import lombok.AllArgsConstructor;
@@ -43,6 +44,9 @@ public class Raffle {
 	private LocalDateTime endDateTime;
 	
 	private String status;
+	
+	@ColumnDefault("0") //default 0
+	private Integer winnerCnt;
 	
 	@ManyToOne
     @JoinColumn(name = "username", nullable = false)
