@@ -15,6 +15,7 @@ import java.util.Random;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.security.core.Authentication;
@@ -51,10 +52,23 @@ public class RaffleController {
 	private UserService userService;
 	
 	@GetMapping("/list")
-	public String list(Model model, @PageableDefault Pageable pageable, @RequestParam String status) {
+	public String list(Model model, @PageableDefault Pageable pageable) {
 		
-//		model.addAttribute("status", status);
-		model.addAttribute("raffleList", raffleService.getRaffleList(pageable));
+		List<Raffle> raffleList = raffleService.getRaffleList();
+		List<Integer> cntList = new ArrayList<Integer>(); 
+		List<Float> rateList = new ArrayList<Float>();
+		List<List<RaffleTarget>> winnerList = new ArrayList<List<RaffleTarget>>();
+		for(int i=0; i<raffleList.size(); i++) {
+			int cnt = raffleTargetService.getRaffleTargetCnt(raffleList.get(i));
+			cntList.add(i, cnt);
+			rateList.add(i, (float)cnt/raffleList.get(i).getWinnerCnt());
+			winnerList.add(raffleTargetService.getRaffleTargetWinnerList(raffleList.get(i), "Y"));
+		}
+		
+		model.addAttribute("raffleList", raffleList);
+		model.addAttribute("cntList", cntList);
+		model.addAttribute("rateList", rateList);
+		model.addAttribute("winnerList", winnerList);
 		
 		return "raffle/list";
 	}

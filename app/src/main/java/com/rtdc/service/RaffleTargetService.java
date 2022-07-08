@@ -24,4 +24,12 @@ public class RaffleTargetService {
 		return raffleTargetRepository.findByRaffle(raffle);
 	}
 	
+	public List<RaffleTarget> getRaffleTargetWinnerList(Raffle raffle, String winnerYn){
+		return raffleTargetRepository.findByRaffleAndWinnerYn(raffle, winnerYn);
+	}
+	
+	public int getRaffleTargetCnt(Raffle raffle) {
+		return raffleTargetRepository.countByRaffle(raffle);
+	}
+	
 }

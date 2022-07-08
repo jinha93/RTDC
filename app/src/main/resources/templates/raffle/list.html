@@ -8,7 +8,7 @@
 .card {
   display: grid;
   grid-template-columns: 300px;
-  grid-template-rows: 210px 210px 80px;
+  grid-template-rows: 230px 170px 80px;
   grid-template-areas: "image" "text" "stats";
 
   border-radius: 18px;
@@ -80,6 +80,11 @@
   padding:10px;
 }
 
+.card-stats .stat .type{
+  font-size:12px;
+  font-weight: 300;
+}
+
 .card:hover {
   transform: scale(1.15);
   box-shadow: 5px 5px 15px rgba(0,0,0,0.6);
@@ -98,26 +103,24 @@
 					<div th:each="raffle, i : ${raffleList}" class="col col-lg-4 col-md-6 col-sm-12 col-12">
 						<div class="card mx-auto" style="width:300px;" data-bs-toggle="modal" th:attr="data-bs-target=${'#exampleModal' + i.index}">
 							<div class="card-image" th:style="'background-image:url('+ ${raffle.cardImgPath} +');'"></div>
+								<img th:if="${raffle.status == '1'}" th:src="@{/assets/img/soldout.png}" style="width: 400px; position: absolute; top:100px; left:-50px;">
 							<div class="card-text">
 								<span class="date">4 days ago</span>
 								<h2 th:text="${raffle.title}"></h2>
 								<span class="period" th:text="${#temporals.format(raffle.startDateTime, 'yyyy-MM-dd')+'~'+#temporals.format(raffle.endDateTime, 'yyyy-MM-dd')}"></span>
-								<div class="soldout"></div>
 							</div>
 							<div class="card-stats">
 								<div class="stat">
-									<div class="value">
-										4<sup>m</sup>
-									</div>
-									<div class="type">read</div>
+									<div class="value" th:text="${raffle.winnerCnt}"></div>
+									<div class="type">당첨자 수</div>
 								</div>
 								<div class="stat border-start border-end">
-									<div class="value">5123</div>
-									<div class="type">views</div>
+									<div class="value" th:text="${cntList[i.index]}"></div>
+									<div class="type">참여자 수</div>
 								</div>
 								<div class="stat">
-									<div class="value">32</div>
-									<div class="type">comments</div>
+									<div class="value" th:text="${rateList[i.index]+':1'}"></div>
+									<div class="type">경쟁률</div>
 								</div>
 							</div>
 						</div>
@@ -145,7 +148,22 @@
 					<p th:utext="${raffle.content}" class="card-text"></p>
 				</div>
 				<div class="modal-body text-center" th:if="${raffle.status == '1'}">
+					<hr>
 					<h5>당첨자</h5>
+					<table class="table table-bordered border-primary mx-auto" style="width:40%;">
+						<thead>
+							<tr>
+								<th scope="col">순번</th>
+								<th scope="col">닉네임</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="winner, i : ${winnerList[i.index]}">
+								<th scope="row" th:text="${i.count}"></th>
+								<td th:text="${winner.user.nickname}"></td>
+							</tr>
+						</tbody>
+					</table>
 				</div>
 				<div class="modal-footer">
 					<button type="button" class="btn btn-rtdc" th:if="${raffle.status == '0'}" th:attr="data-bs-target=${'#exampleModal2' + i.index}" data-bs-toggle="modal">신청</button>
@@ -200,7 +218,8 @@
 			data : formData,
 			success : function(result) {
 				alert("저장되었습니다.");
-				$("#closeModal"+i).click();
+// 				$("#closeModal"+i).click();
+				location.reload();
 			}
 		});
 	}

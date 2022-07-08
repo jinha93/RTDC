@@ -11,5 +11,10 @@ import com.rtdc.model.RaffleTargetId;
 
 @Repository
 public interface RaffleTargetRepository extends JpaRepository<RaffleTarget, RaffleTargetId>{
+	
 	List<RaffleTarget> findByRaffle(Raffle raffle);
+
+	int countByRaffle(Raffle raffle);
+
+	List<RaffleTarget> findByRaffleAndWinnerYn(Raffle raffle, String winnerYn);
 }
