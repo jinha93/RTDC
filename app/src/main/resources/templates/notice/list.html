@@ -3,11 +3,11 @@
 <!-- head -->
 <head th:replace="fragment/header :: head"></head>
 
+<!-- header -->
+<header th:replace="fragment/header :: header(menu=${boardId})"></header>
+
 <body>
-	<!-- header -->
-	<header th:replace="fragment/header :: header(menu=${boardId})"></header>
-
-
+<div class="contentDiv">
 	<!-- content -->
 	<div class="container">
 
@@ -95,8 +95,9 @@
 		</nav>
 		<!-- pagenation e -->
 	</div>
-	
-	<!-- footer -->
-	<footer th:replace="fragment/footer :: footer"></footer>
+</div>	
 </body>
+
+<!-- footer -->
+<footer th:replace="fragment/footer :: footer"></footer>
 </html>

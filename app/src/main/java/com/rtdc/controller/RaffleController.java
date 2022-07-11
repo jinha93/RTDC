@@ -73,36 +73,6 @@ public class RaffleController {
 		return "raffle/list";
 	}
 	
-	@GetMapping("/test")
-	public String test(Model model) throws IOException {
-		try {
-//			URL url = new URL("https://th-api.klaytnapi.com/v2/contract/nft/0x46dbdc7965cf3cd2257c054feab941a05ff46488/owner/0x6b56517ce3D425b693017F43C45d74dBBf5BcF64?size=1000"); // MTDZ 갯수 : 0
-			URL url = new URL("https://th-api.klaytnapi.com/v2/contract/nft/0x46dbdc7965cf3cd2257c054feab941a05ff46488/owner/0xd48dd5acce0a627019204079617cdab3fc78af7c?size=1000"); // MTDZ 갯수 : 120
-//			URL url = new URL("https://th-api.klaytnapi.com/v2/contract/nft/0x46dbdc7965cf3cd2257c054feab941a05ff46488/owner/0x850F09C020e964FC09F835d26813b5A99e8c6C09?size=1000"); // MTDZ 갯수 : 1
-			HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-			conn.setRequestProperty("Content-Type", "application/json");
-			conn.setRequestProperty("x-chain-id", "8217");
-			conn.setRequestProperty("Authorization", "Basic S0FTS0pWWUJFOE1YSjJIMTNINDVRODlaOl9IY181Q2pWeGdOSHJfY3psc1EzMm5HMUE0cy1rQ09tdmhRTXpNZWQ=");
-			
-			StringBuffer sb = new StringBuffer();
-			BufferedReader br = new BufferedReader(new InputStreamReader(conn.getInputStream(), "UTF-8"));
-			while(br.ready()) {
-				sb.append(br.readLine());
-			}
-			
-			JsonParser jsonParser = new JsonParser();
-			JsonObject obj = jsonParser.parse(sb.toString()).getAsJsonObject();
-			JsonArray arr = obj.get("items").getAsJsonArray();
-			System.out.println(arr.toString());
-			System.out.println(arr.size());
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		
-		return "index";
-	}
-	
 	@GetMapping("/form")
 	public String form(Model model, @RequestParam(required = false) Long raffleId) {
 		

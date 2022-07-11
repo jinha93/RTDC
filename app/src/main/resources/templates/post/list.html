@@ -4,11 +4,11 @@
 <!-- head -->
 <head th:replace="fragment/header :: head"></head>
 
+<!-- header -->
+<header th:replace="fragment/header :: header"></header>
+
 <body>
-	<!-- header -->
-	<header th:replace="fragment/header :: header"></header>
-
-
+<div class="contentDiv">
 	<!-- content -->
 	<div class="container-fluid">
 		<div class="row">
@@ -166,9 +166,10 @@
 			</div>
 		</div>
 	</div>
-
-
-	<!-- footer -->
-	<footer th:replace="fragment/footer :: footer"></footer>
+</div>
 </body>
+
+<!-- footer -->
+<footer th:replace="fragment/footer :: footer"></footer>
+
 </html>

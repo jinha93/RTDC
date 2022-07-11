@@ -3,11 +3,11 @@
 <!-- head -->
 <head th:replace="fragment/header :: head"></head>
 
+<!-- header -->
+<header th:replace="fragment/header :: header"></header>
+
 <body>
-	<!-- header -->
-	<header th:replace="fragment/header :: header"></header>
-
-
+<div class="contentDiv">
 	<!-- content -->
 	<div class="container p-3">
 		<form action="#" th:action=@{/post/form} th:object="${post}" method="post" enctype="multipart/form-data">
@@ -35,11 +35,11 @@
 			</div>
 		</form>
 	</div>
-
-
-	<!-- footer -->
-	<footer th:replace="fragment/footer :: footer"></footer>
+</div>
 </body>
+
+<!-- footer -->
+<footer th:replace="fragment/footer :: footer"></footer>
 
 <script>
 	var token = $("meta[name='_csrf']").attr("content");

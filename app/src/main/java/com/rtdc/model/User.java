@@ -40,7 +40,7 @@ public class User{
 	
 	private String nickname;
 	
-	@Column(columnDefinition = "varchar(5) default 'USER'", nullable = false)
+	@Column(columnDefinition = "varchar(50) default 'USER'", nullable = false)
 	private String role;
 	
 	@Column
@@ -55,7 +55,7 @@ public class User{
 	private int point;
 	
 	@Column(nullable = true)
-	private String profileImgPath;
+	private String profileImgPath = "/image/4006";
 	
 	public void encodePassword(PasswordEncoder passwordEncoder) {
 		this.password = passwordEncoder.encode(this.password);

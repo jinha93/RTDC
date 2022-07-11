@@ -52,11 +52,14 @@
 					<li class="nav-item ms-4"><a href="/aboutus" class="nav-link link-dark">ABOUT US</a></li>
 					<li class="nav-item ms-4"><a href="/toyRoom/view" class="nav-link link-dark">TOYROOM</a></li>
 					<li class="nav-item ms-4"><a href="/post/list?boardId=0" class="nav-link link-dark">COMMNUNITY</a></li>
-					<li class="nav-item ms-4"><a href="/raffle/list?status=0" class="nav-link link-dark" sec:authorize="hasRole('ADMIN')">RAFFLE</a></li>
+					<li class="nav-item ms-4"><a href="/raffle/list" class="nav-link link-dark">RAFFLE</a></li>
 				</ul>
-
+				<div class="d-none d-lg-block justify-content-center me-1" sec:authorize="isAuthenticated()">
+					<a class="sbAggroM pt-1 px-2 my-2 text-center text-decoration-none loginBtn" sec:authorize="!hasAnyRole('HOLDER','ADMIN')" href="#" onclick="holderCheck();">홀더인증</a>
+					<img class="" th:src="@{/assets/img/holder.png}" sec:authorize="hasAnyRole('HOLDER','ADMIN')" style="width:40px; height:40px;" title="MTDZ HOLDER">
+				</div>
 				<div class="d-none d-lg-block">
-					<a sec:authorize="isAnonymous()" class="sbAggroM py-2 px-4 text-center text-decoration-none loginBtn" th:href="@{/user/login}">LOGIN</a>
+					<a class="me-3" sec:authorize="isAnonymous()" th:href="@{/user/login}"><img th:src="@{/assets/img/login2.png}" style="width: 80px;"></a>
 					<div class="" sec:authorize="isAuthenticated()">
 						<div class="d-flex flex-row" id="dropdownMenuButton" data-bs-toggle="dropdown" aria-expanded="false" style="cursor: pointer;">
 							<div class="d-flex flex-column justify-content-center text-end me-3">
@@ -79,7 +82,7 @@
 					</button>
 					<div class="offcanvas offcanvas-end" tabindex="-1" id="offcanvasRight" aria-labelledby="offcanvasRightLabel" style="width: 270px;">
 						<div class="offcanvas-header">
-							<a sec:authorize="isAnonymous()" class="sbAggroM py-2 px-4 text-center text-decoration-none loginBtn" th:href="@{/user/login}">LOGIN</a>
+							<a sec:authorize="isAnonymous()" th:href="@{/user/login}"><img th:src="@{/assets/img/login2.png}" style="width: 80px;"></a>
 							<div class="" sec:authorize="isAuthenticated()">
 								<div class="d-flex flex-row" style="cursor: pointer;">
 									<img class="d-flex flex-row profileImg">
@@ -116,12 +119,8 @@
 										<li><a class="dropdown-item" href="/post/list?boardId=4">건의/신고</a></li>
 									</ul>
 								</li>
-								<li class="nav-item dropdown" sec:authorize="hasRole('ADMIN')">
-									<a class="nav-link dropdown-toggle text-dark sbAggroM show" href="#" id="offcanvasNavbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="true">Raffle</a>
-									<ul class="dropdown-menu show" aria-labelledby="offcanvasNavbarDropdown" data-bs-popper="none">
-										<li><a class="dropdown-item" href="/raffle/list?status=0">진행중</a></li>
-										<li><a class="dropdown-item" href="/raffle/list?status=1">종료된</a></li>
-									</ul>
+								<li class="nav-item dropdown">
+									<a class="nav-link text-dark sbAggroM show" href="/raffle/list">RAFFLE</a>
 								</li>
 							</ul>
 						</div>
@@ -168,6 +167,38 @@
 					});
 				}
 			}
+			
+			async function holderCheck(){
+				const accounts = await klaytn.enable();
+				
+				if (klaytn.networkVersion === 8217) {
+			        console.log("메인넷");
+			    } else {
+			        alert("ERROR: 클레이튼 네트워크로 연결되지 않았습니다!");
+			        return;
+			    }
+				
+				if(confirm("인증하시겠습니까?")){
+					$.ajax({
+						type : "POST",
+						url : "/user/holderCheck",
+						data : {
+							accounts : accounts[0]
+						},
+						success : function(result) {
+							if(result == "1"){
+								alert("저장되었습니다. 다시 로그인해주세요.");
+								location.href = "/user/logout";
+							}else if(result == "-9"){
+								alert("해당 지갑엔 메타토이드래곤즈가 없습니다. \n지갑을 확인해주세요.")
+							}else{
+								alert("오류가 발생하였습니다. \n관리자에게 문의해주세요.");
+							}
+						}
+					});
+				}
+			};
+			
 		</script>
 	</header>
 </body>

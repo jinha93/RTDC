@@ -75,14 +75,14 @@
 	
 	
 </style>
+
+<!-- header -->
+<header th:replace="fragment/header :: header"></header>
+
 <body>
-	<!-- header -->
-	<header th:replace="fragment/header :: header"></header>
-
-
+<div class="contentDiv">
 	<!-- content -->
 	<div style="background-color: #87c7e7;">
-		
 		<div class="pixelDiv mx-auto">
 			<div class="pixelContent" id="content">	
 				<button type="button" onclick="save();" style="width:10%; height:10%; font-size:2em; float:right; margin-top:2%; margin-right:35%;">저장</button>
@@ -96,17 +96,12 @@
 			</div>
 		</div>
 	</div>
-	<div class="text-center mt-5">
-		<button type="button" onclick="save();" style="width:200px;height: 100px; font-size: 2em;">저장</button>
-<!-- 		<input type="file" class="form-control mx-auto mb-3" id="profileImg" onchange="sendFile();" accept=".png, .jpg, .jpeg" style="display: none;"> -->
-<!-- 		<button type="button" onclick="insBgImg();" style="width:200px;height: 100px; font-size: 2em;">이미지 삽입</button> -->
-<!-- 		<button type="button" onclick="downImg();" style="width:200px;height: 100px; font-size: 2em;">이미지 저장</button> -->
-	</div>
-
-
-	<!-- footer -->
-	<footer th:replace="fragment/footer :: footer"></footer>
+</div>
 </body>
+
+<!-- footer -->
+<footer th:replace="fragment/footer :: footer"></footer>
+
 <script th:inline="javascript">
 	$(document).ready(function(){
 		$(".picker").spectrum({

@@ -27,6 +27,10 @@ body{
 .sbAggroM{
 	font-family: 'sbAggroM';
 }
+
+.contentDiv{
+	min-height: 700px;
+}
 /* 폰트 e*/
 
 .colorRtdc{

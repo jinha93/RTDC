@@ -3,11 +3,11 @@
 <!-- head -->
 <head th:replace="fragment/header :: head"></head>
 
+<!-- header -->
+<header th:replace="fragment/header :: header"></header>
+
 <body>
-	<!-- header -->
-	<header th:replace="fragment/header :: header"></header>
-
-
+<div class="contentDiv">
 	<!-- content -->
 	<div class="container">
 		<div class="row justify-content-center mt-5 mb-5">
@@ -65,10 +65,12 @@
 		</div>
 	</div>
 
-
-	<!-- footer -->
-	<footer th:replace="fragment/footer :: footer"></footer>
+</div>
 </body>
+
+<!-- footer -->
+<footer th:replace="fragment/footer :: footer"></footer>
+
 <script>
 	function commentValidate(){
 		$("#commentForm").submit();
